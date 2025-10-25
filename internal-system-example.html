@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Café - Internal Order Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a0f0a;
+            color: #f5e6d3;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c1810, #5c4033);
+            border-radius: 15px;
+        }
+        
+        .header h1 {
+            color: #d4a574;
+            margin: 0;
+        }
+        
+        .api-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .status-connected {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-disconnected {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .orders-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .order-card {
+            background: linear-gradient(135deg, #2c1810, #3d2a1a);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #d4a574;
+        }
+        
+        .order-card.pending { border-left-color: #f59e0b; }
+        .order-card.preparing { border-left-color: #10b981; }
+        .order-card.ready { border-left-color: #ef4444; }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .order-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #d4a574;
+        }
+        
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pending { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .status-preparing { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-ready { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        
+        .customer-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(212, 165, 116, 0.1);
+            border-radius: 10px;
+        }
+        
+        .order-items {
+            margin-bottom: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(212, 165, 116, 0.2);
+        }
+        
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: #d4a574;
+            border-top: 2px solid #d4a574;
+            padding-top: 10px;
+        }
+        
+        .actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-start { background: #10b981; color: white; }
+        .btn-complete { background: #ef4444; color: white; }
+        .btn-collect { background: #6b7280; color: white; }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #f5e6d3;
+        }
+        
+        .config-section {
+            background: linear-gradient(135deg, #2c1810, #3d2a1a);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .config-section h3 {
+            color: #d4a574;
+            margin-top: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #f5e6d3;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d4a574;
+            border-radius: 8px;
+            background: #1a0f0a;
+            color: #f5e6d3;
+        }
+        
+        .btn-test {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-coffee"></i> Knowledge Café - Internal System</h1>
+        <div class="api-status" id="apiStatus">Checking connection...</div>
+    </div>
+    
+    <div class="config-section">
+        <h3>API Configuration</h3>
+        <div class="form-group">
+            <label for="apiEndpoint">API Endpoint:</label>
+            <input type="text" id="apiEndpoint" value="https://your-internal-system.com/api" placeholder="https://your-api.com/api">
+        </div>
+        <div class="form-group">
+            <label for="apiKey">API Key:</label>
+            <input type="password" id="apiKey" placeholder="Your API key">
+        </div>
+        <button class="btn-test" onclick="testConnection()">Test Connection</button>
+    </div>
+    
+    <div class="orders-container" id="ordersContainer">
+        <div class="empty-state">
+            <h3>No Orders</h3>
+            <p>Orders will appear here when customers place them</p>
+        </div>
+    </div>
+    
+    <script>
+        // This is an example of how your internal system would work
+        class InternalOrderSystem {
+            constructor() {
+                this.apiEndpoint = 'https://your-internal-system.com/api';
+                this.apiKey = 'your-api-key';
+                this.orders = [];
+                this.init();
+            }
+            
+            init() {
+                this.loadConfiguration();
+                this.startPolling();
+                this.setupEventListeners();
+            }
+            
+            loadConfiguration() {
+                const savedEndpoint = localStorage.getItem('cafe_api_endpoint');
+                const savedKey = localStorage.getItem('cafe_api_key');
+                
+                if (savedEndpoint) document.getElementById('apiEndpoint').value = savedEndpoint;
+                if (savedKey) document.getElementById('apiKey').value = savedKey;
+            }
+            
+            saveConfiguration() {
+                const endpoint = document.getElementById('apiEndpoint').value;
+                const key = document.getElementById('apiKey').value;
+                
+                localStorage.setItem('cafe_api_endpoint', endpoint);
+                localStorage.setItem('cafe_api_key', key);
+                
+                this.apiEndpoint = endpoint;
+                this.apiKey = key;
+            }
+            
+            async testConnection() {
+                try {
+                    const response = await fetch(`${this.apiEndpoint}/health`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.apiKey}`
+                        }
+                    });
+                    
+                    const status = document.getElementById('apiStatus');
+                    if (response.ok) {
+                        status.textContent = 'Connected';
+                        status.className = 'api-status status-connected';
+                        return true;
+                    } else {
+                        throw new Error('Connection failed');
+                    }
+                } catch (error) {
+                    const status = document.getElementById('apiStatus');
+                    status.textContent = 'Disconnected';
+                    status.className = 'api-status status-disconnected';
+                    return false;
+                }
+            }
+            
+            async fetchOrders() {
+                try {
+                    const response = await fetch(`${this.apiEndpoint}/orders`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.apiKey}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        this.orders = await response.json();
+                        this.renderOrders();
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch orders:', error);
+                }
+            }
+            
+            async updateOrderStatus(orderId, status) {
+                try {
+                    const response = await fetch(`${this.apiEndpoint}/orders/${orderId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${this.apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status })
+                    });
+                    
+                    if (response.ok) {
+                        await this.fetchOrders(); // Refresh orders
+                    }
+                } catch (error) {
+                    console.error('Failed to update order:', error);
+                }
+            }
+            
+            renderOrders() {
+                const container = document.getElementById('ordersContainer');
+                
+                if (this.orders.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No Orders</h3>
+                            <p>Orders will appear here when customers place them</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = this.orders.map(order => `
+                    <div class="order-card ${order.status}" data-order-id="${order.id}">
+                        <div class="order-header">
+                            <div class="order-number">#${order.id}</div>
+                            <div class="order-status status-${order.status}">${order.status}</div>
+                        </div>
+                        
+                        <div class="customer-info">
+                            <strong>${order.customer.name}</strong><br>
+                            ${order.customer.email}<br>
+                            <small>${order.customer.userType}</small>
+                        </div>
+                        
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <span>${item.name} ${item.pfand ? '(Pfand)' : ''}</span>
+                                    <span>×${item.quantity}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="order-total">
+                            <span>Total</span>
+                            <span>€${order.totals.total.toFixed(2)}</span>
+                        </div>
+                        
+                        <div class="actions">
+                            ${this.renderActions(order)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            renderActions(order) {
+                switch (order.status) {
+                    case 'pending':
+                        return `<button class="btn btn-start" onclick="internalSystem.updateOrderStatus('${order.id}', 'preparing')">Start Preparing</button>`;
+                    case 'preparing':
+                        return `<button class="btn btn-complete" onclick="internalSystem.updateOrderStatus('${order.id}', 'ready')">Mark Ready</button>`;
+                    case 'ready':
+                        return `<button class="btn btn-collect" onclick="internalSystem.updateOrderStatus('${order.id}', 'completed')">Collected</button>`;
+                    default:
+                        return '';
+                }
+            }
+            
+            startPolling() {
+                // Poll for new orders every 5 seconds
+                setInterval(() => {
+                    this.fetchOrders();
+                }, 5000);
+            }
+            
+            setupEventListeners() {
+                // Save configuration when changed
+                document.getElementById('apiEndpoint').addEventListener('change', () => this.saveConfiguration());
+                document.getElementById('apiKey').addEventListener('change', () => this.saveConfiguration());
+            }
+        }
+        
+        // Initialize the internal system
+        const internalSystem = new InternalOrderSystem();
+        
+        // Global function for testing connection
+        window.testConnection = () => {
+            internalSystem.saveConfiguration();
+            internalSystem.testConnection();
+        };
+    </script>
+</body>
+</html>

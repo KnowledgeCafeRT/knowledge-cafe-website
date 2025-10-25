@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Café - Student-Run Coffee & Learning Hub</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <i class="fas fa-coffee"></i>
+        <span>Knowledge Café</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#home" class="nav-link">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#menu" class="nav-link">Menu</a></li>
+        <li><a href="/order.html" class="nav-link">Order</a></li>
+        <li><a href="/tracking.html" class="nav-link">Track Order</a></li>
+        <li><a href="#loyalty" class="nav-link">Loyalty Card</a></li>
+        <li><a href="#events" class="nav-link">Events</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+        <li><a href="/login.html" class="nav-link profile-link">
+          <i class="fas fa-user"></i>
+          <span>Login</span>
+        </a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to Knowledge Café</h1>
+      <p class="hero-subtitle">Where coffee meets curiosity, and students fuel their minds</p>
+      <div class="hero-buttons">
+        <a href="/order.html" class="btn btn-primary">Order Now</a>
+        <a href="#menu" class="btn btn-secondary">View Menu</a>
+        <a href="#events" class="btn btn-secondary">Upcoming Events</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="coffee-animation">
+        <i class="fas fa-coffee"></i>
+        <div class="steam"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about">
+    <div class="container">
+      <div class="section-header">
+        <h2>About Knowledge Café</h2>
+        <p>More than just a coffee shop - it's a community hub for learning and connection</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="card-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <h3>Student-Run</h3>
+          <p>Operated entirely by students, for students. We understand your needs and create a space that supports your academic journey.</p>
+        </div>
+        <div class="about-card">
+          <div class="card-icon">
+            <i class="fas fa-book"></i>
+          </div>
+          <h3>Study-Friendly</h3>
+          <p>Quiet corners, comfortable seating, and free WiFi make this the perfect place to study, collaborate, or just relax between classes.</p>
+        </div>
+        <div class="about-card">
+          <div class="card-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>Community Focused</h3>
+          <p>We host events, study groups, and create opportunities for students to connect, learn, and grow together.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu Section -->
+  <section id="menu" class="menu">
+    <div class="container">
+      <div class="section-header">
+        <h2>Our Menu</h2>
+        <p>Fresh coffee, delicious treats, and student-friendly prices</p>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-category">
+          <h3><i class="fas fa-coffee"></i> Coffee</h3>
+          <div class="menu-items">
+            <div class="menu-item">
+              <span class="item-name">Filter coffee</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€1.50</span>
+                <span class="item-subprice">Staff: €1.80</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Café Crema</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€1.80</span>
+                <span class="item-subprice">Staff: €2.10</span>
+              </span>
+            </div>
+             <div class="menu-item">
+              <span class="item-name">Americano</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€2.00</span>
+                <span class="item-subprice">Staff: €2.40</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Espresso</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€1.40</span>
+                <span class="item-subprice">Staff: €1.80</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Espresso Doppio</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€1.90</span>
+                <span class="item-subprice">Staff: €2.30</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Espresso Machiatto</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€1.90</span>
+                <span class="item-subprice">Staff: €2.30</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Cappuccino</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€2.00</span>
+                <span class="item-subprice">Staff: €2.40</span>
+              </span>
+            </div>
+             <div class="menu-item">
+              <span class="item-name">Flat White</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€2.40</span>
+                <span class="item-subprice">Staff: €2.80</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Café Latte</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€2.30</span>
+                <span class="item-subprice">Staff: €2.70</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Iced Coffee</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€3.50</span>
+                <span class="item-subprice">Staff: €3.90</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Hot Chocolate</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€2.00</span>
+                <span class="item-subprice">Staff: €2.40</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-category">
+          <h3><i class="fas fa-cookie-bite"></i> Add ons</h3>
+          <div class="menu-items">
+            <div class="menu-item">
+              <span class="item-name">To go</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€0.10</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Extra Shot</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€0.50</span>
+                <span class="item-subprice">Staff: €0.60</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Syrup</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€0.30</span>
+                <span class="item-subprice">Staff: €0.40</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Haferdrink</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€0.40</span>
+                <span class="item-subprice">Staff: €0.50</span>
+              </span>
+            </div>
+            <div class="menu-item">
+              <span class="item-name">Energy Bar</span>
+              <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                <span class="item-price">€2.00</span>
+                <span class="item-subprice">Staff: €2.50</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loyalty Card Section -->
+  <section id="loyalty" class="loyalty">
+    <div class="container">
+      <div class="section-header">
+        <h2>Student Loyalty Card</h2>
+        <p>Earn rewards with every visit! Get your 10th coffee free</p>
+      </div>
+      
+      <div class="loyalty-login-prompt">
+        <div class="loyalty-prompt-card">
+          <div class="prompt-icon">
+            <i class="fas fa-coffee"></i>
+          </div>
+          <h3>Track Your Loyalty Progress</h3>
+          <p>Create an account or log in to access your personal loyalty card, track your visits, and earn rewards!</p>
+          <div class="prompt-actions">
+            <a href="/login.html" class="btn btn-primary">
+              <i class="fas fa-sign-in-alt"></i>
+              Log In / Sign Up
+            </a>
+            <a href="/order.html" class="btn btn-secondary">
+              <i class="fas fa-shopping-cart"></i>
+              Order as Guest
+            </a>
+          </div>
+        </div>
+        
+        <div class="loyalty-benefits">
+          <h3>Loyalty Card Benefits</h3>
+          <div class="benefit-list">
+            <div class="benefit-item">
+              <div class="benefit-icon">
+                <i class="fas fa-coffee"></i>
+              </div>
+              <div class="benefit-content">
+                <h4>Earn Stamps</h4>
+                <p>Get a stamp for every coffee purchase</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-icon">
+                <i class="fas fa-gift"></i>
+              </div>
+              <div class="benefit-content">
+                <h4>Free Coffee</h4>
+                <p>Your 10th coffee is completely free!</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-icon">
+                <i class="fas fa-history"></i>
+              </div>
+              <div class="benefit-content">
+                <h4>Order History</h4>
+                <p>Track all your past orders and reorder favorites</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-icon">
+                <i class="fas fa-bell"></i>
+              </div>
+              <div class="benefit-content">
+                <h4>Special Offers</h4>
+                <p>Get notified about exclusive promotions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events Section -->
+  <section id="events" class="events">
+    <div class="container">
+      <div class="section-header">
+        <h2>Upcoming Events</h2>
+        <p>Join us for study sessions, workshops, and community events</p>
+      </div>
+      <div class="events-grid">
+        <div class="event-card">
+          <div class="event-date">
+            <span class="day">15</span>
+            <span class="month">Dec</span>
+          </div>
+          <div class="event-content">
+            <h3>Study Night</h3>
+            <p>Extended hours for finals week. Free coffee refills for students!</p>
+            <span class="event-time"><i class="fas fa-clock"></i> 6:00 PM - 11:00 PM</span>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="event-date">
+            <span class="day">20</span>
+            <span class="month">Dec</span>
+          </div>
+          <div class="event-content">
+            <h3>Holiday Coffee Tasting</h3>
+            <p>Try our special holiday blends and learn about coffee origins.</p>
+            <span class="event-time"><i class="fas fa-clock"></i> 2:00 PM - 4:00 PM</span>
+          </div>
+        </div>
+        <div class="event-card">
+          <div class="event-date">
+            <span class="day">22</span>
+            <span class="month">Dec</span>
+          </div>
+          <div class="event-content">
+            <h3>Student Art Showcase</h3>
+            <p>Display your artwork and support fellow student artists.</p>
+            <span class="event-time"><i class="fas fa-clock"></i> 5:00 PM - 8:00 PM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-header">
+        <h2>Visit Us</h2>
+        <p>Come study, relax, or just grab a great cup of coffee</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <h4>Where</h4>
+              <p>Entrance Friedrich List Foyer<br>Building 5</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-clock"></i>
+            <div>
+              <h4>When?</h4>
+              <p>Tuesdays from 12 to 14:45h</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <div>
+              <h4>Contact</h4>
+              <p>+1 (555) 123-4567<br>info@knowledgecafe.edu</p>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form">
+          <h3>Get in Touch</h3>
+          <form>
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-logo">
+            <i class="fas fa-coffee"></i>
+            <span>Knowledge Café</span>
+          </div>
+          <p>Your student-run coffee and learning hub</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="/order.html">Order</a></li>
+            <li><a href="#loyalty">Loyalty Card</a></li>
+            <li><a href="#events">Events</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p> Made with ☕ by students, for students.<br>&copy; 2018 Knowledge Café e.V.</p>
+      </div>
+    </div>
+  </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Register service worker for push notifications
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

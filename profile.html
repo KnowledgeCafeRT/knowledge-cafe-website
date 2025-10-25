@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Knowledge Café</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <i class="fas fa-coffee"></i>
+        <span>Knowledge Café</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="/index.html" class="nav-link">Home</a></li>
+        <li><a href="/index.html#about" class="nav-link">About</a></li>
+        <li><a href="/index.html#menu" class="nav-link">Menu</a></li>
+        <li><a href="/order.html" class="nav-link">Order</a></li>
+        <li><a href="/index.html#loyalty" class="nav-link">Loyalty Card</a></li>
+        <li><a href="/index.html#events" class="nav-link">Events</a></li>
+        <li><a href="/index.html#contact" class="nav-link">Contact</a></li>
+        <li><a href="/profile.html" class="nav-link profile-link">
+          <i class="fas fa-user"></i>
+          <span id="userName">Profile</span>
+        </a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Profile Section -->
+  <main class="profile-page">
+    <div class="container">
+      <div class="profile-header">
+        <div class="profile-info">
+          <div class="profile-avatar" id="profileAvatar">
+            <img id="profileImage" src="" alt="Profile Picture" style="display: none;">
+            <i class="fas fa-user" id="defaultAvatar"></i>
+            <div class="avatar-upload">
+              <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+              <button class="avatar-upload-btn" id="avatarUploadBtn">
+                <i class="fas fa-camera"></i>
+              </button>
+            </div>
+          </div>
+          <div class="profile-details">
+            <h1 id="profileName">Loading...</h1>
+            <p id="profileEmail">Loading...</p>
+            <span class="member-since">Member since <span id="memberSince">Loading...</span></span>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <a href="/order.html" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            New Order
+          </a>
+          <button class="btn btn-secondary" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <div class="profile-content">
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="totalOrders">0</h3>
+              <p>Total Orders</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-coffee"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="loyaltyVisits">0</h3>
+              <p>Loyalty Visits</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-euro-sign"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="totalSpent">€0.00</h3>
+              <p>Total Spent</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-gift"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="rewardsEarned">0</h3>
+              <p>Rewards Earned</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-tabs">
+          <button class="profile-tab active" data-tab="current">
+            <i class="fas fa-shopping-cart"></i>
+            Current Order
+          </button>
+          <button class="profile-tab" data-tab="orders">
+            <i class="fas fa-history"></i>
+            Order History
+          </button>
+          <button class="profile-tab" data-tab="loyalty">
+            <i class="fas fa-coffee"></i>
+            Loyalty Card
+          </button>
+          <button class="profile-tab" data-tab="pfand">
+            <i class="fas fa-recycle"></i>
+            Pfand Cups
+          </button>
+          <button class="profile-tab" data-tab="settings">
+            <i class="fas fa-cog"></i>
+            Settings
+          </button>
+        </div>
+
+        <!-- Current Order Tab -->
+        <div class="profile-tab-content active" id="currentTab">
+          <div class="tab-header">
+            <h2>Current Order</h2>
+            <a href="/order.html" class="btn btn-primary">
+              <i class="fas fa-plus"></i>
+              Add Items
+            </a>
+          </div>
+          <div class="current-order-content" id="currentOrderContent">
+            <!-- Current order will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Order History Tab -->
+        <div class="profile-tab-content" id="ordersTab">
+          <div class="tab-header">
+            <h2>Order History</h2>
+            <div class="order-filters">
+              <select id="orderFilter">
+                <option value="all">All Orders</option>
+                <option value="recent">Last 30 Days</option>
+                <option value="favorites">Favorites</option>
+              </select>
+            </div>
+          </div>
+          <div class="orders-list" id="ordersList">
+            <!-- Orders will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Loyalty Card Tab -->
+        <div class="profile-tab-content" id="loyaltyTab">
+          <div class="tab-header">
+            <h2>Loyalty Card</h2>
+            <button class="btn btn-secondary" id="addVisitBtn">
+              <i class="fas fa-plus"></i>
+              Add Visit
+            </button>
+          </div>
+          <div class="loyalty-dashboard">
+            <div class="loyalty-progress-card">
+              <div class="progress-header">
+                <h3>Your Progress</h3>
+                <span class="progress-text" id="loyaltyProgressText">0 / 10 visits</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="loyaltyProgressFill"></div>
+              </div>
+              <div class="stamp-grid" id="loyaltyStampGrid">
+                <!-- Stamps will be populated by JavaScript -->
+              </div>
+            </div>
+            <div class="loyalty-rewards-card">
+              <h3>Available Rewards</h3>
+              <div class="reward-item" id="freeCoffeeReward">
+                <i class="fas fa-gift"></i>
+                <div>
+                  <h4>Free Coffee</h4>
+                  <p>Get your 10th coffee free!</p>
+                </div>
+                <span class="reward-status" id="rewardStatus">Not Available</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pfand Cups Tab -->
+        <div class="profile-tab-content" id="pfandTab">
+          <div class="tab-header">
+            <h2>Pfand Cup Management</h2>
+          </div>
+          <div class="pfand-dashboard">
+            <div class="pfand-stats">
+              <div class="pfand-stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-coffee"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 id="cupsOutstanding">0</h3>
+                  <p>Cups Outstanding</p>
+                </div>
+              </div>
+              <div class="pfand-stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-euro-sign"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 id="pfandValue">€0.00</h3>
+                  <p>Deposit Value</p>
+                </div>
+              </div>
+              <div class="pfand-stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-recycle"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 id="cupsReturned">0</h3>
+                  <p>Cups Returned</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="qr-code-section">
+              <h3><i class="fas fa-qrcode"></i> Your Return QR Code</h3>
+              <div class="qr-code-container">
+                <div id="qrCodeDisplay" class="qr-code-placeholder">
+                  <i class="fas fa-qrcode"></i>
+                  <p>QR Code will appear here</p>
+                </div>
+              </div>
+              <p class="qr-instructions">Show this QR code to staff when returning cups - only staff can process returns</p>
+              <button class="btn btn-secondary" onclick="profileManager.generateQRCode()">
+                <i class="fas fa-sync"></i> Refresh QR Code
+              </button>
+            </div>
+            
+            <div class="pfand-history">
+              <h3>Recent Pfand Activity</h3>
+              <div class="pfand-activity-list" id="pfandActivityList">
+                <!-- Pfand activity will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="profile-tab-content" id="settingsTab">
+          <div class="tab-header">
+            <h2>Account Settings</h2>
+          </div>
+          <div class="settings-sections">
+            <div class="settings-section">
+              <h3>Personal Information</h3>
+              <form class="settings-form" id="profileForm">
+                <div class="form-group">
+                  <label for="settingsName">Full Name</label>
+                  <input type="text" id="settingsName" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingsEmail">Email</label>
+                  <input type="email" id="settingsEmail" required>
+                </div>
+                <div class="form-group">
+                  <label for="settingsStudentId">Student ID</label>
+                  <input type="text" id="settingsStudentId">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i>
+                  Save Changes
+                </button>
+              </form>
+            </div>
+
+            <div class="settings-section">
+              <h3>Preferences</h3>
+              <form class="settings-form" id="preferencesForm">
+                <div class="form-group">
+                  <label for="defaultRole">Default Pricing Role</label>
+                  <select id="defaultRole">
+                    <option value="student">Student</option>
+                    <option value="staff">Staff</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="emailNotifications">
+                    <span class="checkmark"></span>
+                    Email notifications for promotions
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="loyaltyReminders">
+                    <span class="checkmark"></span>
+                    Loyalty card reminders
+                  </label>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i>
+                  Save Preferences
+                </button>
+              </form>
+            </div>
+
+            <div class="settings-section danger-zone">
+              <h3>Danger Zone</h3>
+              <div class="danger-actions">
+                <button class="btn btn-danger" id="deleteAccountBtn">
+                  <i class="fas fa-trash"></i>
+                  Delete Account
+                </button>
+                <p class="danger-warning">This action cannot be undone. All your data will be permanently deleted.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="profile.js"></script>
+</body>
+</html>

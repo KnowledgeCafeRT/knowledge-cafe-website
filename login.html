@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Knowledge Café</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <i class="fas fa-coffee"></i>
+        <span>Knowledge Café</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="/index.html" class="nav-link">Home</a></li>
+        <li><a href="/index.html#about" class="nav-link">About</a></li>
+        <li><a href="/index.html#menu" class="nav-link">Menu</a></li>
+        <li><a href="/order.html" class="nav-link">Order</a></li>
+        <li><a href="/index.html#loyalty" class="nav-link">Loyalty Card</a></li>
+        <li><a href="/index.html#events" class="nav-link">Events</a></li>
+        <li><a href="/index.html#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Login Section -->
+  <main class="auth-page">
+    <div class="container">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-header">
+            <div class="auth-logo">
+              <i class="fas fa-coffee"></i>
+              <h1>Knowledge Café</h1>
+            </div>
+            <p>Welcome back! Sign in to your account</p>
+          </div>
+
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">Log In</button>
+            <button class="auth-tab" data-tab="register">Sign Up</button>
+          </div>
+
+          <!-- Login Form -->
+          <form class="auth-form active" id="loginForm">
+            <div class="form-group">
+              <label for="loginEmail">Email</label>
+              <input type="email" id="loginEmail" placeholder="your.email@university.edu" required>
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" placeholder="Enter your password" required>
+            </div>
+            <div class="form-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="rememberMe">
+                <span class="checkmark"></span>
+                Remember me
+              </label>
+              <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary auth-btn">
+              <i class="fas fa-sign-in-alt"></i>
+              Log In
+            </button>
+          </form>
+
+          <!-- Register Form -->
+          <form class="auth-form" id="registerForm">
+            <div class="form-group">
+              <label for="registerName">Full Name</label>
+              <input type="text" id="registerName" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label for="registerEmail">Email</label>
+              <input type="email" id="registerEmail" placeholder="john.doe@university.edu" required>
+            </div>
+            <div class="form-group">
+              <label for="registerStudentId">Student ID (Optional)</label>
+              <input type="text" id="registerStudentId" placeholder="12345678">
+            </div>
+            <div class="form-group">
+              <label for="registerPassword">Password</label>
+              <input type="password" id="registerPassword" placeholder="Create a password" required>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+            </div>
+            <div class="form-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="agreeTerms" required>
+                <span class="checkmark"></span>
+                I agree to the <a href="#" class="terms-link">Terms & Conditions</a>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary auth-btn">
+              <i class="fas fa-user-plus"></i>
+              Create Account
+            </button>
+          </form>
+
+          <div class="auth-divider">
+            <span>or</span>
+          </div>
+
+          <div class="guest-option">
+            <p>Don't want to create an account?</p>
+            <a href="/order.html" class="btn btn-secondary">
+              <i class="fas fa-shopping-cart"></i>
+              Continue as Guest
+            </a>
+          </div>
+        </div>
+
+        <div class="auth-benefits">
+          <h3>Why create an account?</h3>
+          <div class="benefit-list">
+            <div class="benefit-item">
+              <i class="fas fa-history"></i>
+              <div>
+                <h4>Order History</h4>
+                <p>Track all your past orders and reorder favorites</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-coffee"></i>
+              <div>
+                <h4>Loyalty Rewards</h4>
+                <p>Earn stamps and get your 10th coffee free</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-bolt"></i>
+              <div>
+                <h4>Faster Checkout</h4>
+                <p>Save your preferences for quicker ordering</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <i class="fas fa-bell"></i>
+              <div>
+                <h4>Special Offers</h4>
+                <p>Get notified about events and promotions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+</body>
+</html>

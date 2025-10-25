@@ -1,0 +1,32 @@
+{
+  "name": "knowledge-cafe",
+  "version": "1.0.0",
+  "description": "A student-run cafe website with ordering system, loyalty program, and API integration.",
+  "main": "index.html",
+  "scripts": {
+    "start": "node mock-api-server.js",
+    "dev": "python -m http.server 8000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cafe",
+    "student",
+    "loyalty",
+    "pfand",
+    "ordering",
+    "api",
+    "html",
+    "css",
+    "javascript"
+  ],
+  "author": "Knowledge Cafe Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.0"
+  },
+  "homepage": "https://your-domain.com"
+}

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout - Knowledge Café</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <i class="fas fa-coffee"></i>
+        <span>Knowledge Café</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="/index.html#home" class="nav-link">Home</a></li>
+        <li><a href="/order.html" class="nav-link">Order</a></li>
+        <li><a href="/login.html" class="nav-link profile-link">
+          <i class="fas fa-user"></i>
+          <span>Login</span>
+        </a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="checkout-page">
+    <div class="container checkout-container">
+      <!-- Progress Steps -->
+      <div class="checkout-progress">
+        <div class="progress-step completed">
+          <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
+          <span>Order</span>
+        </div>
+        <div class="progress-line completed"></div>
+        <div class="progress-step active">
+          <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+          <span>Payment</span>
+        </div>
+        <div class="progress-line"></div>
+        <div class="progress-step">
+          <div class="step-icon"><i class="fas fa-check"></i></div>
+          <span>Complete</span>
+        </div>
+      </div>
+
+      <div class="checkout-content">
+        <!-- Order Summary Card -->
+        <div class="checkout-card order-summary-card">
+          <div class="card-header">
+            <h3><i class="fas fa-receipt"></i> Order Summary</h3>
+            <a href="/order.html" class="edit-link">Edit Order</a>
+          </div>
+          <div class="card-body">
+            <div class="order-items-list">
+              <ul id="summaryItems" class="summary-items"></ul>
+            </div>
+            <div class="order-totals">
+              <div class="total-row">
+                <span>Subtotal</span>
+                <span id="sumSubtotal">€0.00</span>
+              </div>
+              <div class="total-row">
+                <span>Taxes</span>
+                <span id="sumTaxes">€0.00</span>
+              </div>
+              <div class="total-row final-total">
+                <span>Total</span>
+                <span id="sumTotal">€0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method Card -->
+        <div class="checkout-card payment-card">
+          <div class="card-header">
+            <h3><i class="fas fa-credit-card"></i> Payment Method</h3>
+          </div>
+          <div class="card-body">
+            <div class="payment-options">
+              <div class="payment-option selected">
+                <div class="payment-icon">
+                  <i class="fab fa-stripe"></i>
+                </div>
+                <div class="payment-info">
+                  <h4>Stripe Checkout</h4>
+                  <p>Secure payment processing</p>
+                </div>
+                <div class="payment-radio">
+                  <input type="radio" name="payment" value="stripe" checked>
+                </div>
+              </div>
+            </div>
+            
+            <div class="payment-security">
+              <div class="security-badges">
+                <div class="security-badge">
+                  <i class="fas fa-shield-alt"></i>
+                  <span>SSL Secured</span>
+                </div>
+                <div class="security-badge">
+                  <i class="fas fa-lock"></i>
+                  <span>PCI Compliant</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Info Card -->
+        <div class="checkout-card customer-card">
+          <div class="card-header">
+            <h3><i class="fas fa-user"></i> Customer Information</h3>
+          </div>
+          <div class="card-body">
+            <div class="customer-form">
+              <div class="form-group">
+                <label for="customerName">Name</label>
+                <input type="text" id="customerName" placeholder="Your full name" required>
+              </div>
+              <div class="form-group">
+                <label for="customerEmail">Email</label>
+                <input type="email" id="customerEmail" placeholder="your.email@example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="customerPhone">Phone (Optional)</label>
+                <input type="tel" id="customerPhone" placeholder="+1 (555) 123-4567">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scheduling Card -->
+        <div class="checkout-card scheduling-card">
+          <div class="card-header">
+            <h3><i class="fas fa-clock"></i> Pickup Time</h3>
+          </div>
+          <div class="card-body">
+            <div class="scheduling-options">
+              <label class="schedule-option">
+                <input type="radio" name="pickupTime" value="now" checked>
+                <span class="schedule-label">
+                  <i class="fas fa-bolt"></i>
+                  <strong>Ready Now</strong>
+                  <small>Prepare immediately (5-7 minutes)</small>
+                </span>
+              </label>
+              <label class="schedule-option">
+                <input type="radio" name="pickupTime" value="scheduled">
+                <span class="schedule-label">
+                  <i class="fas fa-calendar"></i>
+                  <strong>Schedule for Later</strong>
+                  <small>Choose your preferred pickup time</small>
+                </span>
+              </label>
+            </div>
+            <div class="scheduled-time" id="scheduledTime" style="display: none;">
+              <div class="form-group">
+                <label for="pickupDate">Pickup Date *</label>
+                <input type="date" id="pickupDate" min="">
+              </div>
+              <div class="form-group">
+                <label for="pickupTimeInput">Pickup Time *</label>
+                <input type="time" id="pickupTimeInput" min="07:00" max="18:00">
+              </div>
+              <div class="schedule-note">
+                <i class="fas fa-info-circle"></i>
+                <small>Orders can be scheduled up to 7 days in advance. We'll prepare your order 5 minutes before your scheduled time.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="checkout-actions">
+          <a href="/order.html" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Back to Order
+          </a>
+          <button id="payNow" class="btn btn-primary">
+            <i class="fas fa-credit-card"></i>
+            Pay Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="checkout.js"></script>
+  <script>
+      // Register service worker for push notifications
+      if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+              navigator.serviceWorker.register('/sw.js')
+                  .then((registration) => {
+                      console.log('✅ Service Worker registered:', registration);
+                  })
+                  .catch((error) => {
+                      console.log('❌ Service Worker registration failed:', error);
+                  });
+          });
+      }
+  </script>
+</body>
+</html>
+
+

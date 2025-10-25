@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking - Knowledge Café</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .tracking-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5e6d3;
+            min-height: 100vh;
+        }
+        
+        .tracking-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .tracking-header h1 {
+            color: #2c1810;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tracking-header p {
+            color: #5c4033;
+            font-size: 1.1rem;
+        }
+        
+        .order-search {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #d4a574;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f5e6d3;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .search-btn {
+            background: #d4a574;
+            color: #2c1810;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: #c49060;
+            transform: translateY(-2px);
+        }
+        
+        .order-tracking {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: none;
+        }
+        
+        .order-info {
+            background: linear-gradient(135deg, #2c1810, #3d2a1a);
+            color: #f5e6d3;
+            padding: 2rem;
+        }
+        
+        .order-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .order-time {
+            color: #d4a574;
+            font-size: 0.9rem;
+        }
+        
+        .order-items {
+            padding: 1.5rem;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-details h4 {
+            color: #2c1810;
+            margin-bottom: 0.25rem;
+        }
+        
+        .item-details p {
+            color: #5c4033;
+            font-size: 0.9rem;
+        }
+        
+        .item-price {
+            color: #d4a574;
+            font-weight: 600;
+        }
+        
+        .status-timeline {
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #d4a574;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d4a574;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #d4a574;
+        }
+        
+        .timeline-item.completed::before {
+            background: #10b981;
+            box-shadow: 0 0 0 2px #10b981;
+        }
+        
+        .timeline-item.current::before {
+            background: #3b82f6;
+            box-shadow: 0 0 0 2px #3b82f6;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        
+        .timeline-content h3 {
+            color: #2c1810;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .timeline-content p {
+            color: #5c4033;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-time {
+            color: #999;
+            font-size: 0.8rem;
+        }
+        
+        .estimated-time {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .estimated-time h4 {
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .estimated-time p {
+            color: #424242;
+            font-size: 0.9rem;
+        }
+        
+        .no-order {
+            text-align: center;
+            padding: 3rem;
+            color: #5c4033;
+        }
+        
+        .no-order i {
+            font-size: 3rem;
+            color: #d4a574;
+            margin-bottom: 1rem;
+        }
+        
+        .recent-orders {
+            margin-top: 2rem;
+        }
+        
+        .recent-orders h3 {
+            color: #2c1810;
+            margin-bottom: 1rem;
+        }
+        
+        .recent-order-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .recent-order-item:hover {
+            border-color: #d4a574;
+            transform: translateY(-2px);
+        }
+        
+        .recent-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .recent-order-number {
+            font-weight: 600;
+            color: #2c1810;
+        }
+        
+        .recent-order-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-preparing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-ready {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-collected {
+            background: #f3f4f6;
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <div class="tracking-container">
+        <div class="tracking-header">
+            <h1><i class="fas fa-map-marker-alt"></i> Track Your Order</h1>
+            <p>Enter your order number to see real-time updates</p>
+        </div>
+        
+        <div class="order-search">
+            <form class="search-form" id="trackingForm">
+                <input type="text" id="orderNumber" class="search-input" placeholder="Enter order number (e.g., #12345)" required>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Track Order
+                </button>
+            </form>
+        </div>
+        
+        <div class="order-tracking" id="orderTracking">
+            <div class="order-info">
+                <div class="order-number" id="trackingOrderNumber">#12345</div>
+                <div class="order-time" id="trackingOrderTime">Placed at 2:30 PM</div>
+            </div>
+            
+            <div class="order-items" id="trackingOrderItems">
+                <!-- Order items will be populated here -->
+            </div>
+            
+            <div class="status-timeline">
+                <h3>Order Progress</h3>
+                <div class="timeline" id="statusTimeline">
+                    <!-- Timeline will be populated here -->
+                </div>
+                
+                <div class="estimated-time" id="estimatedTime">
+                    <h4><i class="fas fa-clock"></i> Estimated Ready Time</h4>
+                    <p id="estimatedTimeText">5-7 minutes</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="recent-orders" id="recentOrders" style="display: none;">
+            <h3>Recent Orders</h3>
+            <div id="recentOrdersList">
+                <!-- Recent orders will be populated here -->
+            </div>
+        </div>
+        
+        <div class="no-order" id="noOrderFound" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h3>Order Not Found</h3>
+            <p>Please check your order number and try again</p>
+        </div>
+    </div>
+    
+    <script src="tracking.js"></script>
+    <script>
+        // Register service worker for push notifications
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
