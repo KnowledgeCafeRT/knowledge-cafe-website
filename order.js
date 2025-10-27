@@ -1,19 +1,22 @@
 const PRODUCT_CATALOG = [
   { id: 'coffee', title: 'Coffee', items: [
-    { id: 'espresso', name: 'Espresso', priceStudent: 1.40, priceStaff: 1.80 },
-    { id: 'americano', name: 'Americano', priceStudent: 2.00, priceStaff: 2.40 },
-    { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.00, priceStaff: 2.40 },
-    { id: 'latte', name: 'Café Latte', priceStudent: 2.30, priceStaff: 2.70 },
-    { id: 'iced-coffee', name: 'Iced Coffee', priceStudent: 3.50, priceStaff: 3.90 },
-    { id: 'hot-choc', name: 'Hot Chocolate', priceStudent: 2.00, priceStaff: 2.40 }
+    { id: 'americano', name: 'Americano', priceStudent: 2.00, priceStaff: 2.50 },
+    { id: 'espresso', name: 'Espresso', priceStudent: 1.50, priceStaff: 2.00 },
+    { id: 'espresso-doppio', name: 'Espresso Doppio', priceStudent: 2.00, priceStaff: 2.50 },
+    { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.00, priceStaff: 2.50 },
+    { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 }
   ]},
-  { id: 'drinks', title: 'Further Drinks', items: [] },
+  { id: 'drinks', title: 'Drinks', items: [
+    { id: 'softdrinks', name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
+    { id: 'wasser', name: 'Water', priceStudent: 1.00, priceStaff: 1.00 },
+    { id: 'redbull', name: 'RedBull', priceStudent: 2.00, priceStaff: 2.00 }
+  ]},
   { id: 'addons', title: 'Add ons', items: [
-    { id: 'togo', name: 'To go', priceStudent: 0.10, priceStaff: 0.10 },
-    { id: 'extra-shot', name: 'Extra Shot', priceStudent: 0.50, priceStaff: 0.60 },
-    { id: 'syrup', name: 'Syrup', priceStudent: 0.30, priceStaff: 0.40 },
-    { id: 'oat', name: 'Haferdrink', priceStudent: 0.40, priceStaff: 0.50 },
-    { id: 'bar', name: 'Energy Bar', priceStudent: 2.00, priceStaff: 2.50 }
+    { id: 'togo', name: 'To Go', priceStudent: 0.20, priceStaff: 0.20 },
+    { id: 'extra-shot', name: 'Extra Shot', priceStudent: 0.50, priceStaff: 0.50 },
+    { id: 'syrup', name: 'Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+    { id: 'oat-milk', name: 'Oat Milk', priceStudent: 0.00, priceStaff: 0.00 },
+    { id: 'cow-milk', name: 'Cow Milk', priceStudent: 0.00, priceStaff: 0.00 }
   ]}
 ];
 

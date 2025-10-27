@@ -36,7 +36,6 @@ async function payNow() {
   // Get customer info
   const customerName = document.getElementById('customerName').value;
   const customerEmail = document.getElementById('customerEmail').value;
-  const customerPhone = document.getElementById('customerPhone').value;
 
   if (!customerName || !customerEmail) {
     alert('Please fill in your name and email.');
@@ -74,8 +73,7 @@ async function payNow() {
     })),
     customer: {
       name: customerName,
-      email: customerEmail,
-      phone: customerPhone
+      email: customerEmail
     },
     subtotal: subtotal,
     taxes: taxes,

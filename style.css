@@ -695,6 +695,29 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
+/* Coming Soon Event Cards */
+.event-card.coming-soon {
+  opacity: 0.85;
+  border-left-color: #d4a574;
+}
+
+.event-card.coming-soon .event-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #d4a574, #c49060);
+  color: #2c1810;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-right: 1.5rem;
+  min-width: 80px;
+  font-size: 2rem;
+}
+
+.event-card.coming-soon:hover {
+  opacity: 1;
+}
+
 .event-date {
   display: flex;
   flex-direction: column;
@@ -3094,6 +3117,78 @@ html {
   .security-badges {
     flex-direction: column;
     gap: 0.5rem;
+  }
+}
+
+/* Instagram Section */
+.instagram-section {
+  padding: 80px 0;
+  background: #f8f5f0;
+}
+
+.instagram-section .section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.instagram-section h2 {
+  color: #2c1810;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+}
+
+.instagram-section h2 i {
+  color: #E4405F;
+  margin-right: 0.5rem;
+}
+
+.instagram-embed {
+  max-width: 1000px;
+  margin: 0 auto 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.instagram-embed iframe {
+  border: none;
+  width: 100%;
+  min-height: 600px;
+}
+
+.instagram-link {
+  text-align: center;
+}
+
+.instagram-link .btn {
+  background: linear-gradient(135deg, #E4405F, #C13584);
+  color: white;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.instagram-link .btn:hover {
+  background: linear-gradient(135deg, #C13584, #833AB4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(225, 48, 108, 0.3);
+}
+
+@media (max-width: 768px) {
+  .instagram-section {
+    padding: 60px 0;
+  }
+  
+  .instagram-section h2 {
+    font-size: 2rem;
+  }
+  
+  .instagram-embed {
+    padding: 1rem;
+  }
+  
+  .instagram-embed iframe {
+    min-height: 400px;
   }
 }
 
