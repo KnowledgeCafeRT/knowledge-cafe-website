@@ -10,44 +10,317 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    /* Minimal POS-specific adjustments, reusing site styles */
-    .pos-wrapper { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    .pos-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .pos-header h1 { margin: 0; }
-    .pos-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
-    .pos-panel { background: #fff; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); padding: 16px; }
-    .pos-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
-    .pos-tab { padding: 10px 14px; border-radius: 10px; background: #f3ece5; color: #2c1810; cursor: pointer; border: 1px solid #eadfd4; }
-    .pos-tab.active { background: #d4a574; color: #2c1810; border-color: #cda06b; }
-    .category-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .category-btn { padding: 8px 12px; border-radius: 8px; background: #f3ece5; border: 1px solid #eadfd4; cursor: pointer; }
-    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-    .item-card { background: #fff; border: 1px solid #eadfd4; border-radius: 10px; padding: 12px; cursor: pointer; transition: transform .1s; }
-    .item-card:hover { transform: translateY(-2px); }
-    .item-name { font-weight: 600; color: #2c1810; }
-    .item-price { color: #8b5e3c; font-weight: 600; }
-    .cart-list { display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow: auto; margin-bottom: 10px; }
-    .cart-line { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 10px; border: 1px solid #eadfd4; border-radius: 10px; }
-    .qty-controls { display: flex; align-items: center; gap: 6px; }
-    .qty-btn { padding: 4px 8px; border: 1px solid #eadfd4; border-radius: 6px; background: #f7efe6; cursor: pointer; }
-    .total-row { display: flex; justify-content: space-between; font-weight: 700; margin-top: 8px; color: #2c1810; }
-    .minor-row { display: flex; justify-content: space-between; margin-top: 4px; color: #5c4033; }
-    .actions { display: flex; gap: 10px; margin-top: 12px; }
-    .btn-primary { background: #d4a574; color: #2c1810; padding: 10px 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; }
-    .btn-secondary { background: #f3ece5; color: #2c1810; padding: 10px 14px; border-radius: 10px; border: 1px solid #eadfd4; cursor: pointer; }
-    .queue-list { display: flex; flex-direction: column; gap: 10px; max-height: 600px; overflow: auto; }
-    .queue-card { border: 1px solid #eadfd4; border-left: 6px solid #d4a574; border-radius: 10px; padding: 10px; background: #fff; }
-    .queue-meta { display: flex; justify-content: space-between; color: #5c4033; font-size: 0.9rem; }
-    .queue-items { margin-top: 6px; color: #2c1810; }
-    .pin-gate { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
-    .pin-card { background: #fff; padding: 20px; border-radius: 12px; width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-    .pin-card h3 { margin: 0 0 10px; }
-    .pin-input { width: 100%; padding: 10px; border: 1px solid #eadfd4; border-radius: 8px; margin-bottom: 10px; }
-    .inline { display: inline-flex; gap: 10px; align-items: center; }
+    * { box-sizing: border-box; }
+    body { 
+      font-family: 'Space Grotesk', sans-serif; 
+      background: #f8f5f0; 
+      margin: 0; 
+      padding: 0; 
+    }
+    .pos-wrapper { 
+      max-width: 1400px; 
+      margin: 20px auto; 
+      padding: 0 20px; 
+    }
+    .pos-header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      margin-bottom: 20px; 
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .pos-header h1 { 
+      margin: 0; 
+      font-family: 'Fredoka', sans-serif;
+      font-size: 2rem;
+      color: #2c1810;
+    }
+    .pos-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 420px; 
+      gap: 24px; 
+    }
+    .pos-panel { 
+      background: #fff; 
+      border-radius: 12px; 
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08); 
+      padding: 20px; 
+      min-height: 600px;
+    }
+    .pos-tabs { 
+      display: flex; 
+      gap: 8px; 
+      margin-bottom: 20px; 
+    }
+    .pos-tab { 
+      padding: 12px 20px; 
+      border-radius: 10px; 
+      background: #f3ece5; 
+      color: #2c1810; 
+      cursor: pointer; 
+      border: 2px solid transparent; 
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .pos-tab:hover {
+      background: #eadfd4;
+    }
+    .pos-tab.active { 
+      background: #d4a574; 
+      color: #2c1810; 
+      border-color: #c49060; 
+    }
+    .category-row { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 10px; 
+      margin-bottom: 20px; 
+    }
+    .category-btn { 
+      padding: 12px 20px; 
+      border-radius: 10px; 
+      background: #f3ece5; 
+      border: 2px solid #eadfd4; 
+      cursor: pointer; 
+      font-weight: 600;
+      font-size: 1rem;
+      color: #2c1810;
+      transition: all 0.2s;
+    }
+    .category-btn:hover {
+      background: #d4a574;
+      border-color: #c49060;
+      transform: translateY(-2px);
+    }
+    .items-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+      gap: 15px; 
+    }
+    .item-card { 
+      background: #fff; 
+      border: 2px solid #eadfd4; 
+      border-radius: 12px; 
+      padding: 20px; 
+      cursor: pointer; 
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .item-card:hover { 
+      transform: translateY(-4px); 
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      border-color: #d4a574;
+    }
+    .item-name { 
+      font-weight: 700; 
+      color: #2c1810; 
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .item-price { 
+      color: #8b5e3c; 
+      font-weight: 700; 
+      font-size: 1.2rem;
+    }
+    .cart-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+      max-height: 400px; 
+      overflow-y: auto; 
+      margin-bottom: 15px; 
+      padding-right: 5px;
+    }
+    .cart-line { 
+      display: grid; 
+      grid-template-columns: 1fr auto; 
+      gap: 12px; 
+      align-items: center; 
+      padding: 12px; 
+      border: 2px solid #eadfd4; 
+      border-radius: 10px; 
+      background: #fafafa;
+    }
+    .qty-controls { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+    }
+    .qty-btn { 
+      padding: 6px 12px; 
+      border: 2px solid #eadfd4; 
+      border-radius: 8px; 
+      background: #fff; 
+      cursor: pointer; 
+      font-weight: 700;
+      font-size: 1rem;
+      min-width: 36px;
+      transition: all 0.2s;
+    }
+    .qty-btn:hover {
+      background: #d4a574;
+      border-color: #c49060;
+    }
+    .total-row { 
+      display: flex; 
+      justify-content: space-between; 
+      font-weight: 700; 
+      margin-top: 12px; 
+      color: #2c1810; 
+      font-size: 1.3rem;
+      padding-top: 12px;
+      border-top: 2px solid #eadfd4;
+    }
+    .minor-row { 
+      display: flex; 
+      justify-content: space-between; 
+      margin-top: 6px; 
+      color: #5c4033; 
+      font-size: 0.95rem;
+    }
+    .actions { 
+      display: flex; 
+      gap: 10px; 
+      margin-top: 15px; 
+    }
+    .btn-primary { 
+      background: #d4a574; 
+      color: #2c1810; 
+      padding: 14px 20px; 
+      border-radius: 10px; 
+      border: none; 
+      cursor: pointer; 
+      font-weight: 700; 
+      font-size: 1.1rem;
+      flex: 1;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      background: #c49060;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+    }
+    .btn-secondary { 
+      background: #f3ece5; 
+      color: #2c1810; 
+      padding: 14px 20px; 
+      border-radius: 10px; 
+      border: 2px solid #eadfd4; 
+      cursor: pointer; 
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: #eadfd4;
+    }
+    .queue-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+      max-height: 600px; 
+      overflow-y: auto; 
+      padding-right: 5px;
+    }
+    .queue-card { 
+      border: 2px solid #eadfd4; 
+      border-left: 6px solid #d4a574; 
+      border-radius: 10px; 
+      padding: 15px; 
+      background: #fff; 
+    }
+    .queue-meta { 
+      display: flex; 
+      justify-content: space-between; 
+      color: #5c4033; 
+      font-size: 0.9rem; 
+      margin-bottom: 8px;
+    }
+    .queue-items { 
+      margin-top: 8px; 
+      color: #2c1810; 
+      font-weight: 500;
+    }
+    .pin-gate { 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0,0,0,0.7); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 10000;
+    }
+    .pin-card { 
+      background: #fff; 
+      padding: 30px; 
+      border-radius: 15px; 
+      width: 380px; 
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3); 
+    }
+    .pin-card h3 { 
+      margin: 0 0 15px; 
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.5rem;
+      color: #2c1810;
+    }
+    .pin-card p {
+      color: #5c4033;
+      margin-bottom: 15px;
+    }
+    .pin-input { 
+      width: 100%; 
+      padding: 12px; 
+      border: 2px solid #eadfd4; 
+      border-radius: 8px; 
+      margin-bottom: 15px; 
+      font-size: 1.1rem;
+    }
+    .pin-input:focus {
+      outline: none;
+      border-color: #d4a574;
+    }
+    .inline { 
+      display: inline-flex; 
+      gap: 10px; 
+      align-items: center; 
+    }
+    .pos-panel h3 {
+      font-family: 'Fredoka', sans-serif;
+      color: #2c1810;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+    select.btn-secondary {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 2px solid #eadfd4;
+      background: #f3ece5;
+      color: #2c1810;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    label.inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    @media (max-width: 1024px) {
+      .pos-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="pinGate" class="pin-gate" style="display:none;">
+  <div id="pinGate" class="pin-gate">
     <div class="pin-card">
       <h3><i class="fas fa-lock"></i> Staff Only</h3>
       <p>Enter PIN to access the POS</p>
@@ -59,7 +332,7 @@
     </div>
   </div>
 
-  <div class="pos-wrapper">
+  <div class="pos-wrapper" id="posContent" style="display:none;">
     <div class="pos-header">
       <h1>POS - Knowledge Café</h1>
       <div class="inline">

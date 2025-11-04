@@ -35,7 +35,11 @@
 
   function gateWithPin() {
     const gate = document.getElementById('pinGate');
-    if (!gate) return;
+    if (!gate) {
+      // No PIN gate, initialize immediately
+      initializePOS();
+      return;
+    }
     gate.style.display = 'flex';
     const pinBtn = document.getElementById('posPinBtn');
     const pinCancel = document.getElementById('posPinCancel');
@@ -46,11 +50,37 @@
       const stored = localStorage.getItem('kcafe_pos_pin') || '1234';
       if (pin === stored) {
         gate.style.display = 'none';
+        const posContent = document.getElementById('posContent');
+        if (posContent) posContent.style.display = '';
+        // Initialize POS after unlocking
+        initializePOS();
       } else {
         alert('Incorrect PIN');
+        input.value = '';
       }
     });
     pinCancel?.addEventListener('click', () => { window.location.href = '/'; });
+    // Allow Enter key to submit PIN
+    const pinInput = document.getElementById('posPinInput');
+    pinInput?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        pinBtn?.click();
+      }
+    });
+  }
+
+  function initializePOS() {
+    renderCategories();
+    renderItems(PRODUCT_CATALOG[0].id);
+    renderCart();
+    setupTabs();
+    setupPriceMode();
+    setupButtons();
+    // auto-refresh queue every 5s when on queue tab
+    setInterval(() => {
+      const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
+      if (active === 'queue') renderQueue();
+    }, 5000);
   }
 
   function renderCategories() {
@@ -242,17 +272,6 @@
 
   function init() {
     gateWithPin();
-    renderCategories();
-    renderItems(PRODUCT_CATALOG[0].id);
-    renderCart();
-    setupTabs();
-    setupPriceMode();
-    setupButtons();
-    // auto-refresh queue every 5s when on queue tab
-    setInterval(() => {
-      const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
-      if (active === 'queue') renderQueue();
-    }, 5000);
   }
 
   document.addEventListener('DOMContentLoaded', init);
