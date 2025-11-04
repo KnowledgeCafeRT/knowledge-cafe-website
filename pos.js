@@ -77,11 +77,58 @@
     setupTabs();
     setupPriceMode();
     setupButtons();
+    
+    // Listen for new orders from checkout page
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'kcafe_order_queue') {
+        const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
+        if (active === 'queue') {
+          renderQueue();
+          // Show notification for new order
+          showNewOrderNotification();
+        }
+      }
+    });
+    
+    // Also listen for same-tab storage events (for testing)
+    window.addEventListener('kcafe_new_order', () => {
+      const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
+      if (active === 'queue') {
+        renderQueue();
+        showNewOrderNotification();
+      }
+    });
+    
     // auto-refresh queue every 5s when on queue tab
     setInterval(() => {
       const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
       if (active === 'queue') renderQueue();
     }, 5000);
+  }
+
+  function showNewOrderNotification() {
+    // Create a temporary notification
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 10000;
+      font-weight: 600;
+      animation: slideInRight 0.3s ease;
+    `;
+    notification.innerHTML = '<i class="fas fa-bell"></i> New order received!';
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
   }
 
   function renderCategories() {

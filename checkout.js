@@ -144,10 +144,30 @@ async function payNow() {
     status: 'pending',
     createdAt: order.date,
     updatedAt: order.date,
-    userType: currentUser ? currentUser.userType : 'guest'
+    userType: currentUser ? currentUser.userType : 'guest',
+    source: 'online' // Mark as online order
   };
   orderQueue.push(displayOrder);
   localStorage.setItem('kcafe_order_queue', JSON.stringify(orderQueue));
+  
+  // Trigger storage event so POS page can update immediately (works across tabs)
+  // Note: StorageEvent only works across different tabs/windows, not same tab
+  // For same-tab updates, we'll use a custom event
+  window.dispatchEvent(new CustomEvent('kcafe_new_order', {
+    detail: { orderId: order.id }
+  }));
+  
+  // Also trigger storage event for cross-tab communication
+  try {
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'kcafe_order_queue',
+      newValue: JSON.stringify(orderQueue),
+      oldValue: localStorage.getItem('kcafe_order_queue')
+    }));
+  } catch (e) {
+    // StorageEvent might not work in all browsers, that's okay
+    console.log('Storage event triggered');
+  }
 
   // Clear cart
   localStorage.removeItem('kcafe_cart_v1');
