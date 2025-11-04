@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Café POS (Internal)</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* Minimal POS-specific adjustments, reusing site styles */
+    .pos-wrapper { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    .pos-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .pos-header h1 { margin: 0; }
+    .pos-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+    .pos-panel { background: #fff; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); padding: 16px; }
+    .pos-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+    .pos-tab { padding: 10px 14px; border-radius: 10px; background: #f3ece5; color: #2c1810; cursor: pointer; border: 1px solid #eadfd4; }
+    .pos-tab.active { background: #d4a574; color: #2c1810; border-color: #cda06b; }
+    .category-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .category-btn { padding: 8px 12px; border-radius: 8px; background: #f3ece5; border: 1px solid #eadfd4; cursor: pointer; }
+    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+    .item-card { background: #fff; border: 1px solid #eadfd4; border-radius: 10px; padding: 12px; cursor: pointer; transition: transform .1s; }
+    .item-card:hover { transform: translateY(-2px); }
+    .item-name { font-weight: 600; color: #2c1810; }
+    .item-price { color: #8b5e3c; font-weight: 600; }
+    .cart-list { display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow: auto; margin-bottom: 10px; }
+    .cart-line { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 10px; border: 1px solid #eadfd4; border-radius: 10px; }
+    .qty-controls { display: flex; align-items: center; gap: 6px; }
+    .qty-btn { padding: 4px 8px; border: 1px solid #eadfd4; border-radius: 6px; background: #f7efe6; cursor: pointer; }
+    .total-row { display: flex; justify-content: space-between; font-weight: 700; margin-top: 8px; color: #2c1810; }
+    .minor-row { display: flex; justify-content: space-between; margin-top: 4px; color: #5c4033; }
+    .actions { display: flex; gap: 10px; margin-top: 12px; }
+    .btn-primary { background: #d4a574; color: #2c1810; padding: 10px 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; }
+    .btn-secondary { background: #f3ece5; color: #2c1810; padding: 10px 14px; border-radius: 10px; border: 1px solid #eadfd4; cursor: pointer; }
+    .queue-list { display: flex; flex-direction: column; gap: 10px; max-height: 600px; overflow: auto; }
+    .queue-card { border: 1px solid #eadfd4; border-left: 6px solid #d4a574; border-radius: 10px; padding: 10px; background: #fff; }
+    .queue-meta { display: flex; justify-content: space-between; color: #5c4033; font-size: 0.9rem; }
+    .queue-items { margin-top: 6px; color: #2c1810; }
+    .pin-gate { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+    .pin-card { background: #fff; padding: 20px; border-radius: 12px; width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .pin-card h3 { margin: 0 0 10px; }
+    .pin-input { width: 100%; padding: 10px; border: 1px solid #eadfd4; border-radius: 8px; margin-bottom: 10px; }
+    .inline { display: inline-flex; gap: 10px; align-items: center; }
+  </style>
+</head>
+<body>
+  <div id="pinGate" class="pin-gate" style="display:none;">
+    <div class="pin-card">
+      <h3><i class="fas fa-lock"></i> Staff Only</h3>
+      <p>Enter PIN to access the POS</p>
+      <input id="posPinInput" class="pin-input" type="password" placeholder="Enter PIN" />
+      <div class="inline">
+        <button id="posPinBtn" class="btn-primary">Unlock</button>
+        <button id="posPinCancel" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pos-wrapper">
+    <div class="pos-header">
+      <h1>POS - Knowledge Café</h1>
+      <div class="inline">
+        <label class="inline" style="color:#5c4033;">
+          <input type="checkbox" id="usePfand" /> Pfand cup (+€2.00 each)
+        </label>
+        <select id="priceMode" class="btn-secondary">
+          <option value="student">Student Prices</option>
+          <option value="staff">Staff Prices</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pos-tabs">
+      <button class="pos-tab active" data-tab="new">New In-Person Order</button>
+      <button class="pos-tab" data-tab="queue">Order Queue (Online + In-Person)</button>
+    </div>
+
+    <div class="pos-grid">
+      <div class="pos-panel" id="leftPanel">
+        <div id="tabNew">
+          <div class="category-row" id="posCategories"></div>
+          <div class="items-grid" id="posItems"></div>
+        </div>
+
+        <div id="tabQueue" style="display:none;">
+          <div class="queue-list" id="queueList"></div>
+        </div>
+      </div>
+
+      <div class="pos-panel">
+        <h3><i class="fas fa-shopping-basket"></i> Current Cart</h3>
+        <div class="cart-list" id="cartList"></div>
+        <div class="minor-row"><span>Subtotal</span><span id="posSubtotal">€0.00</span></div>
+        <div class="minor-row"><span>Taxes (5%)</span><span id="posTaxes">€0.00</span></div>
+        <div class="minor-row"><span>Pfand</span><span id="posPfand">€0.00</span></div>
+        <div class="total-row"><span>Total</span><span id="posTotal">€0.00</span></div>
+
+        <div style="margin-top:12px;">
+          <label style="display:block;color:#5c4033;margin-bottom:6px;">Customer (optional)</label>
+          <input id="posCustomerName" class="pin-input" type="text" placeholder="Name" style="margin-bottom:6px;" />
+          <input id="posCustomerEmail" class="pin-input" type="email" placeholder="Email" />
+        </div>
+
+        <div class="actions">
+          <button id="clearCart" class="btn-secondary"><i class="fas fa-trash"></i> Clear</button>
+          <button id="submitOrder" class="btn-primary"><i class="fas fa-check"></i> Submit Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/pos.js"></script>
+</body>
+</html>
+
+
