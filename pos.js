@@ -21,7 +21,8 @@
       { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
       { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
       { id: 'oat-milk', name: 'Oat Milk', priceStudent: 0.00, priceStaff: 0.00 },
-      { id: 'cow-milk', name: 'Cow Milk', priceStudent: 0.00, priceStaff: 0.00 }
+      { id: 'cow-milk', name: 'Cow Milk', priceStudent: 0.00, priceStaff: 0.00 },
+      { id: 'pfand', name: 'Pfand Cup', priceStudent: 2.00, priceStaff: 2.00 }
     ]}
   ];
 
@@ -121,15 +122,9 @@
   function addToCart(item, unitPrice) {
     const key = item.id;
     if (!cart[key]) {
-      cart[key] = { id: item.id, name: item.name, price: unitPrice, qty: 0, pfand: false };
+      cart[key] = { id: item.id, name: item.name, price: unitPrice, qty: 0, pfand: item.id === 'pfand' };
     }
     cart[key].qty += 1;
-    // Apply pfand setting to drink-style items (simple: apply to coffee & drinks categories, not addons)
-    const isDrink = ['coffee', 'drinks'].some(catId => (findCategory(catId)?.items || []).some(i => i.id === item.id));
-    if (isDrink) {
-      const usePfand = document.getElementById('usePfand');
-      cart[key].pfand = !!(usePfand && /** @type {HTMLInputElement} */(usePfand).checked);
-    }
     renderCart();
   }
 
@@ -140,8 +135,12 @@
     let subtotal = 0;
     let pfand = 0;
     Object.values(cart).forEach(line => {
-      const lineTotal = line.price * line.qty; subtotal += lineTotal;
-      if (line.pfand) pfand += PFAND_DEPOSIT * line.qty;
+      const lineTotal = line.price * line.qty;
+      if (line.id === 'pfand' || line.pfand) {
+        pfand += lineTotal;
+      } else {
+        subtotal += lineTotal;
+      }
       const row = document.createElement('div');
       row.className = 'cart-line';
       row.innerHTML = `
@@ -177,8 +176,12 @@
 
     let subtotal = 0; let pfandTotal = 0;
     items.forEach(line => {
-      subtotal += line.price * line.qty;
-      if (line.pfand) pfandTotal += PFAND_DEPOSIT * line.qty;
+      const lineTotal = line.price * line.qty;
+      if (line.id === 'pfand' || line.pfand) {
+        pfandTotal += lineTotal;
+      } else {
+        subtotal += lineTotal;
+      }
     });
     const taxes = subtotal * TAX_RATE;
     const total = subtotal + taxes + pfandTotal;
@@ -210,37 +213,128 @@
     renderQueue();
   }
 
+  function updateOrderStatus(orderId, newStatus) {
+    const queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
+    const orderIndex = queue.findIndex(o => o.id === orderId);
+    if (orderIndex !== -1) {
+      queue[orderIndex].status = newStatus;
+      queue[orderIndex].updatedAt = new Date().toISOString();
+      localStorage.setItem('kcafe_order_queue', JSON.stringify(queue));
+      renderQueue();
+    }
+  }
+
+  function getStatusColor(status) {
+    const colors = {
+      'pending': '#f59e0b', // orange
+      'preparing': '#3b82f6', // blue
+      'ready': '#10b981', // green
+      'completed': '#6b7280' // gray
+    };
+    return colors[status] || '#d4a574';
+  }
+
+  function getStatusIcon(status) {
+    const icons = {
+      'pending': 'fa-clock',
+      'preparing': 'fa-coffee',
+      'ready': 'fa-check-circle',
+      'completed': 'fa-check-double'
+    };
+    return icons[status] || 'fa-circle';
+  }
+
+  function getNextStatus(currentStatus) {
+    const flow = {
+      'pending': 'preparing',
+      'preparing': 'ready',
+      'ready': 'completed',
+      'completed': 'completed' // Can't go further
+    };
+    return flow[currentStatus] || 'pending';
+  }
+
   function renderQueue() {
     const list = document.getElementById('queueList');
     if (!list) return;
     const queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
-    // show newest first
-    queue.sort((a,b) => (b.id||0) - (a.id||0));
+    // Sort by status priority, then by newest first
+    const statusOrder = { 'pending': 0, 'preparing': 1, 'ready': 2, 'completed': 3 };
+    queue.sort((a, b) => {
+      const aStatus = statusOrder[a.status] ?? 4;
+      const bStatus = statusOrder[b.status] ?? 4;
+      if (aStatus !== bStatus) return aStatus - bStatus;
+      return (b.id || 0) - (a.id || 0);
+    });
     list.innerHTML = '';
+    
+    if (queue.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:#5c4033;"><i class="fas fa-inbox" style="font-size:3rem;opacity:0.3;margin-bottom:10px;"></i><p>No orders in queue</p></div>';
+      return;
+    }
+
     queue.forEach(o => {
       const div = document.createElement('div');
       div.className = 'queue-card';
+      const status = o.status || 'pending';
+      const statusColor = getStatusColor(status);
+      const statusIcon = getStatusIcon(status);
+      const nextStatus = getNextStatus(status);
       const who = o.customer?.name || o.customer?.email || 'Guest';
       const src = o.source || 'online';
+      
+      div.style.borderLeftColor = statusColor;
+      
+      // Build status button text
+      let statusButtonText = '';
+      let statusButtonClass = 'btn-status';
+      if (status === 'pending') {
+        statusButtonText = '<i class="fas fa-coffee"></i> Start Making';
+        statusButtonClass = 'btn-status btn-status-primary';
+      } else if (status === 'preparing') {
+        statusButtonText = '<i class="fas fa-check-circle"></i> Mark Ready';
+        statusButtonClass = 'btn-status btn-status-success';
+      } else if (status === 'ready') {
+        statusButtonText = '<i class="fas fa-check-double"></i> Mark Completed';
+        statusButtonClass = 'btn-status btn-status-complete';
+      } else {
+        statusButtonText = '<i class="fas fa-check-double"></i> Completed';
+        statusButtonClass = 'btn-status btn-status-disabled';
+      }
+
       div.innerHTML = `
-        <div class="queue-meta">
-          <span>#${o.id} • ${who}</span>
-          <span>${src} • ${o.status}</span>
+        <div class="queue-header">
+          <div class="queue-meta">
+            <span><strong>#${o.id}</strong> • ${who}</span>
+            <span class="status-badge" style="background:${statusColor}20;color:${statusColor};border:1px solid ${statusColor}40;">
+              <i class="fas ${statusIcon}"></i> ${status.charAt(0).toUpperCase() + status.slice(1)}
+            </span>
+          </div>
+          <div class="queue-source" style="color:#5c4033;font-size:0.85rem;margin-top:4px;">
+            ${src === 'in_person' ? '<i class="fas fa-walk"></i> Walk-in' : '<i class="fas fa-globe"></i> Online'} • ${new Date(o.createdAt).toLocaleTimeString()}
+          </div>
         </div>
         <div class="queue-items">
-          ${o.items.map(i => `${i.name} × ${i.quantity}`).join(', ')}
+          ${o.items.map(i => `<span class="queue-item">${i.name} × ${i.quantity}</span>`).join('')}
         </div>
-        <div class="queue-meta" style="margin-top:6px;">
-          <span>${new Date(o.createdAt).toLocaleTimeString()}</span>
-          <span><strong>${formatPrice(o.total || 0)}</strong></span>
+        <div class="queue-footer">
+          <div class="queue-total">
+            <strong>${formatPrice(o.total || 0)}</strong>
+          </div>
+          <button class="${statusButtonClass}" onclick="window.updateOrderStatus(${o.id}, '${nextStatus}')" ${status === 'completed' ? 'disabled' : ''}>
+            ${statusButtonText}
+          </button>
         </div>
       `;
       list.appendChild(div);
     });
   }
 
+  // Make updateOrderStatus available globally for onclick handlers
+  window.updateOrderStatus = updateOrderStatus;
+
   function setupTabs() {
-    const tabs = Array.from(document.querySelectorAll('.pos-tab'));
+    const tabs = Array.from(document.querySelectorAll('.pos-tab[data-tab]'));
     tabs.forEach(btn => btn.addEventListener('click', () => {
       tabs.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -253,12 +347,23 @@
   }
 
   function setupPriceMode() {
-    const sel = /** @type {HTMLSelectElement} */(document.getElementById('priceMode'));
-    if (!sel) return;
-    sel.value = priceMode;
-    sel.addEventListener('change', () => {
-      priceMode = sel.value;
+    const btn = document.getElementById('priceModeBtn');
+    if (!btn) return;
+    
+    // Update button text based on current mode
+    function updateButtonText() {
+      const icon = priceMode === 'student' ? '<i class="fas fa-graduation-cap"></i>' : '<i class="fas fa-user-tie"></i>';
+      const text = priceMode === 'student' ? 'Student Prices' : 'Staff Prices';
+      btn.innerHTML = `${icon} ${text}`;
+    }
+    
+    updateButtonText();
+    
+    btn.addEventListener('click', () => {
+      // Toggle between student and staff
+      priceMode = priceMode === 'student' ? 'staff' : 'student';
       localStorage.setItem('kcafe_pos_price_mode', priceMode);
+      updateButtonText();
       // re-render current category
       const first = PRODUCT_CATALOG[0]?.id || 'coffee';
       renderItems(first);

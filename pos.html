@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Knowledge Café POS (Internal)</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -52,6 +52,7 @@
       display: flex; 
       gap: 8px; 
       margin-bottom: 20px; 
+      align-items: center;
     }
     .pos-tab { 
       padding: 12px 20px; 
@@ -71,6 +72,17 @@
       background: #d4a574; 
       color: #2c1810; 
       border-color: #c49060; 
+    }
+    .price-mode-btn {
+      margin-left: auto;
+      background: #8b5e3c;
+      color: #fff;
+    }
+    .price-mode-btn:hover {
+      background: #6b4523;
+    }
+    .price-mode-btn i {
+      margin-right: 5px;
     }
     .category-row { 
       display: flex; 
@@ -229,18 +241,98 @@
       border-radius: 10px; 
       padding: 15px; 
       background: #fff; 
+      transition: all 0.2s;
+    }
+    .queue-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .queue-header {
+      margin-bottom: 12px;
     }
     .queue-meta { 
       display: flex; 
       justify-content: space-between; 
-      color: #5c4033; 
-      font-size: 0.9rem; 
-      margin-bottom: 8px;
+      align-items: center;
+      color: #2c1810; 
+      font-size: 0.95rem; 
+      margin-bottom: 6px;
+    }
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
     .queue-items { 
-      margin-top: 8px; 
+      margin: 12px 0; 
       color: #2c1810; 
       font-weight: 500;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .queue-item {
+      background: #f3ece5;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .queue-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #eadfd4;
+    }
+    .queue-total {
+      font-size: 1.2rem;
+      color: #2c1810;
+      font-weight: 700;
+    }
+    .btn-status {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-status-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    .btn-status-primary:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+    }
+    .btn-status-success {
+      background: #10b981;
+      color: white;
+    }
+    .btn-status-success:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+    .btn-status-complete {
+      background: #8b5e3c;
+      color: white;
+    }
+    .btn-status-complete:hover {
+      background: #6b4523;
+      transform: translateY(-2px);
+    }
+    .btn-status-disabled {
+      background: #d1d5db;
+      color: #6b7280;
+      cursor: not-allowed;
     }
     .pin-gate { 
       position: fixed; 
@@ -335,20 +427,14 @@
   <div class="pos-wrapper" id="posContent" style="display:none;">
     <div class="pos-header">
       <h1>POS - Knowledge Café</h1>
-      <div class="inline">
-        <label class="inline" style="color:#5c4033;">
-          <input type="checkbox" id="usePfand" /> Pfand cup (+€2.00 each)
-        </label>
-        <select id="priceMode" class="btn-secondary">
-          <option value="student">Student Prices</option>
-          <option value="staff">Staff Prices</option>
-        </select>
-      </div>
     </div>
 
     <div class="pos-tabs">
       <button class="pos-tab active" data-tab="new">New In-Person Order</button>
       <button class="pos-tab" data-tab="queue">Order Queue (Online + In-Person)</button>
+      <button id="priceModeBtn" class="pos-tab price-mode-btn" data-mode="student">
+        <i class="fas fa-tag"></i> Student Prices
+      </button>
     </div>
 
     <div class="pos-grid">
@@ -385,7 +471,7 @@
     </div>
   </div>
 
-  <script src="/pos.js"></script>
+  <script src="pos.js"></script>
 </body>
 </html>
 
