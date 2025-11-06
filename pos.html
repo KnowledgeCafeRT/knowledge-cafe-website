@@ -409,6 +409,99 @@
         grid-template-columns: 1fr;
       }
     }
+    /* Milk Selection Modal */
+    .milk-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.2s ease;
+    }
+    .milk-modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      animation: slideUp 0.3s ease;
+    }
+    .milk-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .milk-modal-header h3 {
+      font-family: 'Fredoka', sans-serif;
+      color: #2c1810;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+    .milk-modal-close {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: #5c4033;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    .milk-modal-close:hover {
+      background: #f3ece5;
+      color: #2c1810;
+    }
+    .milk-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .milk-option {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 20px;
+      border: 2px solid #eadfd4;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c1810;
+    }
+    .milk-option:hover {
+      background: #f3ece5;
+      border-color: #d4a574;
+      transform: translateY(-2px);
+    }
+    .milk-option i {
+      font-size: 1.5rem;
+      color: #8b5e3c;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
@@ -453,7 +546,6 @@
         <h3><i class="fas fa-shopping-basket"></i> Current Cart</h3>
         <div class="cart-list" id="cartList"></div>
         <div class="minor-row"><span>Subtotal</span><span id="posSubtotal">€0.00</span></div>
-        <div class="minor-row"><span>Taxes (5%)</span><span id="posTaxes">€0.00</span></div>
         <div class="minor-row"><span>Pfand</span><span id="posPfand">€0.00</span></div>
         <div class="total-row"><span>Total</span><span id="posTotal">€0.00</span></div>
 
@@ -467,6 +559,30 @@
           <button id="clearCart" class="btn-secondary"><i class="fas fa-trash"></i> Clear</button>
           <button id="submitOrder" class="btn-primary"><i class="fas fa-check"></i> Submit Order</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Milk Selection Modal -->
+  <div id="milkModal" class="milk-modal" style="display:none;">
+    <div class="milk-modal-content">
+      <div class="milk-modal-header">
+        <h3 id="milkModalTitle">Choose Milk</h3>
+        <button class="milk-modal-close" id="milkModalClose">&times;</button>
+      </div>
+      <div class="milk-options">
+        <button class="milk-option" data-milk="none">
+          <i class="fas fa-coffee"></i>
+          <span>No Milk</span>
+        </button>
+        <button class="milk-option" data-milk="cow">
+          <i class="fas fa-mug-hot"></i>
+          <span>Cow Milk</span>
+        </button>
+        <button class="milk-option" data-milk="oat">
+          <i class="fas fa-leaf"></i>
+          <span>Oat Milk</span>
+        </button>
       </div>
     </div>
   </div>

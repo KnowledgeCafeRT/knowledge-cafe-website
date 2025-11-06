@@ -127,6 +127,30 @@
             });
         }
     </script>
+
+  <!-- Milk Selection Modal -->
+  <div id="milkModal" class="milk-modal" style="display:none;">
+    <div class="milk-modal-content">
+      <div class="milk-modal-header">
+        <h3 id="milkModalTitle">Choose Milk</h3>
+        <button class="milk-modal-close" id="milkModalClose">&times;</button>
+      </div>
+      <div class="milk-options">
+        <button class="milk-option" data-milk="none">
+          <i class="fas fa-coffee"></i>
+          <span>No Milk</span>
+        </button>
+        <button class="milk-option" data-milk="cow">
+          <i class="fas fa-mug-hot"></i>
+          <span>Cow Milk</span>
+        </button>
+        <button class="milk-option" data-milk="oat">
+          <i class="fas fa-leaf"></i>
+          <span>Oat Milk</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
 

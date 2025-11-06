@@ -1,10 +1,13 @@
 const PRODUCT_CATALOG = [
   { id: 'coffee', title: 'Coffee', items: [
-    { id: 'americano', name: 'Americano', priceStudent: 2.00, priceStaff: 2.50 },
-    { id: 'espresso', name: 'Espresso', priceStudent: 1.50, priceStaff: 2.00 },
-    { id: 'espresso-doppio', name: 'Espresso Doppio', priceStudent: 2.00, priceStaff: 2.50 },
-    { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.00, priceStaff: 2.50 },
-    { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 }
+    { id: 'americano', name: 'Americano', priceStudent: 1.50, priceStaff: 2.00 },
+    { id: 'espresso', name: 'Espresso', priceStudent: 1.30, priceStaff: 1.80 },
+    { id: 'espresso-doppio', name: 'Espresso Doppio', priceStudent: 1.70, priceStaff: 2.20 },
+    { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.50, priceStaff: 3.00 },
+    { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
+    { id: 'cafe-latte', name: 'Cafe Latte', priceStudent: 2.70, priceStaff: 3.20 },
+    { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
+    { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 }
   ]},
   { id: 'drinks', title: 'Drinks', items: [
     { id: 'softdrinks', name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
@@ -14,7 +17,9 @@ const PRODUCT_CATALOG = [
   { id: 'addons', title: 'Add ons', items: [
     { id: 'togo', name: 'To Go', priceStudent: 0.20, priceStaff: 0.20 },
     { id: 'extra-shot', name: 'Extra Shot', priceStudent: 0.50, priceStaff: 0.50 },
-    { id: 'syrup', name: 'Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+    { id: 'syrup-pumpkin', name: 'Pumpkin Spice Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+    { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+    { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
     { id: 'oat-milk', name: 'Oat Milk', priceStudent: 0.00, priceStaff: 0.00 },
     { id: 'cow-milk', name: 'Cow Milk', priceStudent: 0.00, priceStaff: 0.00 }
   ]}
@@ -50,7 +55,82 @@ function priceFor(item, role) {
   return role === 'staff' ? (item.priceStaff ?? item.priceStudent) : (item.priceStudent ?? item.priceStaff);
 }
 
+let pendingCoffeeItem = null;
+
+function isCoffeeItem(item) {
+  const coffeeCategory = PRODUCT_CATALOG.find(cat => cat.id === 'coffee');
+  return coffeeCategory && coffeeCategory.items.some(coffee => coffee.id === item.id);
+}
+
+function showMilkModal(product) {
+  const modal = document.getElementById('milkModal');
+  const title = document.getElementById('milkModalTitle');
+  if (!modal || !title) return;
+  
+  pendingCoffeeItem = product;
+  title.textContent = `Choose Milk for ${product.name}`;
+  modal.style.display = 'flex';
+  
+  // Close modal handlers
+  const closeBtn = document.getElementById('milkModalClose');
+  closeBtn?.addEventListener('click', () => {
+    modal.style.display = 'none';
+    pendingCoffeeItem = null;
+  });
+  
+  // Milk option handlers
+  const milkOptions = document.querySelectorAll('.milk-option');
+  milkOptions.forEach(option => {
+    option.onclick = () => {
+      const milkType = option.getAttribute('data-milk');
+      addCoffeeToCart(product, milkType);
+      modal.style.display = 'none';
+      pendingCoffeeItem = null;
+    };
+  });
+}
+
+function addCoffeeToCart(product, milkType) {
+  const cart = loadCart();
+  const role = getRole();
+  const usePfand = getPfandSetting();
+  const unitPrice = priceFor(product, role);
+  
+  // Create unique key for coffee with milk selection
+  const cartKey = `${product.id}_${milkType}`;
+  
+  if (!cart[cartKey]) {
+    const milkLabel = milkType === 'none' ? '' : milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
+    cart[cartKey] = { 
+      id: product.id,
+      name: product.name + milkLabel, 
+      price: unitPrice, 
+      qty: 0,
+      pfand: usePfand,
+      milk: milkType
+    };
+  }
+  
+  cart[cartKey].price = unitPrice;
+  cart[cartKey].pfand = usePfand;
+  cart[cartKey].qty += 1; 
+  
+  saveCart(cart); 
+  renderCart();
+  
+  const pfandText = usePfand ? ' (with Pfand)' : '';
+  const milkText = milkType === 'none' ? '' : milkType === 'cow' ? ' with Cow Milk' : ' with Oat Milk';
+  showToast(`${product.name}${milkText} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
+}
+
 function addToCart(product) {
+  // Check if it's a coffee item - show milk selection modal
+  if (isCoffeeItem(product)) {
+    showMilkModal(product);
+    return;
+  }
+  
+  // For non-coffee items, add directly
   const cart = loadCart();
   const role = getRole();
   const usePfand = getPfandSetting();

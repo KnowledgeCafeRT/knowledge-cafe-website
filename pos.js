@@ -3,11 +3,14 @@
 (function() {
   const PRODUCT_CATALOG = [
     { id: 'coffee', title: 'Coffee', items: [
-      { id: 'americano', name: 'Americano', priceStudent: 2.00, priceStaff: 2.50 },
-      { id: 'espresso', name: 'Espresso', priceStudent: 1.50, priceStaff: 2.00 },
-      { id: 'espresso-doppio', name: 'Espresso Doppio', priceStudent: 2.00, priceStaff: 2.50 },
-      { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.00, priceStaff: 2.50 },
-      { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 }
+      { id: 'americano', name: 'Americano', priceStudent: 1.50, priceStaff: 2.00 },
+      { id: 'espresso', name: 'Espresso', priceStudent: 1.30, priceStaff: 1.80 },
+      { id: 'espresso-doppio', name: 'Espresso Doppio', priceStudent: 1.70, priceStaff: 2.20 },
+      { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.50, priceStaff: 3.00 },
+      { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
+      { id: 'cafe-latte', name: 'Cafe Latte', priceStudent: 2.70, priceStaff: 3.20 },
+      { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
+      { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 }
     ]},
     { id: 'drinks', title: 'Drinks', items: [
       { id: 'softdrinks', name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
@@ -27,7 +30,7 @@
   ];
 
   const PFAND_DEPOSIT = 2.00;
-  const TAX_RATE = 0.05;
+  const TAX_RATE = 0.00; // Taxes disabled on POS
 
   let priceMode = localStorage.getItem('kcafe_pos_price_mode') || 'student';
   let cart = {}; // id -> { id, name, price, qty, pfand }
@@ -166,7 +169,73 @@
     });
   }
 
+  let pendingCoffeeItem = null;
+  let pendingCoffeePrice = null;
+
+  function isCoffeeItem(item) {
+    const coffeeCategory = PRODUCT_CATALOG.find(cat => cat.id === 'coffee');
+    return coffeeCategory && coffeeCategory.items.some(coffee => coffee.id === item.id);
+  }
+
+  function showMilkModal(item, unitPrice) {
+    const modal = document.getElementById('milkModal');
+    const title = document.getElementById('milkModalTitle');
+    if (!modal || !title) return;
+    
+    pendingCoffeeItem = item;
+    pendingCoffeePrice = unitPrice;
+    title.textContent = `Choose Milk for ${item.name}`;
+    modal.style.display = 'flex';
+    
+    // Close modal handlers
+    const closeBtn = document.getElementById('milkModalClose');
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        modal.style.display = 'none';
+        pendingCoffeeItem = null;
+        pendingCoffeePrice = null;
+      };
+    }
+    
+    // Milk option handlers
+    const milkOptions = document.querySelectorAll('.milk-option');
+    milkOptions.forEach(option => {
+      option.onclick = () => {
+        const milkType = option.getAttribute('data-milk');
+        addCoffeeToCart(item, unitPrice, milkType);
+        modal.style.display = 'none';
+        pendingCoffeeItem = null;
+        pendingCoffeePrice = null;
+      };
+    });
+  }
+
+  function addCoffeeToCart(item, unitPrice, milkType) {
+    const milkLabel = milkType === 'none' ? '' : milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
+    const cartKey = `${item.id}_${milkType}`;
+    
+    if (!cart[cartKey]) {
+      cart[cartKey] = { 
+        id: item.id, 
+        name: item.name + milkLabel, 
+        price: unitPrice, 
+        qty: 0, 
+        pfand: false,
+        milk: milkType
+      };
+    }
+    cart[cartKey].qty += 1;
+    renderCart();
+  }
+
   function addToCart(item, unitPrice) {
+    // Check if it's a coffee item - show milk selection modal
+    if (isCoffeeItem(item)) {
+      showMilkModal(item, unitPrice);
+      return;
+    }
+    
+    // For non-coffee items, add directly
     const key = item.id;
     if (!cart[key]) {
       cart[key] = { id: item.id, name: item.name, price: unitPrice, qty: 0, pfand: item.id === 'pfand' };
@@ -207,8 +276,8 @@
       row.querySelector('[data-act="del"]').addEventListener('click', () => { delete cart[line.id]; renderCart(); });
       list.appendChild(row);
     });
-    const taxes = subtotal * TAX_RATE;
-    const total = subtotal + taxes + pfand;
+    const taxes = 0;
+    const total = subtotal + pfand;
     const sEl = document.getElementById('posSubtotal'); if (sEl) sEl.textContent = formatPrice(subtotal);
     const tEl = document.getElementById('posTaxes'); if (tEl) tEl.textContent = formatPrice(taxes);
     const pEl = document.getElementById('posPfand'); if (pEl) pEl.textContent = formatPrice(pfand);
@@ -230,8 +299,8 @@
         subtotal += lineTotal;
       }
     });
-    const taxes = subtotal * TAX_RATE;
-    const total = subtotal + taxes + pfandTotal;
+    const taxes = 0;
+    const total = subtotal + pfandTotal;
 
     const name = /** @type {HTMLInputElement} */(document.getElementById('posCustomerName'))?.value?.trim() || '';
     const email = /** @type {HTMLInputElement} */(document.getElementById('posCustomerEmail'))?.value?.trim() || '';
