@@ -19,9 +19,7 @@ const PRODUCT_CATALOG = [
     { id: 'extra-shot', name: 'Extra Shot', priceStudent: 0.50, priceStaff: 0.50 },
     { id: 'syrup-pumpkin', name: 'Pumpkin Spice Syrup', priceStudent: 0.30, priceStaff: 0.30 },
     { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-    { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-    { id: 'oat-milk', name: 'Oat Milk', priceStudent: 0.00, priceStaff: 0.00 },
-    { id: 'cow-milk', name: 'Cow Milk', priceStudent: 0.00, priceStaff: 0.00 }
+    { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 }
   ]}
 ];
 
@@ -58,6 +56,8 @@ function priceFor(item, role) {
 let pendingCoffeeItem = null;
 
 function isCoffeeItem(item) {
+  // Tea should not show milk selection
+  if (item.id === 'tea') return false;
   const coffeeCategory = PRODUCT_CATALOG.find(cat => cat.id === 'coffee');
   return coffeeCategory && coffeeCategory.items.some(coffee => coffee.id === item.id);
 }
@@ -100,7 +100,7 @@ function addCoffeeToCart(product, milkType) {
   const cartKey = `${product.id}_${milkType}`;
   
   if (!cart[cartKey]) {
-    const milkLabel = milkType === 'none' ? '' : milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
+    const milkLabel = milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
     cart[cartKey] = { 
       id: product.id,
       name: product.name + milkLabel, 
@@ -119,7 +119,7 @@ function addCoffeeToCart(product, milkType) {
   renderCart();
   
   const pfandText = usePfand ? ' (with Pfand)' : '';
-  const milkText = milkType === 'none' ? '' : milkType === 'cow' ? ' with Cow Milk' : ' with Oat Milk';
+  const milkText = milkType === 'cow' ? ' with Cow Milk' : ' with Oat Milk';
   showToast(`${product.name}${milkText} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
 }
 

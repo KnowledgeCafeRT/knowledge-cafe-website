@@ -79,32 +79,70 @@
     setupPriceMode();
     setupButtons();
     
-    // Listen for new orders from checkout page
+    // Initial queue render if on queue tab
+    const activeTab = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
+    if (activeTab === 'queue') {
+      renderQueue();
+    }
+    
+    // Set up Supabase real-time subscription
+    setupRealtimeSubscription();
+    
+    // Listen for new orders from checkout page (cross-tab)
+    // This fires automatically when localStorage changes in another tab/window
     window.addEventListener('storage', (e) => {
       if (e.key === 'kcafe_order_queue') {
+        renderQueue();
         const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
         if (active === 'queue') {
-          renderQueue();
           // Show notification for new order
           showNewOrderNotification();
         }
       }
     });
     
-    // Also listen for same-tab storage events (for testing)
-    window.addEventListener('kcafe_new_order', () => {
+    // Also listen for same-tab custom events (when order placed in same tab)
+    window.addEventListener('kcafe_new_order', (e) => {
+      console.log('New order event received:', e.detail);
+      renderQueue();
       const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
       if (active === 'queue') {
-        renderQueue();
         showNewOrderNotification();
       }
     });
     
-    // auto-refresh queue every 5s when on queue tab
+    // auto-refresh queue every 3s when on queue tab (backup in case events fail)
     setInterval(() => {
       const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
       if (active === 'queue') renderQueue();
-    }, 5000);
+    }, 3000);
+  }
+
+  async function setupRealtimeSubscription() {
+    try {
+      const supabase = await window.getSupabaseClient();
+      if (supabase) {
+        // Subscribe to order changes
+        supabase
+          .channel('orders')
+          .on('postgres_changes', 
+            { event: '*', schema: 'public', table: 'orders' },
+            (payload) => {
+              console.log('Order change detected:', payload);
+              renderQueue();
+              const active = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
+              if (active === 'queue') {
+                if (payload.eventType === 'INSERT') {
+                  showNewOrderNotification();
+                }
+              }
+            }
+          )
+          .subscribe();
+      }
+    } catch (error) {
+      console.error('Error setting up real-time subscription:', error);
+    }
   }
 
   function showNewOrderNotification() {
@@ -211,7 +249,7 @@
   }
 
   function addCoffeeToCart(item, unitPrice, milkType) {
-    const milkLabel = milkType === 'none' ? '' : milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
+    const milkLabel = milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
     const cartKey = `${item.id}_${milkType}`;
     
     if (!cart[cartKey]) {
@@ -286,7 +324,7 @@
 
   function clearCart() { cart = {}; renderCart(); }
 
-  function submitOrder() {
+  async function submitOrder() {
     const items = Object.values(cart).filter(l => l.qty > 0);
     if (items.length === 0) { alert('Cart is empty'); return; }
 
@@ -306,12 +344,48 @@
     const email = /** @type {HTMLInputElement} */(document.getElementById('posCustomerEmail'))?.value?.trim() || '';
 
     const now = new Date().toISOString();
-    const orderId = Date.now();
+    const orderItems = items.map(line => ({ id: line.id, name: line.name, price: line.price, quantity: line.qty, pfand: !!line.pfand }));
 
+    // Try to save to Supabase first
+    try {
+      const supabase = await window.getSupabaseClient();
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('orders')
+          .insert([{
+            customer_name: name || 'Walk-in Customer',
+            customer_email: email || '',
+            items: orderItems,
+            subtotal: subtotal,
+            pfand_deposit: pfandTotal,
+            total: total,
+            status: 'pending',
+            source: 'in_person',
+            user_type: 'guest',
+            payment_status: 'completed'
+          }])
+          .select()
+          .single();
+        
+        if (!error && data) {
+          alert(`Order #${data.id.substring(0, 8)} submitted! Total ${formatPrice(total)}`);
+          clearCart();
+          renderQueue();
+          return;
+        } else {
+          console.error('Error saving order to Supabase:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error with Supabase:', error);
+    }
+    
+    // Fall back to localStorage
+    const orderId = Date.now();
     const displayOrder = {
       id: orderId,
       customer: { name, email },
-      items: items.map(line => ({ id: line.id, name: line.name, price: line.price, quantity: line.qty, pfand: !!line.pfand })),
+      items: orderItems,
       total: total,
       status: 'pending',
       createdAt: now,
@@ -329,7 +403,53 @@
     renderQueue();
   }
 
-  function updateOrderStatus(orderId, newStatus) {
+  async function updateOrderStatus(orderId, newStatus) {
+    // Try to update in Supabase first
+    try {
+      const supabase = await window.getSupabaseClient();
+      if (supabase) {
+        // Get the order first to check if it's a walk-in
+        const { data: orderData, error: fetchError } = await supabase
+          .from('orders')
+          .select('*')
+          .eq('id', orderId)
+          .single();
+        
+        if (!fetchError && orderData) {
+          const wasCompleted = orderData.status === 'completed';
+          
+          // Update status in Supabase
+          const { error: updateError } = await supabase
+            .from('orders')
+            .update({ status: newStatus, updated_at: new Date().toISOString() })
+            .eq('id', orderId);
+          
+          if (!updateError) {
+            // Track sales when walk-in order is marked as completed
+            if (newStatus === 'completed' && !wasCompleted && orderData.source === 'in_person') {
+              trackSale({
+                id: orderData.id,
+                items: orderData.items || [],
+                total: parseFloat(orderData.total) || 0,
+                customer: {
+                  name: orderData.customer_name,
+                  email: orderData.customer_email
+                },
+                updatedAt: new Date().toISOString()
+              });
+            }
+            renderQueue();
+            return;
+          } else {
+            console.error('Error updating order in Supabase:', updateError);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error with Supabase update:', error);
+    }
+    
+    // Fall back to localStorage
     const queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
     const orderIndex = queue.findIndex(o => o.id === orderId);
     if (orderIndex !== -1) {
@@ -529,17 +649,69 @@
     return flow[currentStatus] || 'pending';
   }
 
-  function renderQueue() {
+  async function renderQueue() {
     const list = document.getElementById('queueList');
     if (!list) return;
-    const queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
+    
+    let queue = [];
+    
+    // Try to load from Supabase first
+    try {
+      const supabase = await window.getSupabaseClient();
+      if (supabase) {
+        // Get all orders that are not completed
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .neq('status', 'completed') // Only show active orders (pending, preparing, ready)
+          .order('created_at', { ascending: false });
+        
+        if (error) {
+          console.error('Error loading orders from Supabase:', error);
+          // Fall back to localStorage
+          queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
+        } else if (data) {
+          console.log('Loaded orders from Supabase:', data.length);
+          // Transform Supabase data to match expected format
+          queue = data.map(o => ({
+            id: o.id,
+            customer: {
+              name: o.customer_name || '',
+              email: o.customer_email || ''
+            },
+            items: o.items || [],
+            total: parseFloat(o.total) || 0,
+            status: o.status || 'pending',
+            createdAt: o.created_at,
+            updatedAt: o.updated_at,
+            userType: o.user_type || 'guest',
+            source: o.source || 'online'
+          }));
+        } else {
+          console.log('No orders found in Supabase');
+          // Fall back to localStorage
+          queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
+        }
+      } else {
+        console.log('Supabase not available, using localStorage');
+        // Supabase not available, use localStorage
+        queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
+      }
+    } catch (error) {
+      console.error('Error with Supabase:', error);
+      // Fall back to localStorage
+      queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
+    }
+    
     // Sort by status priority, then by newest first
     const statusOrder = { 'pending': 0, 'preparing': 1, 'ready': 2, 'completed': 3 };
     queue.sort((a, b) => {
       const aStatus = statusOrder[a.status] ?? 4;
       const bStatus = statusOrder[b.status] ?? 4;
       if (aStatus !== bStatus) return aStatus - bStatus;
-      return (b.id || 0) - (a.id || 0);
+      const aDate = new Date(a.createdAt || 0).getTime();
+      const bDate = new Date(b.createdAt || 0).getTime();
+      return bDate - aDate;
     });
     list.innerHTML = '';
     
@@ -586,7 +758,7 @@
             </span>
           </div>
           <div class="queue-source" style="color:#5c4033;font-size:0.85rem;margin-top:4px;">
-            ${src === 'in_person' ? '<i class="fas fa-walk"></i> Walk-in' : '<i class="fas fa-globe"></i> Online'} • ${new Date(o.createdAt).toLocaleTimeString()}
+            ${src === 'in_person' ? '<i class="fas fa-walk"></i> Walk-in' : '<i class="fas fa-globe"></i> Online'} • ${o.createdAt ? new Date(o.createdAt).toLocaleTimeString() : ''}
           </div>
         </div>
         <div class="queue-items">
@@ -649,6 +821,10 @@
     document.getElementById('clearCart')?.addEventListener('click', clearCart);
     document.getElementById('submitOrder')?.addEventListener('click', submitOrder);
     document.getElementById('exportSalesBtn')?.addEventListener('click', showSalesExportModal);
+    document.getElementById('refreshQueueBtn')?.addEventListener('click', () => {
+      console.log('Manual refresh triggered');
+      renderQueue();
+    });
   }
 
   function init() {

@@ -520,9 +520,14 @@
   <div class="pos-wrapper" id="posContent" style="display:none;">
     <div class="pos-header">
       <h1>POS - Knowledge Café</h1>
-      <button id="exportSalesBtn" class="btn-secondary" style="margin-left: auto;">
-        <i class="fas fa-file-excel"></i> Export Daily Sales
-      </button>
+      <div style="display: flex; gap: 10px; margin-left: auto;">
+        <button id="refreshQueueBtn" class="btn-secondary">
+          <i class="fas fa-sync-alt"></i> Refresh Queue
+        </button>
+        <button id="exportSalesBtn" class="btn-secondary">
+          <i class="fas fa-file-excel"></i> Export Daily Sales
+        </button>
+      </div>
     </div>
 
     <div class="pos-tabs">
@@ -574,10 +579,6 @@
         <button class="milk-modal-close" id="milkModalClose">&times;</button>
       </div>
       <div class="milk-options">
-        <button class="milk-option" data-milk="none">
-          <i class="fas fa-coffee"></i>
-          <span>No Milk</span>
-        </button>
         <button class="milk-option" data-milk="cow">
           <i class="fas fa-mug-hot"></i>
           <span>Cow Milk</span>
@@ -590,6 +591,7 @@
     </div>
   </div>
 
+  <script src="supabase-config.js"></script>
   <script src="pos.js"></script>
 </body>
 </html>
