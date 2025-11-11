@@ -21,8 +21,8 @@ function renderSummary() {
     list.appendChild(li);
   });
 
-  const taxes = 0.00; // Adjust if needed
-  const total = subtotal + taxes;
+  const taxes = 0.00; // Taxes disabled
+  const total = subtotal; // Total equals subtotal (no tax)
   subEl.textContent = formatPrice(subtotal);
   taxEl.textContent = formatPrice(taxes);
   totalEl.textContent = formatPrice(total);
@@ -44,12 +44,12 @@ async function payNow() {
 
   // Calculate totals
   let subtotal = 0;
-  const taxRate = 0.05;
+  const taxRate = 0.00; // Taxes disabled (matching POS)
   items.forEach(item => {
     subtotal += item.price * item.qty;
   });
-  const taxes = subtotal * taxRate;
-  const total = subtotal + taxes;
+  const taxes = 0.00; // No taxes
+  const total = subtotal; // Total equals subtotal (no tax)
 
   // Calculate Pfand
   let pfandTotal = 0;
@@ -134,39 +134,75 @@ async function payNow() {
     }
   }
 
-  // Add order to queue for display
-  const orderQueue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
-  const displayOrder = {
-    id: order.id,
-    customer: order.customer,
-    items: order.items,
-    total: order.total,
-    status: 'pending',
-    createdAt: order.date,
-    updatedAt: order.date,
-    userType: currentUser ? currentUser.userType : 'guest',
-    source: 'online' // Mark as online order
-  };
-  orderQueue.push(displayOrder);
-  localStorage.setItem('kcafe_order_queue', JSON.stringify(orderQueue));
-  
-  // Trigger storage event so POS page can update immediately (works across tabs)
-  // Note: StorageEvent only works across different tabs/windows, not same tab
-  // For same-tab updates, we'll use a custom event
-  window.dispatchEvent(new CustomEvent('kcafe_new_order', {
-    detail: { orderId: order.id }
-  }));
-  
-  // Also trigger storage event for cross-tab communication
-  try {
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: 'kcafe_order_queue',
-      newValue: JSON.stringify(orderQueue),
-      oldValue: localStorage.getItem('kcafe_order_queue')
+  // Helper function to save to localStorage (fallback)
+  function saveToLocalStorage(order, currentUser) {
+    const orderQueue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
+    const displayOrder = {
+      id: order.id,
+      customer: order.customer,
+      items: order.items,
+      total: order.total,
+      status: 'pending',
+      createdAt: order.date,
+      updatedAt: order.date,
+      userType: currentUser ? currentUser.userType : 'guest',
+      source: 'online'
+    };
+    orderQueue.push(displayOrder);
+    localStorage.setItem('kcafe_order_queue', JSON.stringify(orderQueue));
+    
+    // Trigger custom event
+    window.dispatchEvent(new CustomEvent('kcafe_new_order', {
+      detail: { orderId: order.id, order: displayOrder }
     }));
-  } catch (e) {
-    // StorageEvent might not work in all browsers, that's okay
-    console.log('Storage event triggered');
+  }
+
+  // Save order to Supabase
+  try {
+    const supabase = await window.getSupabaseClient();
+    if (supabase) {
+      // Generate a UUID-compatible ID (use timestamp + random)
+      const orderId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      const { data, error } = await supabase
+        .from('orders')
+        .insert([{
+          customer_name: order.customer.name,
+          customer_email: order.customer.email,
+          items: order.items,
+          subtotal: order.subtotal,
+          pfand_deposit: order.pfand || 0,
+          total: order.total,
+          status: 'pending',
+          scheduling: order.scheduling || null,
+          source: 'online',
+          user_type: currentUser ? currentUser.userType : 'guest',
+          payment_status: 'completed'
+        }])
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error saving order to Supabase:', error);
+        // Fall back to localStorage if Supabase fails
+        saveToLocalStorage(order, currentUser);
+      } else {
+        console.log('Order saved to Supabase:', data);
+        // Update order.id with the database ID
+        order.id = data.id;
+        // Trigger custom event for same-tab communication
+        window.dispatchEvent(new CustomEvent('kcafe_new_order', {
+          detail: { orderId: data.id, order: data }
+        }));
+      }
+    } else {
+      // Supabase not available, use localStorage
+      saveToLocalStorage(order, currentUser);
+    }
+  } catch (error) {
+    console.error('Error with Supabase:', error);
+    // Fall back to localStorage
+    saveToLocalStorage(order, currentUser);
   }
 
   // Clear cart
