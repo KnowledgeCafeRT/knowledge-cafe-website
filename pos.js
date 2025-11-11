@@ -23,8 +23,6 @@
       { id: 'syrup-pumpkin', name: 'Pumpkin Spice Syrup', priceStudent: 0.30, priceStaff: 0.30 },
       { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
       { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-      { id: 'oat-milk', name: 'Oat Milk', priceStudent: 0.00, priceStaff: 0.00 },
-      { id: 'cow-milk', name: 'Cow Milk', priceStudent: 0.00, priceStaff: 0.00 },
       { id: 'pfand', name: 'Pfand Cup', priceStudent: 2.00, priceStaff: 2.00 }
     ]}
   ];
@@ -173,6 +171,8 @@
   let pendingCoffeePrice = null;
 
   function isCoffeeItem(item) {
+    // Tea should not show milk selection
+    if (item.id === 'tea') return false;
     const coffeeCategory = PRODUCT_CATALOG.find(cat => cat.id === 'coffee');
     return coffeeCategory && coffeeCategory.items.some(coffee => coffee.id === item.id);
   }
@@ -333,11 +333,144 @@
     const queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
     const orderIndex = queue.findIndex(o => o.id === orderId);
     if (orderIndex !== -1) {
-      queue[orderIndex].status = newStatus;
-      queue[orderIndex].updatedAt = new Date().toISOString();
+      const order = queue[orderIndex];
+      const wasCompleted = order.status === 'completed';
+      order.status = newStatus;
+      order.updatedAt = new Date().toISOString();
       localStorage.setItem('kcafe_order_queue', JSON.stringify(queue));
+      
+      // Track sales when walk-in order is marked as completed
+      if (newStatus === 'completed' && !wasCompleted && order.source === 'in_person') {
+        trackSale(order);
+      }
+      
       renderQueue();
     }
+  }
+
+  // Sales tracking functions
+  function trackSale(order) {
+    const salesKey = 'kcafe_daily_sales';
+    const sales = JSON.parse(localStorage.getItem(salesKey)) || {};
+    
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    if (!sales[today]) {
+      sales[today] = [];
+    }
+    
+    // Add sale record
+    sales[today].push({
+      orderId: order.id,
+      timestamp: order.updatedAt || new Date().toISOString(),
+      items: order.items || [],
+      total: order.total || 0,
+      customerName: order.customer?.name || '',
+      customerEmail: order.customer?.email || ''
+    });
+    
+    localStorage.setItem(salesKey, JSON.stringify(sales));
+  }
+
+  function getDailySales(date) {
+    const salesKey = 'kcafe_daily_sales';
+    const sales = JSON.parse(localStorage.getItem(salesKey)) || {};
+    return sales[date] || [];
+  }
+
+  function aggregateDailySales(date) {
+    const sales = getDailySales(date);
+    const aggregated = {};
+    let totalRevenue = 0;
+    
+    sales.forEach(sale => {
+      totalRevenue += sale.total || 0;
+      sale.items.forEach(item => {
+        // Use item name as key to properly track milk variations
+        // (e.g., "Americano (Oat Milk)" vs "Americano (Cow Milk)")
+        const key = item.name;
+        if (!aggregated[key]) {
+          aggregated[key] = {
+            id: item.id,
+            name: item.name,
+            quantity: 0,
+            revenue: 0,
+            unitPrice: item.price || 0
+          };
+        }
+        aggregated[key].quantity += item.quantity || 0;
+        aggregated[key].revenue += (item.price || 0) * (item.quantity || 0);
+      });
+    });
+    
+    return {
+      date,
+      items: Object.values(aggregated),
+      totalRevenue,
+      totalOrders: sales.length
+    };
+  }
+
+  function exportSalesToCSV(date) {
+    const data = aggregateDailySales(date);
+    const sales = getDailySales(date);
+    
+    // Create CSV content
+    let csv = `Knowledge Café - Daily Sales Report\n`;
+    csv += `Date: ${date}\n`;
+    csv += `Total Orders: ${data.totalOrders}\n`;
+    csv += `Total Revenue: €${data.totalRevenue.toFixed(2)}\n\n`;
+    
+    // Sales by item
+    csv += `Item Sales Summary\n`;
+    csv += `Item Name,Quantity,Unit Price,Total Revenue\n`;
+    data.items.forEach(item => {
+      csv += `"${item.name}",${item.quantity},€${item.unitPrice.toFixed(2)},€${item.revenue.toFixed(2)}\n`;
+    });
+    
+    // Detailed order list
+    csv += `\nDetailed Order List\n`;
+    csv += `Order ID,Time,Customer Name,Customer Email,Items,Total\n`;
+    sales.forEach(sale => {
+      const time = new Date(sale.timestamp).toLocaleTimeString('en-US', { hour12: false });
+      const itemsList = sale.items.map(i => `${i.name} (x${i.quantity})`).join('; ');
+      csv += `${sale.orderId},"${time}","${sale.customerName}","${sale.customerEmail}","${itemsList}",€${sale.total.toFixed(2)}\n`;
+    });
+    
+    // Create download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `knowledge-cafe-sales-${date}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function showSalesExportModal() {
+    const today = new Date().toISOString().split('T')[0];
+    const sales = getDailySales(today);
+    
+    if (sales.length === 0) {
+      alert('No sales data for today yet.');
+      return;
+    }
+    
+    // Ask for date
+    const dateInput = prompt(`Enter date to export (YYYY-MM-DD)\nLeave empty for today (${today}):`, today);
+    if (dateInput === null) return; // User cancelled
+    
+    const exportDate = dateInput.trim() || today;
+    const exportSales = getDailySales(exportDate);
+    
+    if (exportSales.length === 0) {
+      alert(`No sales data found for ${exportDate}.`);
+      return;
+    }
+    
+    exportSalesToCSV(exportDate);
+    alert(`Sales report for ${exportDate} exported successfully!`);
   }
 
   function getStatusColor(status) {
@@ -489,6 +622,7 @@
   function setupButtons() {
     document.getElementById('clearCart')?.addEventListener('click', clearCart);
     document.getElementById('submitOrder')?.addEventListener('click', submitOrder);
+    document.getElementById('exportSalesBtn')?.addEventListener('click', showSalesExportModal);
   }
 
   function init() {
