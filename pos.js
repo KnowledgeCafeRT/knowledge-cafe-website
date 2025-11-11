@@ -414,30 +414,56 @@
     const data = aggregateDailySales(date);
     const sales = getDailySales(date);
     
-    // Create CSV content
-    let csv = `Knowledge Café - Daily Sales Report\n`;
-    csv += `Date: ${date}\n`;
-    csv += `Total Orders: ${data.totalOrders}\n`;
-    csv += `Total Revenue: €${data.totalRevenue.toFixed(2)}\n\n`;
+    // Sort items by revenue (descending)
+    const sortedItems = [...data.items].sort((a, b) => b.revenue - a.revenue);
     
-    // Sales by item
-    csv += `Item Sales Summary\n`;
+    // Helper function to escape CSV fields
+    function escapeCSV(field) {
+      if (field === null || field === undefined) return '';
+      const str = String(field);
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    }
+    
+    // Create CSV content with proper Excel formatting
+    let csv = '';
+    
+    // Header section
+    csv += `Knowledge Cafe - Daily Sales Report\n`;
+    csv += `Date,${date}\n`;
+    csv += `Total Orders,${data.totalOrders}\n`;
+    csv += `Total Revenue,${data.totalRevenue.toFixed(2)}\n`;
+    csv += `\n`;
+    
+    // Sales by item summary
+    csv += `ITEM SALES SUMMARY\n`;
     csv += `Item Name,Quantity,Unit Price,Total Revenue\n`;
-    data.items.forEach(item => {
-      csv += `"${item.name}",${item.quantity},€${item.unitPrice.toFixed(2)},€${item.revenue.toFixed(2)}\n`;
+    sortedItems.forEach(item => {
+      csv += `${escapeCSV(item.name)},${item.quantity},${item.unitPrice.toFixed(2)},${item.revenue.toFixed(2)}\n`;
     });
+    // Add totals row
+    csv += `TOTAL,,,${data.totalRevenue.toFixed(2)}\n`;
+    csv += `\n`;
     
     // Detailed order list
-    csv += `\nDetailed Order List\n`;
-    csv += `Order ID,Time,Customer Name,Customer Email,Items,Total\n`;
+    csv += `DETAILED ORDER LIST\n`;
+    csv += `Order ID,Date,Time,Customer Name,Customer Email,Items,Total\n`;
     sales.forEach(sale => {
-      const time = new Date(sale.timestamp).toLocaleTimeString('en-US', { hour12: false });
+      const saleDate = new Date(sale.timestamp);
+      const dateStr = saleDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      const timeStr = saleDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
       const itemsList = sale.items.map(i => `${i.name} (x${i.quantity})`).join('; ');
-      csv += `${sale.orderId},"${time}","${sale.customerName}","${sale.customerEmail}","${itemsList}",€${sale.total.toFixed(2)}\n`;
+      csv += `${sale.orderId},${escapeCSV(dateStr)},${escapeCSV(timeStr)},${escapeCSV(sale.customerName || '')},${escapeCSV(sale.customerEmail || '')},${escapeCSV(itemsList)},${sale.total.toFixed(2)}\n`;
     });
     
+    // Add BOM for Excel UTF-8 compatibility
+    const BOM = '\uFEFF';
+    const csvWithBOM = BOM + csv;
+    
     // Create download
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
