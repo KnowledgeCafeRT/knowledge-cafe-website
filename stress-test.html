@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stress Test - Knowledge Café</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #8B4513;
+      margin-bottom: 2rem;
+    }
+    
+    .test-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    label {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    input, select {
+      padding: 0.5rem;
+      border: 2px solid #eee;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    
+    button {
+      padding: 1rem 2rem;
+      background: #8B4513;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      background: #A0522D;
+      transform: translateY(-2px);
+    }
+    
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .results {
+      margin-top: 2rem;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, #8B4513, #A0522D);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .log {
+      background: #2c2c2c;
+      color: #0f0;
+      padding: 1rem;
+      border-radius: 8px;
+      height: 400px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+    
+    .log-entry {
+      margin-bottom: 0.5rem;
+    }
+    
+    .log-success { color: #0f0; }
+    .log-error { color: #f00; }
+    .log-warning { color: #ff0; }
+    .log-info { color: #0ff; }
+    
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #eee;
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8B4513, #A0522D);
+      width: 0%;
+      transition: width 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 POS System Stress Test</h1>
+    
+    <div class="test-controls">
+      <div class="control-group">
+        <label>Number of Orders</label>
+        <input type="number" id="numOrders" value="10" min="1" max="1000">
+      </div>
+      
+      <div class="control-group">
+        <label>Delay Between Orders (ms)</label>
+        <input type="number" id="delayMs" value="100" min="0" max="5000">
+      </div>
+      
+      <div class="control-group">
+        <label>Test Type</label>
+        <select id="testType">
+          <option value="sequential">Sequential</option>
+          <option value="simultaneous">Simultaneous</option>
+          <option value="wave">Wave Pattern</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label>Order Complexity</label>
+        <select id="complexity">
+          <option value="simple">Simple (1-2 items)</option>
+          <option value="medium">Medium (3-5 items)</option>
+          <option value="complex">Complex (6-10 items)</option>
+        </select>
+      </div>
+    </div>
+    
+    <button id="startTest" onclick="startStressTest()">🚀 Start Stress Test</button>
+    <button id="stopTest" onclick="stopStressTest()" disabled style="margin-left: 1rem; background: #dc3545;">⏹️ Stop Test</button>
+    
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressBar">0%</div>
+    </div>
+    
+    <div class="results">
+      <h2>Test Results</h2>
+      
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value" id="totalOrders">0</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="successRate">0%</div>
+          <div class="stat-label">Success Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="avgTime">0ms</div>
+          <div class="stat-label">Avg Response Time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="failedOrders">0</div>
+          <div class="stat-label">Failed Orders</div>
+        </div>
+      </div>
+      
+      <h3>Console Log</h3>
+      <div class="log" id="logConsole"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    let testRunning = false;
+    let testStats = {
+      total: 0,
+      success: 0,
+      failed: 0,
+      times: []
+    };
+
+    // Sample menu items matching your actual catalog
+    const menuItems = [
+      { name: 'Americano', priceStudent: 1.50, priceStaff: 2.00 },
+      { name: 'Espresso', priceStudent: 1.30, priceStaff: 1.80 },
+      { name: 'Espresso Doppio', priceStudent: 1.70, priceStaff: 2.20 },
+      { name: 'Cappuccino', priceStudent: 2.50, priceStaff: 3.00 },
+      { name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
+      { name: 'Cafe Latte', priceStudent: 2.70, priceStaff: 3.20 },
+      { name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
+      { name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 },
+      { name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
+      { name: 'Water', priceStudent: 1.00, priceStaff: 1.00 },
+      { name: 'RedBull', priceStudent: 2.00, priceStaff: 2.00 }
+    ];
+
+    function log(message, type = 'info') {
+      const logDiv = document.getElementById('logConsole');
+      const timestamp = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${type}`;
+      entry.textContent = `[${timestamp}] ${message}`;
+      logDiv.appendChild(entry);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function updateStats() {
+      document.getElementById('totalOrders').textContent = testStats.total;
+      document.getElementById('failedOrders').textContent = testStats.failed;
+      
+      const successRate = testStats.total > 0 
+        ? ((testStats.success / testStats.total) * 100).toFixed(1)
+        : 0;
+      document.getElementById('successRate').textContent = successRate + '%';
+      
+      const avgTime = testStats.times.length > 0
+        ? Math.round(testStats.times.reduce((a, b) => a + b, 0) / testStats.times.length)
+        : 0;
+      document.getElementById('avgTime').textContent = avgTime + 'ms';
+    }
+
+    function generateRandomOrder(complexity) {
+      const userTypes = ['student', 'staff', 'guest'];
+      const userType = userTypes[Math.floor(Math.random() * userTypes.length)];
+      
+      // Determine number of items based on complexity
+      let itemCount;
+      switch(complexity) {
+        case 'simple': itemCount = Math.floor(Math.random() * 2) + 1; break;
+        case 'medium': itemCount = Math.floor(Math.random() * 3) + 3; break;
+        case 'complex': itemCount = Math.floor(Math.random() * 5) + 6; break;
+        default: itemCount = 2;
+      }
+      
+      const items = [];
+      let subtotal = 0;
+      
+      for (let i = 0; i < itemCount; i++) {
+        const item = menuItems[Math.floor(Math.random() * menuItems.length)];
+        const quantity = Math.floor(Math.random() * 2) + 1;
+        const price = userType === 'student' ? item.priceStudent : item.priceStaff;
+        const hasPfand = Math.random() > 0.7; // 30% chance of pfand
+        const itemId = item.name.toLowerCase().replace(/\s+/g, '-');
+        
+        items.push({
+          id: itemId,
+          name: item.name,
+          quantity: quantity,
+          price: price,
+          pfand: hasPfand
+        });
+        
+        subtotal += price * quantity;
+      }
+      
+      const pfandTotal = items.filter(i => i.pfand).reduce((sum, i) => sum + (i.quantity * 2.00), 0);
+      const total = subtotal + pfandTotal;
+      
+      return {
+        customer_name: `Test User ${Math.floor(Math.random() * 1000)}`,
+        customer_email: `test${Math.floor(Math.random() * 1000)}@test.com`,
+        user_type: userType,
+        items: items,
+        subtotal: subtotal,
+        pfand_total: pfandTotal,
+        total: total
+      };
+    }
+
+    async function sendTestOrder(orderNum, complexity) {
+      const startTime = Date.now();
+      
+      try {
+        const order = generateRandomOrder(complexity);
+        log(`📤 Sending order ${orderNum}... (${order.items.length} items)`, 'info');
+        
+        // Send to Supabase
+        const supabase = await window.getSupabaseClient();
+        if (!supabase) {
+          throw new Error('Supabase not available');
+        }
+        
+        const { data, error } = await supabase
+          .from('orders')
+          .insert([{
+            customer_name: order.customer_name,
+            customer_email: order.customer_email,
+            items: order.items,
+            subtotal: order.subtotal,
+            pfand_deposit: order.pfand_total || 0,
+            total: order.total,
+            status: 'pending',
+            source: 'online',
+            user_type: order.user_type,
+            payment_status: 'completed'
+          }])
+          .select()
+          .single();
+        
+        if (error) {
+          throw error;
+        }
+        
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+        
+        testStats.success++;
+        testStats.times.push(responseTime);
+        
+        log(`✅ Order ${orderNum} succeeded (${responseTime}ms) - ID: ${data.id.substring(0, 8)}`, 'success');
+        return true;
+        
+      } catch (error) {
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+        
+        testStats.failed++;
+        testStats.times.push(responseTime);
+        
+        log(`❌ Order ${orderNum} failed: ${error.message} (${responseTime}ms)`, 'error');
+        return false;
+      }
+    }
+
+    async function startStressTest() {
+      if (testRunning) return;
+      
+      testRunning = true;
+      document.getElementById('startTest').disabled = true;
+      document.getElementById('stopTest').disabled = false;
+      
+      // Reset stats
+      testStats = { total: 0, success: 0, failed: 0, times: [] };
+      updateStats();
+      document.getElementById('logConsole').innerHTML = '';
+      
+      const numOrders = parseInt(document.getElementById('numOrders').value);
+      const delayMs = parseInt(document.getElementById('delayMs').value);
+      const testType = document.getElementById('testType').value;
+      const complexity = document.getElementById('complexity').value;
+      
+      log(`🚀 Starting stress test...`, 'info');
+      log(`📊 Orders: ${numOrders}, Delay: ${delayMs}ms, Type: ${testType}, Complexity: ${complexity}`, 'info');
+      log(`⏰ Started at ${new Date().toLocaleTimeString()}`, 'info');
+      
+      const startTime = Date.now();
+      
+      try {
+        if (testType === 'simultaneous') {
+          // Send all orders at once
+          log(`⚡ Sending ${numOrders} orders simultaneously...`, 'warning');
+          const promises = [];
+          for (let i = 1; i <= numOrders; i++) {
+            testStats.total++;
+            promises.push(sendTestOrder(i, complexity));
+            updateProgress(i, numOrders);
+          }
+          await Promise.all(promises);
+          
+        } else if (testType === 'sequential') {
+          // Send orders one after another
+          for (let i = 1; i <= numOrders; i++) {
+            if (!testRunning) break;
+            
+            testStats.total++;
+            await sendTestOrder(i, complexity);
+            updateProgress(i, numOrders);
+            updateStats();
+            
+            if (delayMs > 0 && i < numOrders) {
+              await sleep(delayMs);
+            }
+          }
+          
+        } else if (testType === 'wave') {
+          // Send orders in waves of 10
+          const waveSize = 10;
+          const waves = Math.ceil(numOrders / waveSize);
+          
+          for (let wave = 0; wave < waves; wave++) {
+            if (!testRunning) break;
+            
+            const start = wave * waveSize;
+            const end = Math.min(start + waveSize, numOrders);
+            
+            log(`🌊 Wave ${wave + 1}/${waves}: Orders ${start + 1}-${end}`, 'warning');
+            
+            const promises = [];
+            for (let i = start + 1; i <= end; i++) {
+              testStats.total++;
+              promises.push(sendTestOrder(i, complexity));
+            }
+            
+            await Promise.all(promises);
+            updateProgress(end, numOrders);
+            updateStats();
+            
+            if (wave < waves - 1) {
+              log(`⏸️  Waiting ${delayMs}ms before next wave...`, 'info');
+              await sleep(delayMs);
+            }
+          }
+        }
+        
+      } catch (error) {
+        log(`💥 Test crashed: ${error.message}`, 'error');
+      }
+      
+      const endTime = Date.now();
+      const totalTime = ((endTime - startTime) / 1000).toFixed(2);
+      
+      log(`✅ Test completed in ${totalTime}s`, 'success');
+      log(`📊 Results: ${testStats.success}/${testStats.total} succeeded (${testStats.failed} failed)`, 'info');
+      
+      if (testStats.times.length > 0) {
+        const avgTime = Math.round(testStats.times.reduce((a, b) => a + b, 0) / testStats.times.length);
+        const minTime = Math.min(...testStats.times);
+        const maxTime = Math.max(...testStats.times);
+        log(`⏱️  Response times: Min ${minTime}ms, Max ${maxTime}ms, Avg ${avgTime}ms`, 'info');
+      }
+      
+      updateStats();
+      
+      testRunning = false;
+      document.getElementById('startTest').disabled = false;
+      document.getElementById('stopTest').disabled = true;
+    }
+
+    function stopStressTest() {
+      testRunning = false;
+      log(`⏹️  Test stopped by user`, 'warning');
+      document.getElementById('startTest').disabled = false;
+      document.getElementById('stopTest').disabled = true;
+    }
+
+    function updateProgress(current, total) {
+      const percent = Math.round((current / total) * 100);
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = percent + '%';
+      progressBar.textContent = percent + '%';
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Make functions global
+    window.startStressTest = startStressTest;
+    window.stopStressTest = stopStressTest;
+    
+    // Initialize
+    setTimeout(() => {
+      log(`✅ Stress test tool ready`, 'success');
+      log(`📝 Configure test parameters above and click "Start Stress Test"`, 'info');
+      log(`💡 Tip: Open POS page (pos.html) in another tab to watch orders appear!`, 'info');
+    }, 500);
+  </script>
+</body>
+</html>
+
