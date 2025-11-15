@@ -225,13 +225,36 @@ async function payNow() {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderSummary();
-  loadUserInfo();
+  // Wait a bit for session manager to initialize
+  setTimeout(() => {
+    loadUserInfo();
+  }, 100);
   requestNotificationPermission(); // Request notification permission
   setupScheduling(); // Setup order scheduling
   const btn = document.getElementById('payNow'); if (btn) btn.addEventListener('click', payNow);
+  
+  // Listen for session changes
+  window.addEventListener('kcafe_session_change', (e) => {
+    if (e.detail.isAuthenticated) {
+      loadUserInfo();
+    }
+  });
 });
 
 function loadUserInfo() {
+  // Try session manager first (Supabase Auth)
+  if (window.sessionManager && window.sessionManager.isAuthenticated()) {
+    const nameField = document.getElementById('customerName');
+    const emailField = document.getElementById('customerEmail');
+    
+    if (nameField) nameField.value = window.sessionManager.getUserName() || '';
+    if (emailField) emailField.value = window.sessionManager.getUserEmail() || '';
+    
+    // Make fields read-only for logged-in users
+    return;
+  }
+  
+  // Fallback to localStorage
   const currentUser = JSON.parse(localStorage.getItem('kcafe_current_user'));
   if (currentUser) {
     // Auto-fill contact information for logged-in users
@@ -379,10 +402,22 @@ function setupScheduling() {
     pickupDateInput.value = today;
   }
   
-  // Set default time to current time + 30 minutes
+  // Set default time to 11:30 (within business hours 11:00-14:00)
   const now = new Date();
-  now.setMinutes(now.getMinutes() + 30);
-  const defaultTime = now.toTimeString().slice(0, 5);
+  const currentHour = now.getHours();
+  let defaultTime = '11:30'; // Default to 11:30 AM
+  
+  // If current time is within business hours, use current time + 30 minutes
+  if (currentHour >= 11 && currentHour < 14) {
+    now.setMinutes(now.getMinutes() + 30);
+    const calculatedTime = now.toTimeString().slice(0, 5);
+    // Make sure it's still within business hours
+    const calculatedHour = parseInt(calculatedTime.split(':')[0]);
+    if (calculatedHour >= 11 && calculatedHour < 14) {
+      defaultTime = calculatedTime;
+    }
+  }
+  
   if (pickupTimeInput) {
     pickupTimeInput.value = defaultTime;
   }
@@ -438,10 +473,10 @@ function validateScheduledTime() {
     return false;
   }
   
-  // Check if time is within business hours (7 AM - 6 PM)
+  // Check if time is within business hours (11 AM - 2 PM)
   const hour = scheduledDateTime.getHours();
-  if (hour < 7 || hour >= 18) {
-    alert('Please select a time between 7:00 AM and 6:00 PM.');
+  if (hour < 11 || hour >= 14) {
+    alert('Please select a time between 11:00 AM and 2:00 PM.');
     document.getElementById('pickupTimeInput').value = '';
     return false;
   }
