@@ -388,12 +388,41 @@ async function sendOrderReadyNotification(orderId, customerName, items) {
   }, 10000);
 }
 
+// Get current time in CET timezone
+function getCurrentCETTime() {
+  const now = new Date();
+  // Convert to CET (UTC+1 in winter, UTC+2 in summer)
+  // Using toLocaleString with timeZone option for accurate CET time
+  const cetTimeString = now.toLocaleString('en-US', { 
+    timeZone: 'Europe/Berlin', // Berlin uses CET/CEST
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23'
+  });
+  
+  const [hours, minutes] = cetTimeString.split(':').map(Number);
+  return { hours, minutes, fullDate: now };
+}
+
+// Check if current time is within business hours (11:00-14:00 CET)
+function isWithinBusinessHours() {
+  const cet = getCurrentCETTime();
+  return cet.hours >= 11 && cet.hours < 14;
+}
+
 // Order Scheduling Functions
 function setupScheduling() {
   const pickupTimeRadios = document.querySelectorAll('input[name="pickupTime"]');
   const scheduledTimeDiv = document.getElementById('scheduledTime');
   const pickupDateInput = document.getElementById('pickupDate');
   const pickupTimeInput = document.getElementById('pickupTimeInput');
+  const readyNowRadio = document.querySelector('input[name="pickupTime"][value="now"]');
+  const readyNowLabel = readyNowRadio?.closest('label');
+  
+  // Check if we're within business hours
+  const withinHours = isWithinBusinessHours();
+  const cet = getCurrentCETTime();
   
   // Set minimum date to today
   const today = new Date().toISOString().split('T')[0];
@@ -403,12 +432,11 @@ function setupScheduling() {
   }
   
   // Set default time to 11:30 (within business hours 11:00-14:00)
-  const now = new Date();
-  const currentHour = now.getHours();
   let defaultTime = '11:30'; // Default to 11:30 AM
   
   // If current time is within business hours, use current time + 30 minutes
-  if (currentHour >= 11 && currentHour < 14) {
+  if (withinHours) {
+    const now = new Date();
     now.setMinutes(now.getMinutes() + 30);
     const calculatedTime = now.toTimeString().slice(0, 5);
     // Make sure it's still within business hours
@@ -420,6 +448,75 @@ function setupScheduling() {
   
   if (pickupTimeInput) {
     pickupTimeInput.value = defaultTime;
+  }
+  
+  // If outside business hours, disable "Ready Now" and force "Schedule for Later"
+  if (!withinHours) {
+    if (readyNowRadio) {
+      readyNowRadio.disabled = true;
+      readyNowRadio.checked = false;
+    }
+    
+    // Check "Schedule for Later" by default
+    const scheduledRadio = document.querySelector('input[name="pickupTime"][value="scheduled"]');
+    if (scheduledRadio) {
+      scheduledRadio.checked = true;
+      scheduledRadio.click(); // Trigger the change event
+    }
+    
+    // Show message about business hours
+    if (readyNowLabel) {
+      const warningMsg = document.createElement('div');
+      warningMsg.id = 'businessHoursWarning';
+      warningMsg.style.cssText = 'background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px; margin-top: 10px; color: #856404; font-size: 0.9rem;';
+      warningMsg.innerHTML = `
+        <i class="fas fa-clock" style="margin-right: 8px;"></i>
+        <strong>We're currently closed!</strong> We're open 11:00-14:00 CET. 
+        Current time: ${String(cet.hours).padStart(2, '0')}:${String(cet.minutes).padStart(2, '0')} CET.
+        Please schedule your order for when we're open.
+      `;
+      
+      // Insert warning after scheduling options
+      const schedulingOptions = document.querySelector('.scheduling-options');
+      if (schedulingOptions && !document.getElementById('businessHoursWarning')) {
+        schedulingOptions.parentNode.insertBefore(warningMsg, schedulingOptions.nextSibling);
+      }
+      
+      // Update label to show it's disabled
+      if (readyNowLabel) {
+        readyNowLabel.style.opacity = '0.5';
+        readyNowLabel.style.cursor = 'not-allowed';
+        const smallText = readyNowLabel.querySelector('small');
+        if (smallText) {
+          smallText.textContent = 'Only available 11:00-14:00 CET';
+          smallText.style.color = '#dc3545';
+        }
+      }
+    }
+  } else {
+    // Within business hours - enable "Ready Now"
+    if (readyNowRadio) {
+      readyNowRadio.disabled = false;
+      if (!document.querySelector('input[name="pickupTime"]:checked')) {
+        readyNowRadio.checked = true;
+      }
+    }
+    
+    if (readyNowLabel) {
+      readyNowLabel.style.opacity = '1';
+      readyNowLabel.style.cursor = 'pointer';
+      const smallText = readyNowLabel.querySelector('small');
+      if (smallText) {
+        smallText.textContent = 'Prepare immediately (5-7 minutes)';
+        smallText.style.color = '';
+      }
+    }
+    
+    // Remove warning if it exists
+    const warning = document.getElementById('businessHoursWarning');
+    if (warning) {
+      warning.remove();
+    }
   }
   
   // Handle pickup time selection
@@ -452,7 +549,8 @@ function validateScheduledTime() {
   
   if (!pickupDate || !pickupTime) return;
   
-  const scheduledDateTime = new Date(`${pickupDate}T${pickupTime}`);
+  // Create date in CET timezone
+  const scheduledDateTime = new Date(`${pickupDate}T${pickupTime}:00`);
   const now = new Date();
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 7); // 7 days in advance
@@ -473,10 +571,18 @@ function validateScheduledTime() {
     return false;
   }
   
-  // Check if time is within business hours (11 AM - 2 PM)
-  const hour = scheduledDateTime.getHours();
+  // Check if time is within business hours (11:00-14:00 CET)
+  // Get the hour in CET timezone
+  const cetHour = scheduledDateTime.toLocaleString('en-US', {
+    timeZone: 'Europe/Berlin',
+    hour: '2-digit',
+    hour12: false,
+    hourCycle: 'h23'
+  });
+  const hour = parseInt(cetHour);
+  
   if (hour < 11 || hour >= 14) {
-    alert('Please select a time between 11:00 AM and 2:00 PM.');
+    alert('Please select a time between 11:00 AM and 2:00 PM CET.');
     document.getElementById('pickupTimeInput').value = '';
     return false;
   }
@@ -485,9 +591,26 @@ function validateScheduledTime() {
 }
 
 function getScheduledPickupTime() {
-  const pickupTime = document.querySelector('input[name="pickupTime"]:checked').value;
+  const pickupTime = document.querySelector('input[name="pickupTime"]:checked');
   
-  if (pickupTime === 'now') {
+  if (!pickupTime) {
+    alert('Please select a pickup time option.');
+    return null;
+  }
+  
+  // Prevent "Ready Now" orders outside business hours
+  if (pickupTime.value === 'now') {
+    if (!isWithinBusinessHours()) {
+      alert('Sorry! We\'re currently closed. We\'re open 11:00-14:00 CET. Please schedule your order for when we\'re open.');
+      // Force schedule option
+      const scheduledRadio = document.querySelector('input[name="pickupTime"][value="scheduled"]');
+      if (scheduledRadio) {
+        scheduledRadio.checked = true;
+        scheduledRadio.click();
+      }
+      return null;
+    }
+    
     return {
       type: 'immediate',
       scheduledFor: new Date().toISOString(),
