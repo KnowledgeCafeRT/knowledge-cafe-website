@@ -659,11 +659,20 @@
     try {
       const supabase = await window.getSupabaseClient();
       if (supabase) {
-        // Get all orders that are not completed
+        // Get today's orders that are not completed
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStart = today.toISOString();
+        const todayEnd = new Date(today);
+        todayEnd.setHours(23, 59, 59, 999);
+        const todayEndISO = todayEnd.toISOString();
+        
         const { data, error } = await supabase
           .from('orders')
           .select('*')
           .neq('status', 'completed') // Only show active orders (pending, preparing, ready)
+          .gte('created_at', todayStart) // Only today's orders
+          .lte('created_at', todayEndISO)
           .order('created_at', { ascending: false });
         
         if (error) {
@@ -703,6 +712,16 @@
       queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
     }
     
+    // Filter to only today's orders (for localStorage fallback)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    queue = queue.filter(o => {
+      if (!o.createdAt) return false;
+      const orderDate = new Date(o.createdAt);
+      orderDate.setHours(0, 0, 0, 0);
+      return orderDate.getTime() === today.getTime();
+    });
+    
     // Sort by status priority, then by newest first
     const statusOrder = { 'pending': 0, 'preparing': 1, 'ready': 2, 'completed': 3 };
     queue.sort((a, b) => {
@@ -716,9 +735,16 @@
     list.innerHTML = '';
     
     if (queue.length === 0) {
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:#5c4033;"><i class="fas fa-inbox" style="font-size:3rem;opacity:0.3;margin-bottom:10px;"></i><p>No orders in queue</p></div>';
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:#5c4033;"><i class="fas fa-inbox" style="font-size:3rem;opacity:0.3;margin-bottom:10px;"></i><p>No orders for today</p></div>';
       return;
     }
+
+    // Add today's date header
+    const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const headerDiv = document.createElement('div');
+    headerDiv.style.cssText = 'padding: 15px 20px; background: #8b5e3c; color: white; border-radius: 10px; margin-bottom: 15px; font-weight: 700; font-size: 1.2rem; text-align: center;';
+    headerDiv.innerHTML = `<i class="fas fa-calendar-day"></i> ${todayStr}`;
+    list.appendChild(headerDiv);
 
     queue.forEach(o => {
       const div = document.createElement('div');
@@ -749,10 +775,13 @@
         statusButtonClass = 'btn-status btn-status-disabled';
       }
 
+      // Format order ID (show last 8 chars if UUID)
+      const orderIdDisplay = typeof o.id === 'string' && o.id.length > 12 ? o.id.substring(o.id.length - 8) : o.id;
+      
       div.innerHTML = `
         <div class="queue-header">
           <div class="queue-meta">
-            <span><strong>#${o.id}</strong> • ${who}</span>
+            <span><strong>#${orderIdDisplay}</strong> • ${who}</span>
             <span class="status-badge" style="background:${statusColor}20;color:${statusColor};border:1px solid ${statusColor}40;">
               <i class="fas ${statusIcon}"></i> ${status.charAt(0).toUpperCase() + status.slice(1)}
             </span>
@@ -761,18 +790,28 @@
             ${src === 'in_person' ? '<i class="fas fa-walk"></i> Walk-in' : '<i class="fas fa-globe"></i> Online'} • ${o.createdAt ? new Date(o.createdAt).toLocaleTimeString() : ''}
           </div>
         </div>
-        <div class="queue-items">
-          ${o.items.map(i => `<span class="queue-item">${i.name} × ${i.quantity}</span>`).join('')}
+        <div class="queue-items-large">
+          ${o.items.map(i => `<div class="queue-item-large"><strong>${i.name}</strong> <span class="queue-item-qty">× ${i.quantity}</span></div>`).join('')}
         </div>
         <div class="queue-footer">
           <div class="queue-total">
             <strong>${formatPrice(o.total || 0)}</strong>
           </div>
-          <button class="${statusButtonClass}" onclick="window.updateOrderStatus(${o.id}, '${nextStatus}')" ${status === 'completed' ? 'disabled' : ''}>
+          <button class="${statusButtonClass}" data-order-id="${o.id}" data-next-status="${nextStatus}" ${status === 'completed' ? 'disabled' : ''}>
             ${statusButtonText}
           </button>
         </div>
       `;
+      
+      // Add event listener to button (fixes onclick issue)
+      const button = div.querySelector('button');
+      if (button && status !== 'completed') {
+        button.addEventListener('click', () => {
+          const orderId = button.getAttribute('data-order-id');
+          const nextStatus = button.getAttribute('data-next-status');
+          updateOrderStatus(orderId, nextStatus);
+        });
+      }
       list.appendChild(div);
     });
   }

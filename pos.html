@@ -280,6 +280,38 @@
       border-radius: 8px;
       font-size: 0.9rem;
     }
+    .queue-items-large {
+      margin: 15px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .queue-item-large {
+      background: #f3ece5;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 1.3rem;
+      color: #2c1810;
+      font-weight: 600;
+      border-left: 4px solid #d4a574;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .queue-item-large strong {
+      color: #8b5e3c;
+      font-size: 1.4rem;
+    }
+    .queue-item-qty {
+      background: #8b5e3c;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      min-width: 50px;
+      text-align: center;
+    }
     .queue-footer {
       display: flex;
       justify-content: space-between;
@@ -593,6 +625,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="supabase-config.js"></script>
+  <script src="session-manager.js"></script>
   <script src="pos.js"></script>
 </body>
 </html>
