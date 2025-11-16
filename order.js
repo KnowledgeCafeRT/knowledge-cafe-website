@@ -7,7 +7,8 @@ const PRODUCT_CATALOG = [
     { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
     { id: 'cafe-latte', name: 'Cafe Latte', priceStudent: 2.70, priceStaff: 3.20 },
     { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
-    { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 }
+    { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 },
+    { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 3.00, priceStaff: 3.50 }
   ]},
   { id: 'drinks', title: 'Drinks', items: [
     { id: 'softdrinks', name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
@@ -29,6 +30,11 @@ const PFAND_STORAGE_KEY = 'kcafe_pfand_v1';
 const PFAND_DEPOSIT = 2.00;
 
 function getRole() {
+  // Check if user is logged in via session manager
+  if (window.sessionManager && window.sessionManager.isAuthenticated()) {
+    return window.sessionManager.getUserType(); // Returns 'student' or 'staff'
+  }
+  // Fallback to localStorage
   return localStorage.getItem(ROLE_STORAGE_KEY) || 'student';
 }
 

@@ -10,7 +10,8 @@
       { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
       { id: 'cafe-latte', name: 'Cafe Latte', priceStudent: 2.70, priceStaff: 3.20 },
       { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
-      { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 }
+      { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 },
+      { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 3.00, priceStaff: 3.50 }
     ]},
     { id: 'drinks', title: 'Drinks', items: [
       { id: 'softdrinks', name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
@@ -650,8 +651,9 @@
   }
 
   async function renderQueue() {
-    const list = document.getElementById('queueList');
-    if (!list) return;
+    const walkInList = document.getElementById('walkInQueueList');
+    const onlineList = document.getElementById('onlineQueueList');
+    if (!walkInList || !onlineList) return;
     
     let queue = [];
     
@@ -723,9 +725,24 @@
       return orderDate.getTime() === today.getTime();
     });
     
+    // Separate orders by source
+    const walkInOrders = queue.filter(o => o.source === 'in_person');
+    const onlineOrders = queue.filter(o => o.source !== 'in_person');
+    
     // Sort by status priority, then by newest first
     const statusOrder = { 'pending': 0, 'preparing': 1, 'ready': 2, 'completed': 3 };
-    queue.sort((a, b) => {
+    const sortOrders = (orders) => {
+      return orders.sort((a, b) => {
+        const aStatus = statusOrder[a.status] ?? 4;
+        const bStatus = statusOrder[b.status] ?? 4;
+        if (aStatus !== bStatus) return aStatus - bStatus;
+        const aDate = new Date(a.createdAt || 0).getTime();
+        const bDate = new Date(b.createdAt || 0).getTime();
+        return bDate - aDate;
+      });
+    };
+    
+    walkInOrders.sort((a, b) => {
       const aStatus = statusOrder[a.status] ?? 4;
       const bStatus = statusOrder[b.status] ?? 4;
       if (aStatus !== bStatus) return aStatus - bStatus;
@@ -733,21 +750,34 @@
       const bDate = new Date(b.createdAt || 0).getTime();
       return bDate - aDate;
     });
-    list.innerHTML = '';
     
-    if (queue.length === 0) {
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:#5c4033;"><i class="fas fa-inbox" style="font-size:3rem;opacity:0.3;margin-bottom:10px;"></i><p>No orders for today</p></div>';
+    onlineOrders.sort((a, b) => {
+      const aStatus = statusOrder[a.status] ?? 4;
+      const bStatus = statusOrder[b.status] ?? 4;
+      if (aStatus !== bStatus) return aStatus - bStatus;
+      const aDate = new Date(a.createdAt || 0).getTime();
+      const bDate = new Date(b.createdAt || 0).getTime();
+      return bDate - aDate;
+    });
+    
+    // Render walk-in orders
+    renderOrderList(walkInList, walkInOrders);
+    
+    // Render online orders
+    renderOrderList(onlineList, onlineOrders);
+  }
+  
+  function renderOrderList(listElement, orders) {
+    if (!listElement) return;
+    
+    listElement.innerHTML = '';
+    
+    if (orders.length === 0) {
+      listElement.innerHTML = '<div style="text-align:center;padding:40px;color:#5c4033;"><i class="fas fa-inbox" style="font-size:3rem;opacity:0.3;margin-bottom:10px;"></i><p>No orders</p></div>';
       return;
     }
 
-    // Add today's date header
-    const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    const headerDiv = document.createElement('div');
-    headerDiv.style.cssText = 'padding: 15px 20px; background: #8b5e3c; color: white; border-radius: 10px; margin-bottom: 15px; font-weight: 700; font-size: 1.2rem; text-align: center;';
-    headerDiv.innerHTML = `<i class="fas fa-calendar-day"></i> ${todayStr}`;
-    list.appendChild(headerDiv);
-
-    queue.forEach(o => {
+    orders.forEach(o => {
       const div = document.createElement('div');
       div.className = 'queue-card';
       const status = o.status || 'pending';
@@ -830,7 +860,7 @@
           updateOrderStatus(orderId, nextStatus);
         });
       }
-      list.appendChild(div);
+      listElement.appendChild(div);
     });
   }
 

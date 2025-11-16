@@ -60,6 +60,21 @@ async function payNow() {
   const scheduling = getScheduledPickupTime();
   if (!scheduling) return; // Validation failed
   
+  // Check if the selected time slot is still available (not full)
+  if (scheduling.type === 'scheduled' && scheduling.scheduledFor) {
+    const scheduledDate = new Date(scheduling.scheduledFor);
+    const dateStr = scheduledDate.toISOString().split('T')[0];
+    const timeStr = `${String(scheduledDate.getHours()).padStart(2, '0')}:${String(Math.floor(scheduledDate.getMinutes() / 10) * 10).padStart(2, '0')}`;
+    
+    const orderCount = await getOrderCountForTimeSlot(dateStr, timeStr);
+    if (orderCount >= 2) {
+      alert('Sorry, this time slot is no longer available. Two orders have already been placed for this time. Please select another time slot.');
+      // Re-render time slots to show updated availability
+      await renderTimeSlots(dateStr);
+      return;
+    }
+  }
+  
   // Create order
   const order = {
     id: Date.now(),
@@ -415,24 +430,153 @@ function isWithinBusinessHours() {
 }
 
 // Order Scheduling Functions
-// Generate time slots (20-minute intervals from 11:00 to 13:40)
+// Generate time slots (10-minute intervals from 11:00 to 13:50)
 function generateTimeSlots() {
   const slots = [];
   for (let hour = 11; hour < 14; hour++) {
-    slots.push(`${String(hour).padStart(2, '0')}:00`);
-    slots.push(`${String(hour).padStart(2, '0')}:20`);
-    slots.push(`${String(hour).padStart(2, '0')}:40`);
+    for (let minute = 0; minute < 60; minute += 10) {
+      // Stop at 14:00 (don't include 14:00)
+      if (hour === 14 && minute >= 0) break;
+      slots.push(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
+    }
   }
   return slots;
 }
 
+// Check how many orders exist for a specific time slot
+async function getOrderCountForTimeSlot(date, timeSlot) {
+  try {
+    const supabase = await window.getSupabaseClient();
+    if (!supabase) return 0;
+    
+    // Get all active online orders for the date
+    const dateStart = new Date(`${date}T00:00:00`).toISOString();
+    const dateEnd = new Date(`${date}T23:59:59`).toISOString();
+    
+    const { data: orders, error } = await supabase
+      .from('orders')
+      .select('id, scheduling')
+      .neq('status', 'completed')
+      .neq('status', 'cancelled')
+      .eq('source', 'online')
+      .gte('created_at', dateStart)
+      .lte('created_at', dateEnd);
+    
+    if (error) {
+      console.error('Error checking time slot availability:', error);
+      return 0;
+    }
+    
+    if (!orders) return 0;
+    
+    // Count orders for this specific time slot
+    const [slotHour, slotMinute] = timeSlot.split(':').map(Number);
+    let count = 0;
+    
+    orders.forEach(order => {
+      if (order.scheduling && order.scheduling.scheduledFor) {
+        const orderTime = new Date(order.scheduling.scheduledFor);
+        const orderDateStr = orderTime.toISOString().split('T')[0];
+        
+        // Only count if it's for the selected date
+        if (orderDateStr === date) {
+          const orderHour = orderTime.getHours();
+          const orderMinute = orderTime.getMinutes();
+          
+          // Find which 10-minute slot this order belongs to
+          const orderSlotMinute = Math.floor(orderMinute / 10) * 10;
+          
+          // Check if it matches the requested slot
+          if (orderHour === slotHour && orderSlotMinute === slotMinute) {
+            count++;
+          }
+        }
+      }
+    });
+    
+    return count;
+  } catch (error) {
+    console.error('Error checking time slot availability:', error);
+    return 0;
+  }
+}
+
+// Get order counts for all time slots (optimized batch query)
+async function getOrderCountsForAllSlots(date, slots) {
+  try {
+    const supabase = await window.getSupabaseClient();
+    if (!supabase) {
+      // Return empty object if Supabase not available
+      return {};
+    }
+    
+    // Get all active online orders for the date
+    const dateStart = new Date(`${date}T00:00:00`).toISOString();
+    const dateEnd = new Date(`${date}T23:59:59`).toISOString();
+    
+    const { data: orders, error } = await supabase
+      .from('orders')
+      .select('id, scheduling')
+      .neq('status', 'completed')
+      .neq('status', 'cancelled')
+      .eq('source', 'online')
+      .gte('created_at', dateStart)
+      .lte('created_at', dateEnd);
+    
+    if (error) {
+      console.error('Error checking time slot availability:', error);
+      return {};
+    }
+    
+    if (!orders) return {};
+    
+    // Count orders per time slot
+    const slotCounts = {};
+    slots.forEach(slot => {
+      slotCounts[slot] = 0;
+    });
+    
+    orders.forEach(order => {
+      if (order.scheduling && order.scheduling.scheduledFor) {
+        const orderTime = new Date(order.scheduling.scheduledFor);
+        const orderDateStr = orderTime.toISOString().split('T')[0];
+        
+        // Only count if it's for the selected date
+        if (orderDateStr === date) {
+          const orderHour = orderTime.getHours();
+          const orderMinute = orderTime.getMinutes();
+          
+          // Find which 10-minute slot this order belongs to
+          const slotMinute = Math.floor(orderMinute / 10) * 10;
+          const slotKey = `${String(orderHour).padStart(2, '0')}:${String(slotMinute).padStart(2, '0')}`;
+          
+          if (slotCounts.hasOwnProperty(slotKey)) {
+            slotCounts[slotKey]++;
+          }
+        }
+      }
+    });
+    
+    return slotCounts;
+  } catch (error) {
+    console.error('Error checking time slot availability:', error);
+    return {};
+  }
+}
+
 // Render time slot buttons
-function renderTimeSlots(selectedDate = null) {
+async function renderTimeSlots(selectedDate = null) {
   const timeSlotsGrid = document.getElementById('timeSlotsGrid');
   if (!timeSlotsGrid) return;
   
   const slots = generateTimeSlots();
   timeSlotsGrid.innerHTML = '';
+  
+  // Get order counts for all slots
+  let slotCounts = {};
+  if (selectedDate) {
+    slotCounts = await getOrderCountsForAllSlots(selectedDate, slots);
+  }
   
   slots.forEach(slot => {
     const btn = document.createElement('button');
@@ -440,6 +584,9 @@ function renderTimeSlots(selectedDate = null) {
     btn.className = 'time-slot-btn';
     btn.textContent = slot;
     btn.dataset.time = slot;
+    
+    const orderCount = slotCounts[slot] || 0;
+    const isFull = orderCount >= 2;
     
     // Check if this time slot is in the past (if date is today)
     if (selectedDate) {
@@ -454,11 +601,26 @@ function renderTimeSlots(selectedDate = null) {
         if (slotTime <= now) {
           btn.classList.add('disabled');
           btn.disabled = true;
+          btn.title = 'This time slot has passed';
         }
       }
     }
     
+    // Disable if slot is full (2 orders already)
+    if (isFull) {
+      btn.classList.add('disabled');
+      btn.disabled = true;
+      btn.title = 'This time slot is full (2 orders already)';
+      btn.textContent = `${slot} (Full)`;
+    }
+    
     btn.addEventListener('click', () => {
+      // Check if slot is full
+      if (isFull) {
+        alert('This time slot is no longer available. Two orders have already been placed for this time. Please select another time slot.');
+        return;
+      }
+      
       // Remove selected class from all buttons
       document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
       
@@ -488,11 +650,11 @@ function setupScheduling() {
     pickupDateInput.value = today;
   }
   
-  // Generate time slots
-  renderTimeSlots(today);
+  // Generate time slots (async)
+  renderTimeSlots(today).catch(err => console.error('Error rendering time slots:', err));
   
-  // Set default time to 11:20 (within business hours 11:00-14:00)
-  let defaultTime = '11:20'; // Default to 11:20 AM
+  // Set default time to 11:10 (within business hours 11:00-14:00)
+  let defaultTime = '11:10'; // Default to 11:10 AM
   
   // If current time is within business hours, use next available slot
   if (withinHours) {
@@ -500,18 +662,12 @@ function setupScheduling() {
     const currentMinutes = now.getMinutes();
     const currentHour = now.getHours();
     
-    // Round up to next 20-minute slot (00, 20, 40)
-    let nextSlotMinutes;
-    if (currentMinutes <= 20) {
-      nextSlotMinutes = 20;
-    } else if (currentMinutes <= 40) {
-      nextSlotMinutes = 40;
-    } else {
-      nextSlotMinutes = 0;
-    }
-    
+    // Round up to next 10-minute slot (00, 10, 20, 30, 40, 50)
+    let nextSlotMinutes = Math.ceil(currentMinutes / 10) * 10;
     let nextSlotHour = currentHour;
-    if (nextSlotMinutes === 0 && currentMinutes > 40) {
+    
+    if (nextSlotMinutes >= 60) {
+      nextSlotMinutes = 0;
       nextSlotHour += 1;
     }
     
@@ -560,8 +716,8 @@ function setupScheduling() {
   
   // Handle date change - re-render time slots
   if (pickupDateInput) {
-    pickupDateInput.addEventListener('change', (e) => {
-      renderTimeSlots(e.target.value);
+    pickupDateInput.addEventListener('change', async (e) => {
+      await renderTimeSlots(e.target.value);
       // Auto-select first available slot
       setTimeout(() => {
         const firstAvailable = document.querySelector('.time-slot-btn:not(.disabled)');
