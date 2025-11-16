@@ -80,7 +80,9 @@ async function payNow() {
     pfand: pfandTotal,
     total: total + pfandTotal,
     scheduling: scheduling,
-    status: 'completed'
+    status: 'pending',
+    payment_method: 'pay_at_pickup',
+    payment_status: 'pending'
   };
 
   // Save order to user profile if logged in
@@ -177,7 +179,8 @@ async function payNow() {
           scheduling: order.scheduling || null,
           source: 'online',
           user_type: currentUser ? currentUser.userType : 'guest',
-          payment_status: 'completed'
+          payment_status: 'pending',
+          payment_method: 'pay_at_pickup'
         }])
         .select()
         .single();
@@ -213,7 +216,7 @@ async function payNow() {
     ? 'Your order is being prepared! (5-7 minutes)'
     : `Your order is scheduled for ${new Date(scheduling.scheduledFor).toLocaleDateString()} at ${new Date(scheduling.scheduledFor).toLocaleTimeString()}`;
     
-  alert(`Order completed successfully!\nOrder #${order.id}\nTotal: €${(total + pfandTotal).toFixed(2)}\n\n${schedulingText}\n\nYou can track it at: http://localhost:3000/tracking.html`);
+  alert(`Order placed successfully!\nOrder #${order.id}\nTotal: €${(total + pfandTotal).toFixed(2)}\n\n${schedulingText}\n\nPlease pay when you collect your order. You will receive a notification when your order is ready!`);
   
   // Redirect to profile if logged in, otherwise to home
   if (currentUser) {
@@ -412,6 +415,63 @@ function isWithinBusinessHours() {
 }
 
 // Order Scheduling Functions
+// Generate time slots (11:00, 11:30, 12:00, 12:30, 13:00, 13:30)
+function generateTimeSlots() {
+  const slots = [];
+  for (let hour = 11; hour < 14; hour++) {
+    slots.push(`${String(hour).padStart(2, '0')}:00`);
+    slots.push(`${String(hour).padStart(2, '0')}:30`);
+  }
+  return slots;
+}
+
+// Render time slot buttons
+function renderTimeSlots(selectedDate = null) {
+  const timeSlotsGrid = document.getElementById('timeSlotsGrid');
+  if (!timeSlotsGrid) return;
+  
+  const slots = generateTimeSlots();
+  timeSlotsGrid.innerHTML = '';
+  
+  slots.forEach(slot => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'time-slot-btn';
+    btn.textContent = slot;
+    btn.dataset.time = slot;
+    
+    // Check if this time slot is in the past (if date is today)
+    if (selectedDate) {
+      const today = new Date().toISOString().split('T')[0];
+      if (selectedDate === today) {
+        const [hours, minutes] = slot.split(':').map(Number);
+        const now = new Date();
+        const slotTime = new Date();
+        slotTime.setHours(hours, minutes, 0, 0);
+        
+        // If slot is in the past, disable it
+        if (slotTime <= now) {
+          btn.classList.add('disabled');
+          btn.disabled = true;
+        }
+      }
+    }
+    
+    btn.addEventListener('click', () => {
+      // Remove selected class from all buttons
+      document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
+      
+      // Add selected class to clicked button
+      if (!btn.disabled) {
+        btn.classList.add('selected');
+        document.getElementById('pickupTimeInput').value = slot;
+      }
+    });
+    
+    timeSlotsGrid.appendChild(btn);
+  });
+}
+
 function setupScheduling() {
   const pickupTimeRadios = document.querySelectorAll('input[name="pickupTime"]');
   const scheduledTimeDiv = document.getElementById('scheduledTime');
@@ -431,24 +491,46 @@ function setupScheduling() {
     pickupDateInput.value = today;
   }
   
+  // Generate time slots
+  renderTimeSlots(today);
+  
   // Set default time to 11:30 (within business hours 11:00-14:00)
   let defaultTime = '11:30'; // Default to 11:30 AM
   
-  // If current time is within business hours, use current time + 30 minutes
+  // If current time is within business hours, use next available slot
   if (withinHours) {
     const now = new Date();
-    now.setMinutes(now.getMinutes() + 30);
-    const calculatedTime = now.toTimeString().slice(0, 5);
-    // Make sure it's still within business hours
-    const calculatedHour = parseInt(calculatedTime.split(':')[0]);
-    if (calculatedHour >= 11 && calculatedHour < 14) {
-      defaultTime = calculatedTime;
+    const currentMinutes = now.getMinutes();
+    const currentHour = now.getHours();
+    
+    // Round up to next 30-minute slot
+    let nextSlotMinutes = currentMinutes <= 30 ? 30 : 60;
+    let nextSlotHour = currentHour;
+    
+    if (nextSlotMinutes === 60) {
+      nextSlotMinutes = 0;
+      nextSlotHour += 1;
+    }
+    
+    // Make sure it's within business hours
+    if (nextSlotHour >= 11 && nextSlotHour < 14) {
+      defaultTime = `${String(nextSlotHour).padStart(2, '0')}:${String(nextSlotMinutes).padStart(2, '0')}`;
     }
   }
   
-  if (pickupTimeInput) {
-    pickupTimeInput.value = defaultTime;
-  }
+  // Select default time slot
+  setTimeout(() => {
+    const defaultBtn = document.querySelector(`.time-slot-btn[data-time="${defaultTime}"]`);
+    if (defaultBtn && !defaultBtn.disabled) {
+      defaultBtn.click();
+    } else {
+      // If default is disabled, select first available slot
+      const firstAvailable = document.querySelector('.time-slot-btn:not(.disabled)');
+      if (firstAvailable) {
+        firstAvailable.click();
+      }
+    }
+  }, 100);
   
   // If outside business hours, disable "Ready Now" and force "Schedule for Later"
   if (!withinHours) {
@@ -519,6 +601,21 @@ function setupScheduling() {
     }
   }
   
+  // Handle date change - re-render time slots
+  if (pickupDateInput) {
+    pickupDateInput.addEventListener('change', (e) => {
+      renderTimeSlots(e.target.value);
+      // Auto-select first available slot
+      setTimeout(() => {
+        const firstAvailable = document.querySelector('.time-slot-btn:not(.disabled)');
+        if (firstAvailable) {
+          firstAvailable.click();
+        }
+      }, 50);
+      validateScheduledTime();
+    });
+  }
+  
   // Handle pickup time selection
   pickupTimeRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
@@ -536,9 +633,8 @@ function setupScheduling() {
     });
   });
   
-  // Validate scheduled time
-  if (pickupDateInput && pickupTimeInput) {
-    pickupDateInput.addEventListener('change', validateScheduledTime);
+  // Validate scheduled time when time slot is selected
+  if (pickupTimeInput) {
     pickupTimeInput.addEventListener('change', validateScheduledTime);
   }
 }
@@ -547,7 +643,11 @@ function validateScheduledTime() {
   const pickupDate = document.getElementById('pickupDate').value;
   const pickupTime = document.getElementById('pickupTimeInput').value;
   
-  if (!pickupDate || !pickupTime) return;
+  if (!pickupDate) return false;
+  if (!pickupTime) {
+    alert('Please select a pickup time slot.');
+    return false;
+  }
   
   // Create date in CET timezone
   const scheduledDateTime = new Date(`${pickupDate}T${pickupTime}:00`);
@@ -560,6 +660,8 @@ function validateScheduledTime() {
     alert('Please select a future date and time for pickup.');
     document.getElementById('pickupDate').value = '';
     document.getElementById('pickupTimeInput').value = '';
+    // Clear selected time slot
+    document.querySelectorAll('.time-slot-btn').forEach(btn => btn.classList.remove('selected'));
     return false;
   }
   
@@ -568,6 +670,8 @@ function validateScheduledTime() {
     alert('Orders can only be scheduled up to 7 days in advance.');
     document.getElementById('pickupDate').value = '';
     document.getElementById('pickupTimeInput').value = '';
+    // Clear selected time slot
+    document.querySelectorAll('.time-slot-btn').forEach(btn => btn.classList.remove('selected'));
     return false;
   }
   
@@ -584,6 +688,8 @@ function validateScheduledTime() {
   if (hour < 11 || hour >= 14) {
     alert('Please select a time between 11:00 AM and 2:00 PM CET.');
     document.getElementById('pickupTimeInput').value = '';
+    // Clear selected time slot
+    document.querySelectorAll('.time-slot-btn').forEach(btn => btn.classList.remove('selected'));
     return false;
   }
   
