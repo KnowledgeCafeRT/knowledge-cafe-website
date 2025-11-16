@@ -415,12 +415,13 @@ function isWithinBusinessHours() {
 }
 
 // Order Scheduling Functions
-// Generate time slots (11:00, 11:30, 12:00, 12:30, 13:00, 13:30)
+// Generate time slots (20-minute intervals from 11:00 to 13:40)
 function generateTimeSlots() {
   const slots = [];
   for (let hour = 11; hour < 14; hour++) {
     slots.push(`${String(hour).padStart(2, '0')}:00`);
-    slots.push(`${String(hour).padStart(2, '0')}:30`);
+    slots.push(`${String(hour).padStart(2, '0')}:20`);
+    slots.push(`${String(hour).padStart(2, '0')}:40`);
   }
   return slots;
 }
@@ -473,12 +474,8 @@ function renderTimeSlots(selectedDate = null) {
 }
 
 function setupScheduling() {
-  const pickupTimeRadios = document.querySelectorAll('input[name="pickupTime"]');
-  const scheduledTimeDiv = document.getElementById('scheduledTime');
   const pickupDateInput = document.getElementById('pickupDate');
   const pickupTimeInput = document.getElementById('pickupTimeInput');
-  const readyNowRadio = document.querySelector('input[name="pickupTime"][value="now"]');
-  const readyNowLabel = readyNowRadio?.closest('label');
   
   // Check if we're within business hours
   const withinHours = isWithinBusinessHours();
@@ -494,8 +491,8 @@ function setupScheduling() {
   // Generate time slots
   renderTimeSlots(today);
   
-  // Set default time to 11:30 (within business hours 11:00-14:00)
-  let defaultTime = '11:30'; // Default to 11:30 AM
+  // Set default time to 11:20 (within business hours 11:00-14:00)
+  let defaultTime = '11:20'; // Default to 11:20 AM
   
   // If current time is within business hours, use next available slot
   if (withinHours) {
@@ -503,12 +500,18 @@ function setupScheduling() {
     const currentMinutes = now.getMinutes();
     const currentHour = now.getHours();
     
-    // Round up to next 30-minute slot
-    let nextSlotMinutes = currentMinutes <= 30 ? 30 : 60;
-    let nextSlotHour = currentHour;
-    
-    if (nextSlotMinutes === 60) {
+    // Round up to next 20-minute slot (00, 20, 40)
+    let nextSlotMinutes;
+    if (currentMinutes <= 20) {
+      nextSlotMinutes = 20;
+    } else if (currentMinutes <= 40) {
+      nextSlotMinutes = 40;
+    } else {
       nextSlotMinutes = 0;
+    }
+    
+    let nextSlotHour = currentHour;
+    if (nextSlotMinutes === 0 && currentMinutes > 40) {
       nextSlotHour += 1;
     }
     
@@ -532,22 +535,10 @@ function setupScheduling() {
     }
   }, 100);
   
-  // If outside business hours, disable "Ready Now" and force "Schedule for Later"
+  // Show message about business hours if closed
   if (!withinHours) {
-    if (readyNowRadio) {
-      readyNowRadio.disabled = true;
-      readyNowRadio.checked = false;
-    }
-    
-    // Check "Schedule for Later" by default
-    const scheduledRadio = document.querySelector('input[name="pickupTime"][value="scheduled"]');
-    if (scheduledRadio) {
-      scheduledRadio.checked = true;
-      scheduledRadio.click(); // Trigger the change event
-    }
-    
-    // Show message about business hours
-    if (readyNowLabel) {
+    const schedulingCard = document.querySelector('.scheduling-card .card-body');
+    if (schedulingCard && !document.getElementById('businessHoursWarning')) {
       const warningMsg = document.createElement('div');
       warningMsg.id = 'businessHoursWarning';
       warningMsg.style.cssText = 'background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px; margin-top: 10px; color: #856404; font-size: 0.9rem;';
@@ -555,45 +546,11 @@ function setupScheduling() {
         <i class="fas fa-clock" style="margin-right: 8px;"></i>
         <strong>We're currently closed!</strong> We're open 11:00-14:00 CET. 
         Current time: ${String(cet.hours).padStart(2, '0')}:${String(cet.minutes).padStart(2, '0')} CET.
-        Please schedule your order for when we're open.
+        Please select a time when we're open.
       `;
-      
-      // Insert warning after scheduling options
-      const schedulingOptions = document.querySelector('.scheduling-options');
-      if (schedulingOptions && !document.getElementById('businessHoursWarning')) {
-        schedulingOptions.parentNode.insertBefore(warningMsg, schedulingOptions.nextSibling);
-      }
-      
-      // Update label to show it's disabled
-      if (readyNowLabel) {
-        readyNowLabel.style.opacity = '0.5';
-        readyNowLabel.style.cursor = 'not-allowed';
-        const smallText = readyNowLabel.querySelector('small');
-        if (smallText) {
-          smallText.textContent = 'Only available 11:00-14:00 CET';
-          smallText.style.color = '#dc3545';
-        }
-      }
+      schedulingCard.insertBefore(warningMsg, schedulingCard.firstChild);
     }
   } else {
-    // Within business hours - enable "Ready Now"
-    if (readyNowRadio) {
-      readyNowRadio.disabled = false;
-      if (!document.querySelector('input[name="pickupTime"]:checked')) {
-        readyNowRadio.checked = true;
-      }
-    }
-    
-    if (readyNowLabel) {
-      readyNowLabel.style.opacity = '1';
-      readyNowLabel.style.cursor = 'pointer';
-      const smallText = readyNowLabel.querySelector('small');
-      if (smallText) {
-        smallText.textContent = 'Prepare immediately (5-7 minutes)';
-        smallText.style.color = '';
-      }
-    }
-    
     // Remove warning if it exists
     const warning = document.getElementById('businessHoursWarning');
     if (warning) {
@@ -616,22 +573,7 @@ function setupScheduling() {
     });
   }
   
-  // Handle pickup time selection
-  pickupTimeRadios.forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      if (e.target.value === 'scheduled') {
-        scheduledTimeDiv.style.display = 'block';
-        // Make date/time required
-        if (pickupDateInput) pickupDateInput.required = true;
-        if (pickupTimeInput) pickupTimeInput.required = true;
-      } else {
-        scheduledTimeDiv.style.display = 'none';
-        // Make date/time not required
-        if (pickupDateInput) pickupDateInput.required = false;
-        if (pickupTimeInput) pickupTimeInput.required = false;
-      }
-    });
-  });
+  // Time slots are always visible now, no need for radio button handlers
   
   // Validate scheduled time when time slot is selected
   if (pickupTimeInput) {
@@ -697,51 +639,38 @@ function validateScheduledTime() {
 }
 
 function getScheduledPickupTime() {
-  const pickupTime = document.querySelector('input[name="pickupTime"]:checked');
+  const pickupDate = document.getElementById('pickupDate').value;
+  const pickupTimeInput = document.getElementById('pickupTimeInput').value;
   
-  if (!pickupTime) {
-    alert('Please select a pickup time option.');
+  if (!pickupDate || !pickupTimeInput) {
+    alert('Please select a pickup date and time slot.');
     return null;
   }
   
-  // Prevent "Ready Now" orders outside business hours
-  if (pickupTime.value === 'now') {
-    if (!isWithinBusinessHours()) {
-      alert('Sorry! We\'re currently closed. We\'re open 11:00-14:00 CET. Please schedule your order for when we\'re open.');
-      // Force schedule option
-      const scheduledRadio = document.querySelector('input[name="pickupTime"][value="scheduled"]');
-      if (scheduledRadio) {
-        scheduledRadio.checked = true;
-        scheduledRadio.click();
-      }
-      return null;
-    }
-    
+  if (!validateScheduledTime()) {
+    return null;
+  }
+  
+  const scheduledDateTime = new Date(`${pickupDate}T${pickupTimeInput}:00`);
+  const now = new Date();
+  const isToday = scheduledDateTime.toDateString() === now.toDateString();
+  const timeDiff = scheduledDateTime - now;
+  const minutesUntilPickup = Math.floor(timeDiff / (1000 * 60));
+  
+  // If scheduled for today and within 15 minutes, treat as "immediate"
+  if (isToday && minutesUntilPickup <= 15) {
     return {
       type: 'immediate',
-      scheduledFor: new Date().toISOString(),
-      displayText: 'Ready Now'
-    };
-  } else {
-    const pickupDate = document.getElementById('pickupDate').value;
-    const pickupTimeInput = document.getElementById('pickupTimeInput').value;
-    
-    if (!pickupDate || !pickupTimeInput) {
-      alert('Please select a pickup date and time.');
-      return null;
-    }
-    
-    if (!validateScheduledTime()) {
-      return null;
-    }
-    
-    const scheduledDateTime = new Date(`${pickupDate}T${pickupTimeInput}`);
-    return {
-      type: 'scheduled',
       scheduledFor: scheduledDateTime.toISOString(),
-      displayText: `Scheduled for ${scheduledDateTime.toLocaleDateString()} at ${scheduledDateTime.toLocaleTimeString()}`
+      displayText: `Ready by ${scheduledDateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
     };
   }
+  
+  return {
+    type: 'scheduled',
+    scheduledFor: scheduledDateTime.toISOString(),
+    displayText: `Scheduled for ${scheduledDateTime.toLocaleDateString()} at ${scheduledDateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
+  };
 }
 
 

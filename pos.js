@@ -694,7 +694,8 @@
             createdAt: o.created_at,
             updatedAt: o.updated_at,
             userType: o.user_type || 'guest',
-            source: o.source || 'online'
+            source: o.source || 'online',
+            scheduling: o.scheduling || null
           }));
         } else {
           console.log('No orders found in Supabase');
@@ -778,6 +779,22 @@
       // Format order ID (show last 8 chars if UUID)
       const orderIdDisplay = typeof o.id === 'string' && o.id.length > 12 ? o.id.substring(o.id.length - 8) : o.id;
       
+      // Get scheduled pickup time if available
+      let scheduledTimeDisplay = '';
+      if (o.scheduling && o.scheduling.scheduledFor) {
+        const scheduledDate = new Date(o.scheduling.scheduledFor);
+        const now = new Date();
+        const isToday = scheduledDate.toDateString() === now.toDateString();
+        
+        if (isToday) {
+          scheduledTimeDisplay = `<div style="color:#8b5e3c;font-weight:600;margin-top:4px;font-size:0.9rem;"><i class="fas fa-clock"></i> Pickup: ${scheduledDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>`;
+        } else {
+          scheduledTimeDisplay = `<div style="color:#8b5e3c;font-weight:600;margin-top:4px;font-size:0.9rem;"><i class="fas fa-calendar"></i> Pickup: ${scheduledDate.toLocaleDateString()} at ${scheduledDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>`;
+        }
+      } else if (o.scheduling && o.scheduling.type === 'immediate') {
+        scheduledTimeDisplay = `<div style="color:#3b82f6;font-weight:600;margin-top:4px;font-size:0.9rem;"><i class="fas fa-bolt"></i> Ready Now</div>`;
+      }
+      
       div.innerHTML = `
         <div class="queue-header">
           <div class="queue-meta">
@@ -789,6 +806,7 @@
           <div class="queue-source" style="color:#5c4033;font-size:0.85rem;margin-top:4px;">
             ${src === 'in_person' ? '<i class="fas fa-walk"></i> Walk-in' : '<i class="fas fa-globe"></i> Online'} • ${o.createdAt ? new Date(o.createdAt).toLocaleTimeString() : ''}
           </div>
+          ${scheduledTimeDisplay}
         </div>
         <div class="queue-items-large">
           ${o.items.map(i => `<div class="queue-item-large"><strong>${i.name}</strong> <span class="queue-item-qty">× ${i.quantity}</span></div>`).join('')}
