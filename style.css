@@ -1214,6 +1214,51 @@ html {
   color: #8b5e3c;
 }
 
+.milk-option.selected {
+  background: #d4a574;
+  border-color: #c49060;
+  color: #2c1810;
+}
+
+.syrup-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.syrup-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 2px solid #eadfd4;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c1810;
+}
+
+.syrup-option:hover {
+  background: #f3ece5;
+  border-color: #d4a574;
+  transform: translateY(-2px);
+}
+
+.syrup-option.selected {
+  background: #d4a574;
+  border-color: #c49060;
+  color: #2c1810;
+}
+
+.syrup-option i {
+  font-size: 1.2rem;
+  color: #8b5e3c;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

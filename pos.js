@@ -24,6 +24,8 @@
       { id: 'syrup-pumpkin', name: 'Pumpkin Spice Syrup', priceStudent: 0.30, priceStaff: 0.30 },
       { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
       { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+      { id: 'syrup-spekuloos', name: 'Spekuloos Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+      { id: 'syrup-gingerbread', name: 'Gingerbread Syrup', priceStudent: 0.30, priceStaff: 0.30 },
       { id: 'pfand', name: 'Pfand Cup', priceStudent: 2.00, priceStaff: 2.00 }
     ]}
   ];
@@ -83,7 +85,7 @@
     // Initial queue render if on queue tab
     const activeTab = document.querySelector('.pos-tab.active')?.getAttribute('data-tab');
     if (activeTab === 'queue') {
-      renderQueue();
+      setTimeout(() => renderQueue().catch(err => console.error('Error rendering initial queue:', err)), 100);
     }
     
     // Set up Supabase real-time subscription
@@ -223,8 +225,14 @@
     
     pendingCoffeeItem = item;
     pendingCoffeePrice = unitPrice;
-    title.textContent = `Choose Milk for ${item.name}`;
+    title.textContent = `Customize ${item.name}`;
     modal.style.display = 'flex';
+    
+    // Reset selections
+    document.querySelectorAll('.milk-option').forEach(opt => opt.classList.remove('selected'));
+    document.querySelectorAll('.syrup-option').forEach(opt => opt.classList.remove('selected'));
+    const noSyrupOption = document.getElementById('noSyrupOption');
+    if (noSyrupOption) noSyrupOption.classList.add('selected');
     
     // Close modal handlers
     const closeBtn = document.getElementById('milkModalClose');
@@ -240,27 +248,76 @@
     const milkOptions = document.querySelectorAll('.milk-option');
     milkOptions.forEach(option => {
       option.onclick = () => {
-        const milkType = option.getAttribute('data-milk');
-        addCoffeeToCart(item, unitPrice, milkType);
+        milkOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+      };
+    });
+    
+    // Syrup option handlers
+    const syrupOptions = document.querySelectorAll('.syrup-option');
+    syrupOptions.forEach(option => {
+      option.onclick = () => {
+        syrupOptions.forEach(opt => opt.classList.remove('selected'));
+        if (noSyrupOption) noSyrupOption.classList.remove('selected');
+        option.classList.add('selected');
+      };
+    });
+    
+    if (noSyrupOption) {
+      noSyrupOption.onclick = () => {
+        syrupOptions.forEach(opt => opt.classList.remove('selected'));
+        noSyrupOption.classList.add('selected');
+      };
+    }
+    
+    // Add to cart button handler
+    const addToCartBtn = document.getElementById('addCoffeeToCartBtn');
+    if (addToCartBtn) {
+      addToCartBtn.onclick = () => {
+        const selectedMilk = document.querySelector('.milk-option.selected')?.getAttribute('data-milk');
+        const selectedSyrup = document.querySelector('.syrup-option.selected')?.getAttribute('data-syrup');
+        
+        if (!selectedMilk) {
+          alert('Please select a milk type');
+          return;
+        }
+        
+        const syrupId = selectedSyrup || null;
+        addCoffeeToCart(item, unitPrice, selectedMilk, syrupId);
         modal.style.display = 'none';
         pendingCoffeeItem = null;
         pendingCoffeePrice = null;
       };
-    });
+    }
   }
 
-  function addCoffeeToCart(item, unitPrice, milkType) {
+  function addCoffeeToCart(item, unitPrice, milkType, syrupId = null) {
+    // Get syrup info if selected
+    let syrupPrice = 0;
+    let syrupName = '';
+    if (syrupId) {
+      const addonsCategory = PRODUCT_CATALOG.find(cat => cat.id === 'addons');
+      const syrup = addonsCategory?.items.find(s => s.id === syrupId);
+      if (syrup) {
+        syrupPrice = priceMode === 'student' ? syrup.priceStudent : syrup.priceStaff;
+        syrupName = syrup.name;
+      }
+    }
+    
     const milkLabel = milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
-    const cartKey = `${item.id}_${milkType}`;
+    const syrupLabel = syrupName ? ` + ${syrupName}` : '';
+    const cartKey = `${item.id}_${milkType}_${syrupId || 'none'}`;
     
     if (!cart[cartKey]) {
       cart[cartKey] = { 
         id: item.id, 
-        name: item.name + milkLabel, 
-        price: unitPrice, 
+        name: item.name + milkLabel + syrupLabel, 
+        price: unitPrice + syrupPrice, 
         qty: 0, 
         pfand: false,
-        milk: milkType
+        milk: milkType,
+        syrup: syrupId || null,
+        syrupPrice: syrupPrice
       };
     }
     cart[cartKey].qty += 1;
@@ -651,14 +708,17 @@
   }
 
   async function renderQueue() {
-    const walkInList = document.getElementById('walkInQueueList');
-    const onlineList = document.getElementById('onlineQueueList');
-    if (!walkInList || !onlineList) return;
-    
-    let queue = [];
-    
-    // Try to load from Supabase first
     try {
+      const walkInList = document.getElementById('walkInQueueList');
+      const onlineList = document.getElementById('onlineQueueList');
+      if (!walkInList || !onlineList) {
+        console.warn('Queue list elements not found. walkInList:', !!walkInList, 'onlineList:', !!onlineList);
+        return;
+      }
+      
+      let queue = [];
+    
+      // Try to load from Supabase first
       const supabase = await window.getSupabaseClient();
       if (supabase) {
         // Get today's orders that are not completed
@@ -709,30 +769,35 @@
         // Supabase not available, use localStorage
         queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
       }
-    } catch (error) {
-      console.error('Error with Supabase:', error);
-      // Fall back to localStorage
-      queue = JSON.parse(localStorage.getItem('kcafe_order_queue')) || [];
-    }
-    
-    // Filter to only today's orders (for localStorage fallback)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    queue = queue.filter(o => {
-      if (!o.createdAt) return false;
-      const orderDate = new Date(o.createdAt);
-      orderDate.setHours(0, 0, 0, 0);
-      return orderDate.getTime() === today.getTime();
-    });
-    
-    // Separate orders by source
-    const walkInOrders = queue.filter(o => o.source === 'in_person');
-    const onlineOrders = queue.filter(o => o.source !== 'in_person');
-    
-    // Sort by status priority, then by newest first
-    const statusOrder = { 'pending': 0, 'preparing': 1, 'ready': 2, 'completed': 3 };
-    const sortOrders = (orders) => {
-      return orders.sort((a, b) => {
+      
+      // Filter to only today's orders (for localStorage fallback)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      queue = queue.filter(o => {
+        if (!o.createdAt) return false;
+        const orderDate = new Date(o.createdAt);
+        orderDate.setHours(0, 0, 0, 0);
+        return orderDate.getTime() === today.getTime();
+      });
+      
+      // Separate orders by source
+      const walkInOrders = queue.filter(o => o.source === 'in_person');
+      const onlineOrders = queue.filter(o => o.source !== 'in_person');
+      
+      // Sort by status priority, then by newest first
+      const statusOrder = { 'pending': 0, 'preparing': 1, 'ready': 2, 'completed': 3 };
+      const sortOrders = (orders) => {
+        return orders.sort((a, b) => {
+          const aStatus = statusOrder[a.status] ?? 4;
+          const bStatus = statusOrder[b.status] ?? 4;
+          if (aStatus !== bStatus) return aStatus - bStatus;
+          const aDate = new Date(a.createdAt || 0).getTime();
+          const bDate = new Date(b.createdAt || 0).getTime();
+          return bDate - aDate;
+        });
+      };
+      
+      walkInOrders.sort((a, b) => {
         const aStatus = statusOrder[a.status] ?? 4;
         const bStatus = statusOrder[b.status] ?? 4;
         if (aStatus !== bStatus) return aStatus - bStatus;
@@ -740,31 +805,33 @@
         const bDate = new Date(b.createdAt || 0).getTime();
         return bDate - aDate;
       });
-    };
+      
+      onlineOrders.sort((a, b) => {
+        const aStatus = statusOrder[a.status] ?? 4;
+        const bStatus = statusOrder[b.status] ?? 4;
+        if (aStatus !== bStatus) return aStatus - bStatus;
+        const aDate = new Date(a.createdAt || 0).getTime();
+        const bDate = new Date(b.createdAt || 0).getTime();
+        return bDate - aDate;
+      });
     
-    walkInOrders.sort((a, b) => {
-      const aStatus = statusOrder[a.status] ?? 4;
-      const bStatus = statusOrder[b.status] ?? 4;
-      if (aStatus !== bStatus) return aStatus - bStatus;
-      const aDate = new Date(a.createdAt || 0).getTime();
-      const bDate = new Date(b.createdAt || 0).getTime();
-      return bDate - aDate;
-    });
-    
-    onlineOrders.sort((a, b) => {
-      const aStatus = statusOrder[a.status] ?? 4;
-      const bStatus = statusOrder[b.status] ?? 4;
-      if (aStatus !== bStatus) return aStatus - bStatus;
-      const aDate = new Date(a.createdAt || 0).getTime();
-      const bDate = new Date(b.createdAt || 0).getTime();
-      return bDate - aDate;
-    });
-    
-    // Render walk-in orders
-    renderOrderList(walkInList, walkInOrders);
-    
-    // Render online orders
-    renderOrderList(onlineList, onlineOrders);
+      // Render walk-in orders
+      renderOrderList(walkInList, walkInOrders);
+      
+      // Render online orders
+      renderOrderList(onlineList, onlineOrders);
+    } catch (error) {
+      console.error('Error in renderQueue:', error);
+      // Show error message to user
+      const walkInList = document.getElementById('walkInQueueList');
+      const onlineList = document.getElementById('onlineQueueList');
+      if (walkInList) {
+        walkInList.innerHTML = '<div style="text-align:center;padding:40px;color:#dc3545;"><i class="fas fa-exclamation-triangle" style="font-size:3rem;opacity:0.3;margin-bottom:10px;"></i><p>Error loading queue. Please refresh the page.</p></div>';
+      }
+      if (onlineList) {
+        onlineList.innerHTML = '<div style="text-align:center;padding:40px;color:#dc3545;"><i class="fas fa-exclamation-triangle" style="font-size:3rem;opacity:0.3;margin-bottom:10px;"></i><p>Error loading queue. Please refresh the page.</p></div>';
+      }
+    }
   }
   
   function renderOrderList(listElement, orders) {
@@ -875,8 +942,15 @@
       const tab = btn.getAttribute('data-tab');
       const newEl = document.getElementById('tabNew');
       const queueEl = document.getElementById('tabQueue');
-      if (tab === 'new') { newEl.style.display = ''; queueEl.style.display = 'none'; }
-      else { newEl.style.display = 'none'; queueEl.style.display = ''; renderQueue(); }
+      if (tab === 'new') { 
+        newEl.style.display = ''; 
+        queueEl.style.display = 'none'; 
+      } else { 
+        newEl.style.display = 'none'; 
+        queueEl.style.display = ''; 
+        // Small delay to ensure DOM is ready
+        setTimeout(() => renderQueue(), 50);
+      }
     }));
   }
 

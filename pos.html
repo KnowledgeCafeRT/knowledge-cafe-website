@@ -227,6 +227,30 @@
     .btn-secondary:hover {
       background: #eadfd4;
     }
+    .queue-columns-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .queue-column {
+      display: flex;
+      flex-direction: column;
+    }
+    .queue-column-header {
+      font-family: 'Fredoka', sans-serif;
+      color: #2c1810;
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      padding: 12px 16px;
+      background: #f3ece5;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .queue-column-header i {
+      color: #8b5e3c;
+    }
     .queue-list { 
       display: flex; 
       flex-direction: column; 
@@ -234,6 +258,11 @@
       max-height: 600px; 
       overflow-y: auto; 
       padding-right: 5px;
+    }
+    @media (max-width: 1200px) {
+      .queue-columns-container {
+        grid-template-columns: 1fr;
+      }
     }
     .queue-card { 
       border: 2px solid #eadfd4; 
@@ -578,7 +607,20 @@
         </div>
 
         <div id="tabQueue" style="display:none;">
-          <div class="queue-list" id="queueList"></div>
+          <div class="queue-columns-container">
+            <div class="queue-column">
+              <h3 class="queue-column-header">
+                <i class="fas fa-walk"></i> Walk-in Orders
+              </h3>
+              <div class="queue-list" id="walkInQueueList"></div>
+            </div>
+            <div class="queue-column">
+              <h3 class="queue-column-header">
+                <i class="fas fa-globe"></i> Online Pre-orders
+              </h3>
+              <div class="queue-list" id="onlineQueueList"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -603,21 +645,58 @@
     </div>
   </div>
 
-  <!-- Milk Selection Modal -->
+  <!-- Coffee Customization Modal -->
   <div id="milkModal" class="milk-modal" style="display:none;">
-    <div class="milk-modal-content">
+    <div class="milk-modal-content" style="max-width: 500px;">
       <div class="milk-modal-header">
-        <h3 id="milkModalTitle">Choose Milk</h3>
+        <h3 id="milkModalTitle">Customize Coffee</h3>
         <button class="milk-modal-close" id="milkModalClose">&times;</button>
       </div>
-      <div class="milk-options">
-        <button class="milk-option" data-milk="cow">
-          <i class="fas fa-mug-hot"></i>
-          <span>Cow Milk</span>
-        </button>
-        <button class="milk-option" data-milk="oat">
-          <i class="fas fa-leaf"></i>
-          <span>Oat Milk</span>
+      <div style="padding: 20px;">
+        <div style="margin-bottom: 25px;">
+          <h4 style="margin: 0 0 12px 0; color: #2c1810; font-size: 1.1rem;">Choose Milk:</h4>
+          <div class="milk-options" style="display: flex; gap: 10px;">
+            <button class="milk-option" data-milk="cow" style="flex: 1;">
+              <i class="fas fa-mug-hot"></i>
+              <span>Cow Milk</span>
+            </button>
+            <button class="milk-option" data-milk="oat" style="flex: 1;">
+              <i class="fas fa-leaf"></i>
+              <span>Oat Milk</span>
+            </button>
+          </div>
+        </div>
+        <div style="margin-bottom: 25px;">
+          <h4 style="margin: 0 0 12px 0; color: #2c1810; font-size: 1.1rem;">Add Syrup (Optional):</h4>
+          <div class="syrup-options" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <button class="syrup-option" id="noSyrupOption" data-syrup="" style="grid-column: 1 / -1;">
+              <i class="fas fa-times"></i>
+              <span>No Syrup</span>
+            </button>
+            <button class="syrup-option" data-syrup="syrup-vanilla">
+              <i class="fas fa-candy-cane"></i>
+              <span>Vanilla</span>
+            </button>
+            <button class="syrup-option" data-syrup="syrup-hazelnut">
+              <i class="fas fa-candy-cane"></i>
+              <span>Hazelnut</span>
+            </button>
+            <button class="syrup-option" data-syrup="syrup-pumpkin">
+              <i class="fas fa-candy-cane"></i>
+              <span>Pumpkin Spice</span>
+            </button>
+            <button class="syrup-option" data-syrup="syrup-spekuloos">
+              <i class="fas fa-candy-cane"></i>
+              <span>Spekuloos</span>
+            </button>
+            <button class="syrup-option" data-syrup="syrup-gingerbread">
+              <i class="fas fa-candy-cane"></i>
+              <span>Gingerbread</span>
+            </button>
+          </div>
+        </div>
+        <button id="addCoffeeToCartBtn" class="btn-primary" style="width: 100%; padding: 14px; font-size: 1.1rem; margin-top: 10px;">
+          <i class="fas fa-plus"></i> Add to Cart
         </button>
       </div>
     </div>

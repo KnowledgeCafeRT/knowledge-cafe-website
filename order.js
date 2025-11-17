@@ -20,7 +20,9 @@ const PRODUCT_CATALOG = [
     { id: 'extra-shot', name: 'Extra Shot', priceStudent: 0.50, priceStaff: 0.50 },
     { id: 'syrup-pumpkin', name: 'Pumpkin Spice Syrup', priceStudent: 0.30, priceStaff: 0.30 },
     { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-    { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 }
+    { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+    { id: 'syrup-spekuloos', name: 'Spekuloos Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+    { id: 'syrup-gingerbread', name: 'Gingerbread Syrup', priceStudent: 0.30, priceStaff: 0.30 }
   ]}
 ];
 
@@ -74,8 +76,13 @@ function showMilkModal(product) {
   if (!modal || !title) return;
   
   pendingCoffeeItem = product;
-  title.textContent = `Choose Milk for ${product.name}`;
+  title.textContent = `Customize ${product.name}`;
   modal.style.display = 'flex';
+  
+  // Reset selections
+  document.querySelectorAll('.milk-option').forEach(opt => opt.classList.remove('selected'));
+  document.querySelectorAll('.syrup-option').forEach(opt => opt.classList.remove('selected'));
+  document.getElementById('noSyrupOption')?.classList.add('selected');
   
   // Close modal handlers
   const closeBtn = document.getElementById('milkModalClose');
@@ -88,36 +95,91 @@ function showMilkModal(product) {
   const milkOptions = document.querySelectorAll('.milk-option');
   milkOptions.forEach(option => {
     option.onclick = () => {
-      const milkType = option.getAttribute('data-milk');
-      addCoffeeToCart(product, milkType);
+      // Remove selected from all milk options
+      milkOptions.forEach(opt => opt.classList.remove('selected'));
+      // Add selected to clicked option
+      option.classList.add('selected');
+    };
+  });
+  
+  // Syrup option handlers
+  const syrupOptions = document.querySelectorAll('.syrup-option');
+  const noSyrupOption = document.getElementById('noSyrupOption');
+  
+  syrupOptions.forEach(option => {
+    option.onclick = () => {
+      // Remove selected from all syrup options (including no syrup)
+      syrupOptions.forEach(opt => opt.classList.remove('selected'));
+      if (noSyrupOption) noSyrupOption.classList.remove('selected');
+      // Add selected to clicked option
+      option.classList.add('selected');
+    };
+  });
+  
+  if (noSyrupOption) {
+    noSyrupOption.onclick = () => {
+      syrupOptions.forEach(opt => opt.classList.remove('selected'));
+      noSyrupOption.classList.add('selected');
+    };
+  }
+  
+  // Add to cart button handler
+  const addToCartBtn = document.getElementById('addCoffeeToCartBtn');
+  if (addToCartBtn) {
+    addToCartBtn.onclick = () => {
+      const selectedMilk = document.querySelector('.milk-option.selected')?.getAttribute('data-milk');
+      const selectedSyrup = document.querySelector('.syrup-option.selected')?.getAttribute('data-syrup');
+      
+      if (!selectedMilk) {
+        alert('Please select a milk type');
+        return;
+      }
+      
+      const syrupId = selectedSyrup || null;
+      addCoffeeToCart(product, selectedMilk, syrupId);
       modal.style.display = 'none';
       pendingCoffeeItem = null;
     };
-  });
+  }
 }
 
-function addCoffeeToCart(product, milkType) {
+function addCoffeeToCart(product, milkType, syrupId = null) {
   const cart = loadCart();
   const role = getRole();
   const usePfand = getPfandSetting();
   const unitPrice = priceFor(product, role);
   
-  // Create unique key for coffee with milk selection
-  const cartKey = `${product.id}_${milkType}`;
+  // Get syrup info if selected
+  let syrupPrice = 0;
+  let syrupName = '';
+  if (syrupId) {
+    const addonsCategory = PRODUCT_CATALOG.find(cat => cat.id === 'addons');
+    const syrup = addonsCategory?.items.find(item => item.id === syrupId);
+    if (syrup) {
+      syrupPrice = priceFor(syrup, role);
+      syrupName = syrup.name;
+    }
+  }
+  
+  // Create unique key for coffee with milk and syrup selection
+  const cartKey = `${product.id}_${milkType}_${syrupId || 'none'}`;
   
   if (!cart[cartKey]) {
     const milkLabel = milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
+    const syrupLabel = syrupName ? ` + ${syrupName}` : '';
     cart[cartKey] = { 
       id: product.id,
-      name: product.name + milkLabel, 
-      price: unitPrice, 
+      name: product.name + milkLabel + syrupLabel, 
+      price: unitPrice + syrupPrice, 
       qty: 0,
       pfand: usePfand,
-      milk: milkType
+      milk: milkType,
+      syrup: syrupId || null,
+      syrupPrice: syrupPrice
     };
   }
   
-  cart[cartKey].price = unitPrice;
+  cart[cartKey].price = unitPrice + syrupPrice;
   cart[cartKey].pfand = usePfand;
   cart[cartKey].qty += 1; 
   
@@ -126,7 +188,8 @@ function addCoffeeToCart(product, milkType) {
   
   const pfandText = usePfand ? ' (with Pfand)' : '';
   const milkText = milkType === 'cow' ? ' with Cow Milk' : ' with Oat Milk';
-  showToast(`${product.name}${milkText} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
+  const syrupText = syrupName ? ` + ${syrupName}` : '';
+  showToast(`${product.name}${milkText}${syrupText} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
 }
 
 function addToCart(product) {
