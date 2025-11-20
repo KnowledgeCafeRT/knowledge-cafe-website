@@ -851,85 +851,247 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Footer */
+:root {
+  --Blue: #214598;
+}
+
 .footer {
-  background: #2c2c2c;
-  color: white;
-  padding: 3rem 0 1rem;
+  background: #214598;
+  color: #FFF;
+  padding: 0;
+  position: relative;
+  width: 100%;
 }
 
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+.footer-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 70px 49px 0;
+  position: relative;
+  min-height: 735px;
 }
 
-.footer-logo {
+.footer-left {
+  position: absolute;
+  left: 49px;
+  top: 70px;
+}
+
+.footer-brand {
   display: flex;
+  width: 201px;
+  height: 115px;
+  padding-right: 0.488px;
+  justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #8B4513;
-  margin-bottom: 1rem;
+  flex-shrink: 0;
+  position: relative;
 }
 
-.footer-logo i {
-  margin-right: 0.5rem;
-  font-size: 1.8rem;
+.footer-logo-text {
+  color: #FFF;
+  font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 26.029px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.26px;
+  text-transform: uppercase;
+  position: absolute;
+  left: -17px;
+  top: 0px;
 }
 
-.footer-section h4 {
-  color: #8B4513;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
+.footer-logo-cafe {
+  color: #FFF;
+  font-family: 'Italiana', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 97.2px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 119.044%;
+  letter-spacing: -4.86px;
+  text-transform: uppercase;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 201px;
+  height: 116px;
 }
 
-.footer-section ul {
-  list-style: none;
+.footer-tagline {
+  width: 193px;
+  height: 67px;
+  color: #FFF;
+  font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 26.573px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 119.044%;
+  letter-spacing: -1.329px;
+  text-transform: uppercase;
+  position: absolute;
+  left: 0px;
+  top: 222px;
 }
 
-.footer-section ul li {
-  margin-bottom: 0.5rem;
+.footer-center {
+  position: absolute;
+  left: 507px;
+  top: 35px;
 }
 
-.footer-section ul li a {
-  color: #ccc;
+.footer-nav {
+  display: flex;
+  width: 525px;
+  height: 28px;
+  padding: 0 283.266px 0 0.236px;
+  align-items: flex-start;
+  gap: 37.547px;
+  flex-shrink: 0;
+  margin-bottom: 40px;
+}
+
+.footer-nav-link {
+  width: 110px;
+  height: 28px;
+  color: #FFF;
+  font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 119.044%;
+  letter-spacing: -0.72px;
+  text-transform: uppercase;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.footer-section ul li a:hover {
-  color: #8B4513;
+.footer-nav-link.active {
+  color: #214598;
+  font-size: 23.385px;
+  letter-spacing: -0.702px;
 }
 
-.social-links {
-  display: flex;
-  gap: 1rem;
+.footer-nav-link:hover {
+  opacity: 0.8;
 }
 
-.social-links a {
+.footer-links {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #8B4513;
-  color: white;
-  border-radius: 50%;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-links-title {
+  width: 96px;
+  height: 46px;
+  color: #FFF;
+  font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 119.044%;
+  letter-spacing: -0.72px;
+  text-transform: uppercase;
+  margin: 0 0 20px 0;
+}
+
+.footer-link {
+  width: 96px;
+  height: 28px;
+  color: #FFF;
+  font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 119.044%;
+  letter-spacing: -0.72px;
+  text-transform: uppercase;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: color 0.3s ease;
 }
 
-.social-links a:hover {
-  background: #A0522D;
-  transform: translateY(-2px);
+.footer-link:hover {
+  opacity: 0.8;
+}
+
+.footer-right {
+  position: absolute;
+  left: 820px;
+  top: 32px;
+}
+
+.footer-instagram-header {
+  width: 355px;
+  height: 56px;
+  color: #FFF;
+  font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 23.385px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 119.044%;
+  letter-spacing: -0.702px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.footer-instagram-frame {
+  width: 535px;
+  height: 392px;
+  background: #FFF;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.footer-instagram-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 .footer-bottom {
-  text-align: center;
-  padding-top: 2rem;
-  border-top: 1px solid #444;
-  color: #ccc;
+  position: absolute;
+  left: 51px;
+  top: 666px;
+  width: calc(100% - 102px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid #FFF;
+}
+
+.footer-copyright {
+  color: #FFF;
+  font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 26.573px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 119.044%;
+  letter-spacing: -1.329px;
+  text-transform: uppercase;
+  width: 383px;
+  height: 64px;
+}
+
+.footer-impressum {
+  width: 178px;
+  height: 17px;
+  color: #FFF;
+  font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 26.573px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 119.044%;
+  letter-spacing: -1.329px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.footer-impressum:hover {
+  opacity: 0.8;
 }
 
 /* Responsive Design */
@@ -1016,6 +1178,112 @@ h1, h2, h3, h4, h5, h6 {
 
   .stamp-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Footer Responsive */
+  .footer-container {
+    padding: 40px 20px 20px;
+    min-height: auto;
+    position: relative;
+  }
+
+  .footer-left,
+  .footer-center,
+  .footer-right {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .footer-brand {
+    width: 100%;
+    height: auto;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .footer-logo-text {
+    position: relative;
+    left: 0;
+    top: 0;
+    font-size: 20px;
+  }
+
+  .footer-logo-cafe {
+    position: relative;
+    left: 0;
+    top: 0;
+    font-size: 60px;
+    width: auto;
+    height: auto;
+    margin-left: 10px;
+  }
+
+  .footer-tagline {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    font-size: 18px;
+    margin-top: 1rem;
+  }
+
+  .footer-nav {
+    width: 100%;
+    padding: 0;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .footer-nav-link {
+    font-size: 18px;
+  }
+
+  .footer-links {
+    gap: 15px;
+  }
+
+  .footer-link {
+    font-size: 18px;
+  }
+
+  .footer-instagram-header {
+    width: 100%;
+    height: auto;
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .footer-instagram-frame {
+    width: 100%;
+    height: 300px;
+  }
+
+  .footer-bottom {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding-top: 20px;
+    margin-top: 2rem;
+  }
+
+  .footer-copyright {
+    width: 100%;
+    height: auto;
+    font-size: 18px;
+  }
+
+  .footer-impressum {
+    width: auto;
+    height: auto;
+    font-size: 18px;
   }
 }
 
