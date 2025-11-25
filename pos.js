@@ -9,6 +9,7 @@
       { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.50, priceStaff: 3.00 },
       { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
       { id: 'cafe-latte', name: 'Cafe Latte', priceStudent: 2.70, priceStaff: 3.20 },
+      { id: 'hot-chocolate', name: 'Hot Chocolate', priceStudent: 2.90, priceStaff: 3.40 },
       { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
       { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 },
       { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 3.00, priceStaff: 3.50 }
@@ -252,6 +253,10 @@
         option.classList.add('selected');
       };
     });
+    if (milkOptions.length > 0) {
+      milkOptions.forEach(opt => opt.classList.remove('selected'));
+      milkOptions[0].classList.add('selected');
+    }
     
     // Syrup option handlers
     const syrupOptions = document.querySelectorAll('.syrup-option');
@@ -270,20 +275,51 @@
       };
     }
     
+    // Cup option handlers
+    const cupOptions = document.querySelectorAll('.cup-option');
+    if (cupOptions.length > 0) {
+      cupOptions.forEach(opt => opt.classList.remove('selected'));
+      cupOptions[0].classList.add('selected');
+    }
+    cupOptions.forEach(option => {
+      option.onclick = () => {
+        cupOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+      };
+    });
+    
     // Add to cart button handler
     const addToCartBtn = document.getElementById('addCoffeeToCartBtn');
     if (addToCartBtn) {
       addToCartBtn.onclick = () => {
         const selectedMilk = document.querySelector('.milk-option.selected')?.getAttribute('data-milk');
         const selectedSyrup = document.querySelector('.syrup-option.selected')?.getAttribute('data-syrup');
+        const selectedCup = document.querySelector('.cup-option.selected');
         
         if (!selectedMilk) {
           alert('Please select a milk type');
           return;
         }
+        if (!selectedCup) {
+          alert('Please select a cup type');
+          return;
+        }
+        
+        const cupType = selectedCup.getAttribute('data-cup');
+        const cupLabel = selectedCup.getAttribute('data-label') || '';
+        const cupPriceStudent = parseFloat(selectedCup.getAttribute('data-price-student') || '0');
+        const cupPriceStaff = parseFloat(selectedCup.getAttribute('data-price-staff') || '0');
+        const cupPfand = selectedCup.getAttribute('data-pfand') === 'true';
+        const cupPrice = priceMode === 'student' ? cupPriceStudent : cupPriceStaff;
+        const cupPfandAmount = cupPfand ? cupPrice : 0;
         
         const syrupId = selectedSyrup || null;
-        addCoffeeToCart(item, unitPrice, selectedMilk, syrupId);
+        addCoffeeToCart(item, unitPrice, selectedMilk, syrupId, {
+          cupType,
+          cupLabel,
+          cupPrice,
+          cupPfandAmount
+        });
         modal.style.display = 'none';
         pendingCoffeeItem = null;
         pendingCoffeePrice = null;
@@ -291,7 +327,7 @@
     }
   }
 
-  function addCoffeeToCart(item, unitPrice, milkType, syrupId = null) {
+  function addCoffeeToCart(item, unitPrice, milkType, syrupId = null, cupConfig) {
     // Get syrup info if selected
     let syrupPrice = 0;
     let syrupName = '';
@@ -306,18 +342,27 @@
     
     const milkLabel = milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
     const syrupLabel = syrupName ? ` + ${syrupName}` : '';
-    const cartKey = `${item.id}_${milkType}_${syrupId || 'none'}`;
+    const cupType = cupConfig?.cupType || 'togo';
+    const cupLabel = cupConfig?.cupLabel ? ` • ${cupConfig.cupLabel}` : '';
+    const cupPrice = cupConfig?.cupPrice || 0;
+    const cupPfandAmount = cupConfig?.cupPfandAmount || 0;
+    const cartKey = `${item.id}_${milkType}_${syrupId || 'none'}_${cupType}`;
     
     if (!cart[cartKey]) {
       cart[cartKey] = { 
-        id: item.id, 
-        name: item.name + milkLabel + syrupLabel, 
-        price: unitPrice + syrupPrice, 
+        id: cartKey,
+        productId: item.id,
+        name: item.name + milkLabel + syrupLabel + cupLabel, 
+        price: unitPrice + syrupPrice + cupPrice, 
         qty: 0, 
         pfand: false,
         milk: milkType,
         syrup: syrupId || null,
-        syrupPrice: syrupPrice
+        syrupPrice: syrupPrice,
+        cupType,
+        cupPrice,
+        cupLabel: cupConfig?.cupLabel || '',
+        pfandPerUnit: cupPfandAmount
       };
     }
     cart[cartKey].qty += 1;
@@ -334,7 +379,7 @@
     // For non-coffee items, add directly
     const key = item.id;
     if (!cart[key]) {
-      cart[key] = { id: item.id, name: item.name, price: unitPrice, qty: 0, pfand: item.id === 'pfand' };
+      cart[key] = { id: key, productId: item.id, name: item.name, price: unitPrice, qty: 0, pfand: item.id === 'pfand' };
     }
     cart[key].qty += 1;
     renderCart();
@@ -348,10 +393,13 @@
     let pfand = 0;
     Object.values(cart).forEach(line => {
       const lineTotal = line.price * line.qty;
-      if (line.id === 'pfand' || line.pfand) {
+      const pfandPortion = (line.pfandPerUnit || 0) * line.qty;
+      const isPfandLine = line.pfand || line.productId === 'pfand';
+      if (isPfandLine) {
         pfand += lineTotal;
       } else {
-        subtotal += lineTotal;
+        subtotal += lineTotal - pfandPortion;
+        pfand += pfandPortion;
       }
       const row = document.createElement('div');
       row.className = 'cart-line';
@@ -389,10 +437,13 @@
     let subtotal = 0; let pfandTotal = 0;
     items.forEach(line => {
       const lineTotal = line.price * line.qty;
-      if (line.id === 'pfand' || line.pfand) {
+      const pfandPortion = (line.pfandPerUnit || 0) * line.qty;
+      const isPfandLine = line.pfand || line.productId === 'pfand';
+      if (isPfandLine) {
         pfandTotal += lineTotal;
       } else {
-        subtotal += lineTotal;
+        subtotal += lineTotal - pfandPortion;
+        pfandTotal += pfandPortion;
       }
     });
     const taxes = 0;
@@ -402,7 +453,14 @@
     const email = /** @type {HTMLInputElement} */(document.getElementById('posCustomerEmail'))?.value?.trim() || '';
 
     const now = new Date().toISOString();
-    const orderItems = items.map(line => ({ id: line.id, name: line.name, price: line.price, quantity: line.qty, pfand: !!line.pfand }));
+    const orderItems = items.map(line => ({
+      id: line.productId || line.id,
+      name: line.name,
+      price: line.price,
+      quantity: line.qty,
+      pfand: !!(line.pfand || (line.pfandPerUnit || 0)),
+      pfand_amount: line.pfand ? line.price : (line.pfandPerUnit || 0)
+    }));
 
     // Try to save to Supabase first
     try {
@@ -420,13 +478,14 @@
             status: 'pending',
             source: 'in_person',
             user_type: 'guest',
-            payment_status: 'completed'
+            payment_status: 'pending'
           }])
           .select()
           .single();
         
         if (!error && data) {
-          alert(`Order #${data.id.substring(0, 8)} submitted! Total ${formatPrice(total)}`);
+          // Send order to Stripe Terminal for payment
+          await processStripeTerminalPayment(data.id, total, name, email, orderItems);
           clearCart();
           renderQueue();
           return;
@@ -976,6 +1035,192 @@
       const first = PRODUCT_CATALOG[0]?.id || 'coffee';
       renderItems(first);
     });
+  }
+
+  // Process payment via Stripe Terminal
+  async function processStripeTerminalPayment(orderId, total, customerName, customerEmail, orderItems) {
+    try {
+      // Create order description
+      const orderDescription = orderItems.map(item => `${item.quantity}x ${item.name}`).join(', ');
+      
+      // Call backend API to create payment intent for Stripe Terminal
+      const apiEndpoint = window.STRIPE_CONFIG?.terminalEndpoint || '/api/stripe/terminal/create-payment-intent';
+      
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          orderId: orderId,
+          amount: Math.round(total * 100), // Convert to cents
+          currency: 'eur',
+          customerEmail: customerEmail,
+          customerName: customerName,
+          orderDescription: orderDescription || `Order #${orderId.substring(0, 8)}`
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create payment intent');
+      }
+      
+      const result = await response.json();
+      
+      if (result.success && result.paymentIntent) {
+        // Show payment status modal
+        showTerminalPaymentModal(orderId, total, result.paymentIntent);
+        
+        // Poll for payment status
+        pollPaymentStatus(orderId, result.paymentIntent.id);
+      } else {
+        throw new Error(result.error || 'Failed to create payment intent');
+      }
+    } catch (error) {
+      console.error('Error processing Stripe Terminal payment:', error);
+      // Fallback: Show order confirmation without payment
+      alert(`Order #${orderId.substring(0, 8)} submitted! Total ${formatPrice(total)}\n\nNote: Payment terminal connection failed. Customer can pay at pickup.`);
+    }
+  }
+  
+  // Show terminal payment status modal
+  function showTerminalPaymentModal(orderId, total, paymentIntent) {
+    const modal = document.getElementById('terminalPaymentModal');
+    if (!modal) {
+      console.error('Terminal payment modal not found');
+      return;
+    }
+    
+    // Update modal content
+    const orderIdEl = document.getElementById('terminalOrderId');
+    const totalEl = document.getElementById('terminalTotal');
+    const statusEl = document.getElementById('terminalStatus');
+    
+    if (orderIdEl) orderIdEl.textContent = `Order #${orderId.substring(0, 8)}`;
+    if (totalEl) totalEl.textContent = formatPrice(total);
+    if (statusEl) {
+      statusEl.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+          <i class="fas fa-credit-card" style="font-size: 3rem; color: #d4a574; margin-bottom: 15px;"></i>
+          <p style="font-size: 1.1rem; color: #2c1810; margin-bottom: 10px;">
+            <strong>Waiting for payment...</strong>
+          </p>
+          <p style="color: #5c4033; font-size: 0.95rem;">
+            Order sent to Stripe Terminal device.<br>
+            Customer can tap/swipe card on terminal.
+          </p>
+        </div>
+      `;
+    }
+    
+    // Show modal
+    modal.style.display = 'flex';
+  }
+  
+  // Update payment status
+  function updateTerminalPaymentStatus(status, message) {
+    const statusEl = document.getElementById('terminalStatus');
+    if (!statusEl) return;
+    
+    if (status === 'succeeded') {
+      statusEl.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+          <i class="fas fa-check-circle" style="font-size: 3rem; color: #10b981; margin-bottom: 15px;"></i>
+          <p style="font-size: 1.1rem; color: #2c1810; margin-bottom: 10px;">
+            <strong>Payment Successful!</strong>
+          </p>
+          <p style="color: #5c4033; font-size: 0.95rem;">
+            ${message || 'Payment completed successfully.'}
+          </p>
+        </div>
+      `;
+      
+      // Auto-close modal after 3 seconds
+      setTimeout(() => {
+        const modal = document.getElementById('terminalPaymentModal');
+        if (modal) modal.style.display = 'none';
+      }, 3000);
+    } else if (status === 'failed' || status === 'canceled') {
+      statusEl.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+          <i class="fas fa-times-circle" style="font-size: 3rem; color: #dc3545; margin-bottom: 15px;"></i>
+          <p style="font-size: 1.1rem; color: #2c1810; margin-bottom: 10px;">
+            <strong>Payment ${status === 'failed' ? 'Failed' : 'Canceled'}</strong>
+          </p>
+          <p style="color: #5c4033; font-size: 0.95rem;">
+            ${message || 'Payment was not completed.'}
+          </p>
+        </div>
+      `;
+    }
+  }
+  
+  // Poll for payment status
+  async function pollPaymentStatus(orderId, paymentIntentId) {
+    const maxAttempts = 60; // Poll for up to 60 seconds
+    let attempts = 0;
+    
+    const checkStatus = async () => {
+      try {
+        const apiEndpoint = window.STRIPE_CONFIG?.terminalStatusEndpoint || '/api/stripe/terminal/payment-status';
+        
+        const response = await fetch(`${apiEndpoint}?paymentIntentId=${paymentIntentId}`);
+        if (!response.ok) {
+          throw new Error('Failed to check payment status');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success && result.status) {
+          if (result.status === 'succeeded') {
+            // Update order status in Supabase
+            await updateOrderPaymentStatus(orderId, 'completed', paymentIntentId);
+            updateTerminalPaymentStatus('succeeded', 'Payment completed successfully!');
+            return; // Stop polling
+          } else if (result.status === 'failed' || result.status === 'canceled') {
+            updateTerminalPaymentStatus(result.status, result.message || 'Payment was not completed.');
+            return; // Stop polling
+          }
+        }
+        
+        // Continue polling if still processing
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(checkStatus, 1000); // Check every second
+        } else {
+          updateTerminalPaymentStatus('failed', 'Payment timeout. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error checking payment status:', error);
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(checkStatus, 1000);
+        }
+      }
+    };
+    
+    // Start polling
+    checkStatus();
+  }
+  
+  // Update order payment status in Supabase
+  async function updateOrderPaymentStatus(orderId, status, paymentIntentId) {
+    try {
+      const supabase = await window.getSupabaseClient();
+      if (supabase) {
+        await supabase
+          .from('orders')
+          .update({
+            payment_status: status,
+            payment_method: 'stripe_terminal',
+            stripe_payment_intent_id: paymentIntentId,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', orderId);
+      }
+    } catch (error) {
+      console.error('Error updating order payment status:', error);
+    }
   }
 
   function setupButtons() {
