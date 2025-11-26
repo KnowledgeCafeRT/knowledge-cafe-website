@@ -1,277 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Knowledge Café - Student-Run Coffee & Learning Hub</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Climate+Crisis&family=Fredoka:wght@300;400;500;600;700&family=Italiana&family=Montserrat:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Café</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Climate+Crisis:wght@400&family=Italiana&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Hero Section (Figma design) -->
-  <header id="home" class="hero-figma">
-    <div class="hero-figma-inner">
-      <div class="hero-figma-top">
-        <div class="hero-figma-brand">
-          <span class="hero-figma-knowledge">Knowledge</span>
-          <span class="hero-figma-cafe">café</span>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="#home" class="nav-link">home</a>
+            <a href="#about" class="nav-link">about</a>
+            <a href="#menu" class="nav-link">menu</a>
+            <a href="#login" class="nav-link">login</a>
         </div>
-        <nav class="hero-figma-nav">
-          <a href="#home">home</a>
-          <a href="#about">about</a>
-          <a href="#menu">menu</a>
-          <a href="/login.html">login</a>
-        </nav>
-      </div>
-      <h1 class="hero-figma-title">Knowledge</h1>
-      <p class="hero-figma-description">
-        Made by students who know the grind. Come for the coffee, stay for the vibes. Every Tuesday in Building 5 from 11 - 14h
-      </p>
-      <a href="/order.html" class="hero-figma-button">Order now</a>
-    </div>
-    <div class="hero-figma-graphic">
-      <img src="assets/images/hero-splash.png" alt="Coffee splash background" class="hero-figma-splash" loading="lazy">
-      <img src="assets/images/hero-coffee.png" alt="Coffee pouring" class="hero-figma-coffee" loading="lazy">
-    </div>
-  </header>
+    </nav>
 
-  <!-- Story Section -->
-  <section id="about" class="story-section">
-    <div class="story-card story-coffee">
-      <p class="story-title">Coffee</p>
-      <p class="story-text">Big thanks to <a href="https://www.hochland-kaffee.de/" target="_blank" rel="noopener noreferrer">Hochland Kaffee</a> for keeping us buzzing! For over 60 years, they've been perfecting ethical direct trade and roasting with care, so every cup is full of flavor and good vibes.</p>
-      <img src="assets/images/who-bag.png" alt="Hochland coffee bag" loading="lazy">
-    </div>
-    <div class="story-center">
-      <p class="story-question">Who are we?</p>
-      <p class="story-text">We’re ESB Business School students running a non-profit café for the campus community. Tuesdays IMX students serve and Thursdays IB students take over.</p>
-      <div class="story-mission">
-        <p class="story-title">Mission</p>
-        <p>We provide high quality and affordable specialty coffee to the university community and bring people closer through engaged baristas and sustainable materials that promote exchange between study programmes and faculties.</p>
-      </div>
-      <img src="assets/images/coffee-cup.png" alt="Coffee cup" class="story-cup" loading="lazy">
-    </div>
-    <div class="story-card story-students">
-      <p class="story-title">Students</p>
-      <p class="story-text">Knowledge Café is run solely for charitable purposes. We focus on high-quality coffee, meaningful connections, and a cozy space for everyone to recharge.</p>
-      <img src="assets/images/who-graphic.png" alt="Coffee illustration" loading="lazy">
-    </div>
-    <img src="assets/images/arrow-1.png" alt="" class="story-arrow arrow-left" loading="lazy">
-    <img src="assets/images/arrow-3.png" alt="" class="story-arrow arrow-right" loading="lazy">
-    <img src="assets/images/arrow-4.png" alt="" class="story-arrow arrow-bottom" loading="lazy">
-  </section>
-
-  <!-- Menu Section -->
-  <section id="menu" class="menu-figma">
-    <div class="menu-card">
-      <div class="menu-header">
-        <h2>Menu</h2>
-        <p class="menu-subtitle">All coffees are available with cow or oat milk. We exclusively use Oatly oat milk and Bioland Schwarzwaldmilch cow milk.</p>
-      </div>
-      <div class="menu-board">
-        <div class="menu-items-row">
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-espresso-doppio.png" alt="Espresso" loading="lazy">
-            </div>
-            <p class="menu-item-title">Espresso</p>
-            <p class="menu-item-price">1.30€ / 1.80€</p>
-          </div>
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-espresso-doppio.png" alt="Espresso doppio" loading="lazy">
-            </div>
-            <p class="menu-item-title">Espresso doppio</p>
-            <p class="menu-item-price">1.70€ / 2.20€</p>
-          </div>
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-cappuccino.png" alt="Cappuccino" loading="lazy">
-            </div>
-            <p class="menu-item-title">Cappuccino</p>
-            <p class="menu-item-price">2.50€ / 3.00€</p>
-          </div>
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-latte-macchiato.png" alt="Latte Macchiato" loading="lazy">
-            </div>
-            <p class="menu-item-title">Latte macchiato</p>
-            <p class="menu-item-price">2.00€ / 2.50€</p>
-          </div>
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-cafe-latte.png" alt="Cafe Latte" loading="lazy">
-            </div>
-            <p class="menu-item-title">Cafe latte</p>
-            <p class="menu-item-price">2.70€ / 3.20€</p>
-          </div>
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-water.png" alt="Americano" loading="lazy">
-            </div>
-            <p class="menu-item-title">Americano</p>
-            <p class="menu-item-price">1.50€ / 2.00€</p>
-          </div>
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-tea.png" alt="Tea" loading="lazy">
-            </div>
-            <p class="menu-item-title">Tea</p>
-            <p class="menu-item-price">1.00€ / 1.50€</p>
-          </div>
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-pumpkin-spice.png" alt="Pumpkin spice" loading="lazy">
-            </div>
-            <p class="menu-item-title">Pumpkin spice</p>
-            <p class="menu-item-price">3.00€ / 3.50€</p>
-          </div>
-          <div>
-            <div class="menu-item-circle">
-              <img src="assets/images/menu-cinnamon-bun.png" alt="Cinnamon bun latte" loading="lazy">
-            </div>
-            <p class="menu-item-title">Cinnamon bun latte</p>
-            <p class="menu-item-price">3.00€ / 3.50€</p>
-          </div>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-title-wrapper">
+            <h1 class="hero-title">Knowledge</h1>
         </div>
-        <div class="menu-separator"></div>
-        <div class="menu-hot-cold">
-          <div class="menu-hot">
-            <h3>Hot drinks</h3>
-            <p>Espresso · Espresso Doppio · Cappuccino · Latte Macchiato · Cafe Latte · Americano · Tea</p>
-          </div>
-          <div class="menu-cold">
-            <h3>Cold drinks</h3>
-            <div class="cold-row">
-              <img src="assets/images/menu-redbull.png" alt="Red Bull" loading="lazy" width="60">
-              <span>Red Bull · 2.00€</span>
+        <div class="hero-content">
+            <div class="hero-cafe">café</div>
+            <p class="hero-subtitle">Made by students who know<br/>the grind. Come for the coffee, stay for the vibes. Every tuesday in building 5 from 11 - 14h</p>
+            <button class="cta-button">Order now</button>
+        </div>
+        <div class="hero-image">
+            <img src="assets/images/coffee-splash.png" alt="Coffee splash" class="splash-image">
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-container">
+            <div class="about-left">
+                <img src="assets/images/coffee-bag.png" alt="Coffee bag" class="coffee-bag">
+                <div class="about-item">
+                    <h3>coffee</h3>
+                    <p>Big thanks to <a href="https://www.hochland-kaffee.de/" target="_blank" rel="noopener noreferrer">Hochland Kaffee</a> for keeping us buzzing! For over 60 years, they've been perfecting ethical direct trade and roasting with care, so every cup is full of flavor and good vibes.</p>
+                </div>
             </div>
-            <div class="cold-row">
-              <img src="assets/images/menu-water.png" alt="Water" loading="lazy" width="60">
-              <span>Water · 1.00€</span>
+            
+            <div class="about-center">
+                <h2 class="about-heading">who are we?</h2>
             </div>
-            <div class="cold-row">
-              <img src="assets/images/menu-softdrinks.png" alt="Soft drinks" loading="lazy" width="60">
-              <span>Soft drinks · 2.00€</span>
+            
+            <div class="about-right">
+                <div class="about-item">
+                    <img src="assets/images/mascot.png" alt="Bear mascot" class="mascot">
+                    <h3>Students</h3>
+                    <p>We're ESB Business School students running a non-profit café for students on campus. Tuesdays IMX students serve and thurdays IB students take over</p>
+                </div>
+                
+                <div class="about-item mission">
+                    <img src="assets/images/coffee-cup.png" alt="Coffee cup" class="coffee-cup">
+                    <h3>Mission</h3>
+                    <p>We provide high quality and affordable specialty coffee to the university community and bring people closer through highly engaged baristas as well as high value and sustainable materials to promote the social exchange between study programmes and faculties.</p>
+                </div>
             </div>
-          </div>
         </div>
-        <p class="menu-note">*All coffees are available with cow or oat milk. To go cups cost 0.20€. Cup deposit 2€ (refunded after returning).</p>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Syrup Section -->
-  <section class="syrup-section">
-    <div class="syrup-board">
-      <div class="syrup-title">extra pump? sirup!!!!</div>
-      <div class="syrup-items">
-        <article>
-          <img src="assets/images/syrup-vanilla.png" alt="Vanilla syrup" loading="lazy">
-          <p>Vanilla Syrup Pump</p>
-          <span>0.30€</span>
-        </article>
-        <article>
-          <img src="assets/images/syrup-hazelnut.png" alt="Hazelnut syrup" loading="lazy">
-          <p>Hazelnut Syrup Pump</p>
-          <span>0.30€</span>
-        </article>
-        <article>
-          <img src="assets/images/syrup-pumpkin.png" alt="Pumpkin spice syrup" loading="lazy">
-          <p>Pumpkin Spice Syrup Pump</p>
-          <span>0.30€</span>
-        </article>
-        <article>
-          <img src="assets/images/syrup-spekuloos.png" alt="Spekuloos syrup" loading="lazy">
-          <p>Spekuloos Syrup Pump</p>
-          <span>0.30€</span>
-        </article>
-        <article>
-          <img src="assets/images/syrup-gingerbread.png" alt="Gingerbread syrup" loading="lazy">
-          <p>Gingerbread Syrup Pump</p>
-          <span>0.30€</span>
-        </article>
-      </div>
-      <img src="assets/images/menu-grafik3.png" alt="" class="syrup-grafik" loading="lazy">
-    </div>
-  </section>
+    <!-- Menu Section -->
+    <section class="menu-section" id="menu">
+        <h2 class="menu-title">MENU</h2>
+        
+        <div class="menu-container">
+            <!-- Hot Drinks -->
+            <div class="menu-category">
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <img src="assets/images/espresso.png" alt="Espresso">
+                        <h4>Espresso</h4>
+                        <p class="price">1.30€ (Students)<br>1.80€ (Staff)</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/espresso-doppio.png" alt="Espresso Doppio">
+                        <h4>Espresso Doppio</h4>
+                        <p class="price">1.70€ (Students)<br>2.20€ (Staff)</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/cappuccino.png" alt="Cappuccino">
+                        <h4>Cappucino</h4>
+                        <p class="price">2.50€ (Students)<br>3.00€ (Staff)</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/latte-macchiato.png" alt="Latte Macchiato">
+                        <h4>Latte Macchiato</h4>
+                        <p class="price">2.00€ (Students)<br>2.50€ (Staff)</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/caffe-latte.png" alt="Caffe Latte">
+                        <h4>Cafe Latte</h4>
+                        <p class="price">2.70€ (Students)<br>3.20€ (Staff)</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/americano.png" alt="Americano">
+                        <h4>Americano</h4>
+                        <p class="price">1.50€ (Students)<br>2.00€ (Staff)</p>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <img src="assets/images/tea.png" alt="Tea">
+                        <h4>Tea</h4>
+                        <p class="price">1.00€ (Students)<br>1.50€ (Staff)</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/caffe-mocha.png" alt="Pumpkin Spice Latte">
+                        <h4>Pumpkin Spice<br/>Latte</h4>
+                        <p class="price">3.00€ (Students)<br>3.50€ (Staff)</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/latte-macchiato-caramel.png" alt="Cinnamon Bun Latte">
+                        <h4>Cinnamon Bun<br/>Latte</h4>
+                        <p class="price">3.00€ (Students)<br>3.50€ (Staff)</p>
+                    </div>
+                </div>
+                <div class="category-label hot-drinks-label">HOT DRINKS</div>
+            </div>
 
-  <!-- Visit Section -->
-  <section id="contact" class="visit-section">
-    <div class="visit-card">
-      <p class="visit-label">Come Visit Us</p>
-      <div class="visit-question">Where?</div>
-      <p class="visit-answer">Entrance Friedrich List Foyer<br>Building 5</p>
-      <div class="visit-question">When?</div>
-      <p class="visit-answer">Tuesdays from 11-14h</p>
-      <div class="visit-question">Contact</div>
-      <p class="visit-answer">orga@knowledge-cafe.com</p>
-    </div>
-    <div class="visit-photo">
-      <img src="assets/images/visit-coffee.png" alt="Coffee cups" loading="lazy">
-    </div>
-  </section>
+            <!-- Cold Drinks -->
+            <div class="menu-category">
+                <div class="menu-grid cold-drinks">
+                    <div class="menu-item">
+                        <img src="assets/images/redbull.png" alt="RedBull">
+                        <h4>RedBull</h4>
+                        <p class="price">2.00€</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/water.png" alt="Water">
+                        <h4>Water</h4>
+                        <p class="price">1.00€</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/softdrinks.png" alt="Softdrinks">
+                        <h4>Softdrinks</h4>
+                        <p class="price">1.50€</p>
+                    </div>
+                </div>
+                <div class="category-label cold-drinks-label">COLD DRINKS</div>
+            </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-left">
-        <div class="footer-brand">
-          <div class="footer-logo-text">Knowledge</div>
-          <div class="footer-logo-cafe">café</div>
+            <!-- Extra Snacks -->
+            <div class="menu-category">
+                <div class="menu-grid snacks">
+                    <div class="menu-item">
+                        <img src="assets/images/vanilla-wafer.png" alt="Vanilla Wafer Sticks">
+                        <h4>Vanilla Wafer Sticks</h4>
+                        <p class="price">0.50€</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/fruit-bar.png" alt="Fruit Bar">
+                        <h4>Fruit Bar</h4>
+                        <p class="price">0.50€</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/tomato-bottle.png" alt="Tomato Bottle Stopper">
+                        <h4>Tomato Bottle Stopper</h4>
+                        <p class="price">1.00€</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/sandwich-bagel.png" alt="Sandwich Bagel">
+                        <h4>Sandwich Bagel</h4>
+                        <p class="price">2.00€</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="assets/images/gingerbread-bagel.png" alt="Gingerbread Bagel">
+                        <h4>Gingerbread Bagel</h4>
+                        <p class="price">0.50€</p>
+                    </div>
+                </div>
+                <div class="category-label snacks-label">EXTRA SNACKS</div>
+            </div>
         </div>
-        <div class="footer-tagline">united by coffee</div>
-      </div>
-      <div class="footer-center">
-        <nav class="footer-nav">
-          <a href="#home" class="footer-nav-link">home</a>
-          <a href="#about" class="footer-nav-link">about</a>
-          <a href="#menu" class="footer-nav-link">menu</a>
-          <a href="/login.html" class="footer-nav-link">login</a>
-        </nav>
-        <div class="footer-links">
-          <h4 class="footer-links-title">About</h4>
-          <a href="#menu" class="footer-link">menu</a>
-          <a href="/login.html" class="footer-link">login</a>
-        </div>
-      </div>
-      <div class="footer-right">
-        <div class="footer-instagram-header">follow us on IG</div>
-        <div class="footer-instagram-frame">
-          <iframe src="https://www.instagram.com/knowledgecafereutlingen/embed" 
-                  width="100%" 
-                  height="392" 
-                  frameborder="0" 
-                  scrolling="no" 
-                  allowtransparency="true">
-          </iframe>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <div class="footer-copyright">© 2025 Knowledge Café e.V.</div>
-        <div class="footer-impressum">Impressum</div>
-      </div>
-    </div>
-  </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="supabase-config.js"></script>
-  <script src="session-manager.js"></script>
-  <script src="script.js"></script>
-  <script>
-    // Register service worker for push notifications
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((registration) => {
-            console.log('✅ Service Worker registered:', registration);
-          })
-          .catch((error) => {
-            console.log('❌ Service Worker registration failed:', error);
-          });
-      });
-    }
-  </script>
+        <p class="menu-note">*All coffees are available with cow or oat milk. We exclusively use oat milk from Oatly and cow milk by Bioland Schwarzwaldmilch.<br/><br/>A fee of 2€ is charged for cups, which will be returned after giving the cup back. To go cups cost 0.20€</p>
+    </section>
+
+    <!-- Syrup Section -->
+    <section class="syrup-section">
+        <div class="syrup-container">
+            <div class="syrup-label">extra pump?<br/>Sirup!!!!</div>
+            <div class="syrup-grid">
+                <div class="syrup-item">
+                    <img src="assets/images/vanilla-wafer.png" alt="Vanilla Syrup">
+                    <h4>Vanilla Sirup Pump</h4>
+                    <p class="price">0.30€</p>
+                </div>
+                <div class="syrup-item">
+                    <img src="assets/images/fruit-bar.png" alt="Hazelnut Syrup">
+                    <h4>Hazelnut Sirup Pump</h4>
+                    <p class="price">0.30€</p>
+                </div>
+                <div class="syrup-item">
+                    <img src="assets/images/tomato-bottle.png" alt="Pumpkin Spice Syrup">
+                    <h4>Pumpkin Spice Sirup Pump</h4>
+                    <p class="price">0.30€</p>
+                </div>
+                <div class="syrup-item">
+                    <img src="assets/images/sandwich-bagel.png" alt="Spekuloos Syrup">
+                    <h4>Spekuloos Sirup Pump</h4>
+                    <p class="price">0.30€</p>
+                </div>
+                <div class="syrup-item">
+                    <img src="assets/images/gingerbread-bagel.png" alt="Gingerbread Syrup">
+                    <h4>Gingerbread Sirup Pump</h4>
+                    <p class="price">0.30€</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visit Us Section -->
+    <section class="visit" id="contact">
+        <div class="visit-content">
+            <h2 class="visit-title">Come visit us</h2>
+            <div class="visit-details">
+                <div class="visit-info">
+                    <h3>Where?</h3>
+                    <p>Entrance Friedrich List Foyer<br/>Building 5</p>
+                </div>
+                <div class="visit-info">
+                    <h3>When?</h3>
+                    <p>Tuesdays from 11-14h</p>
+                </div>
+                <div class="visit-info">
+                    <h3>Contact</h3>
+                    <p>orga@knowledge-cafe.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="visit-image">
+            <img src="assets/images/coffee-beans.jpg" alt="Coffee beans and latte">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <div class="footer-logo">
+                    <div class="footer-knowledge">Knowledge</div>
+                    <div class="footer-cafe">café</div>
+                </div>
+                <p class="footer-tagline">united by coffee</p>
+            </div>
+            
+            <div class="footer-nav">
+                <a href="#home">home</a>
+                <a href="#about">about</a>
+                <a href="#menu">menu</a>
+                <a href="#login">login</a>
+            </div>
+            
+            <div class="footer-social">
+                <h3>follow us on IG</h3>
+                <div class="instagram-preview" aria-label="Instagram preview">
+                    <iframe src="https://www.instagram.com/knowledgecafereutlingen/embed" width="535" height="392" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 Knowledge Café e.V.</p>
+            <a href="#" class="impressum">Impressum</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>

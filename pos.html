@@ -197,6 +197,173 @@
       gap: 10px; 
       margin-top: 15px; 
     }
+    /* Change Calculator Styles */
+    .change-calculator {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #eadfd4;
+    }
+    .change-calculator h4 {
+      color: #2c1810;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .change-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .change-input-group label {
+      font-weight: 600;
+      color: #5c4033;
+      font-size: 0.95rem;
+    }
+    .change-input-group input {
+      padding: 12px;
+      font-size: 1.2rem;
+      border: 2px solid #eadfd4;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 600;
+      transition: all 0.3s;
+      color: #2c1810;
+    }
+    .change-input-group input:focus {
+      outline: none;
+      border-color: #d4a574;
+      box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.2);
+    }
+    .change-input-group input[readonly] {
+      background: #f8f8f8;
+      color: #8b5e3c;
+    }
+    .quick-amounts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .quick-btn {
+      padding: 10px;
+      border: 2px solid #d4a574;
+      background: white;
+      color: #8b5e3c;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quick-btn:hover {
+      background: #d4a574;
+      color: #2c1810;
+      transform: translateY(-2px);
+    }
+    .quick-btn:active {
+      transform: translateY(0);
+    }
+    .change-display {
+      background: linear-gradient(135deg, #8b5e3c, #a0522d);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-top: 15px;
+      display: none;
+    }
+    .change-display.show {
+      display: block;
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .change-label {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+    .change-amount {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+    .change-breakdown {
+      background: rgba(255,255,255,0.15);
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    .change-breakdown h3 {
+      margin-bottom: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .bill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+    .bill-icon {
+      font-size: 1.3rem;
+      margin-right: 8px;
+    }
+    .bill-count {
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+      .change-alert {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        display: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+      .change-alert.show {
+        display: block;
+        animation: slideIn 0.3s ease;
+      }
+      @keyframes slideIn {
+        from { transform: translateY(-10px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .change-alert-warning {
+        background: #fff3cd;
+        color: #856404;
+        border-left: 4px solid #ffc107;
+      }
+      .change-alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+      }
+      .btn-calculate {
+        width: 100%;
+        margin-top: 10px;
+      }
+      @media (max-width: 900px) {
+        .quick-amounts {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .change-amount {
+          font-size: 2.5rem;
+        }
+        .change-calculator {
+          margin-top: 15px;
+          padding-top: 15px;
+        }
+      }
     .btn-primary { 
       background: #d4a574; 
       color: #2c1810; 
@@ -480,6 +647,8 @@
       justify-content: center;
       z-index: 10000;
       animation: fadeIn 0.2s ease;
+      padding: 20px;
+      overflow-y: auto;
     }
     .milk-modal-content {
       background: white;
@@ -487,8 +656,11 @@
       padding: 30px;
       max-width: 400px;
       width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
       animation: slideUp 0.3s ease;
+      margin: auto;
     }
     .milk-modal-header {
       display: flex;
@@ -612,6 +784,8 @@
       justify-content: center;
       z-index: 10001;
       animation: fadeIn 0.2s ease;
+      padding: 20px;
+      overflow-y: auto;
     }
     .payment-qr-modal-content {
       background: white;
@@ -619,8 +793,11 @@
       padding: 30px;
       max-width: 500px;
       width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
       animation: slideUp 0.3s ease;
+      margin: auto;
     }
     .payment-qr-modal-header {
       display: flex;
@@ -661,6 +838,17 @@
     .payment-qr-modal-body {
       text-align: center;
     }
+    /* Responsive Design */
+    @media (max-width: 1400px) {
+      .pos-wrapper {
+        max-width: 100%;
+        padding: 15px 20px;
+      }
+      .pos-grid {
+        gap: 20px;
+      }
+    }
+
     @media (max-width: 1180px) {
       body {
         font-size: clamp(0.95rem, 1.6vw, 1.05rem);
@@ -676,14 +864,292 @@
         flex-direction: column;
         align-items: flex-start;
       }
+      .pos-header h1 {
+        font-size: 1.75rem;
+      }
       .pos-tabs {
         flex-wrap: wrap;
+        width: 100%;
+      }
+      .pos-tab {
+        font-size: 0.9rem;
+        padding: 10px 16px;
       }
       .pos-panel {
         min-height: auto;
       }
       .items-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      }
+      .queue-columns-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .pos-wrapper {
+        padding: 10px;
+        margin: 10px auto;
+      }
+      .pos-header h1 {
+        font-size: 1.5rem;
+      }
+      .pos-header {
+        gap: 10px;
+      }
+      .pos-header > div {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .pos-header button {
+        width: 100%;
+      }
+      .pos-tabs {
+        gap: 6px;
+      }
+      .pos-tab {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        flex: 1;
+        min-width: 0;
+      }
+      .price-mode-btn {
+        margin-left: 0;
+        width: 100%;
+      }
+      .category-row {
+        gap: 8px;
+      }
+      .category-btn {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+        flex: 1;
+        min-width: 0;
+      }
+      .items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+      .item-card {
+        padding: 15px;
+      }
+      .item-name {
+        font-size: 1rem;
+      }
+      .item-price {
+        font-size: 1.1rem;
+      }
+      .cart-list {
+        max-height: 300px;
+      }
+      .cart-line {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .qty-controls {
+        justify-content: flex-end;
+      }
+      .total-row {
+        font-size: 1.2rem;
+      }
+      .actions {
+        flex-direction: column;
+      }
+      .btn-primary,
+      .btn-secondary {
+        width: 100%;
+      }
+      .queue-column-header {
+        font-size: 1.1rem;
+        padding: 10px 12px;
+      }
+      .queue-card {
+        padding: 12px;
+      }
+      .queue-item-large {
+        font-size: 1.1rem;
+        padding: 12px 15px;
+      }
+      .queue-item-large strong {
+        font-size: 1.2rem;
+      }
+      .milk-modal-content,
+      .payment-qr-modal-content {
+        width: 95%;
+        padding: 20px;
+        max-width: none;
+      }
+      .milk-options {
+        flex-direction: column;
+      }
+      .milk-option {
+        width: 100%;
+      }
+      .syrup-options {
+        grid-template-columns: 1fr !important;
+      }
+      .cup-options {
+        gap: 10px;
+      }
+      .cup-option {
+        padding: 12px 16px;
+      }
+      .pin-card {
+        width: 90%;
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9rem;
+      }
+      .pos-wrapper {
+        padding: 8px;
+        margin: 5px auto;
+      }
+      .pos-header h1 {
+        font-size: 1.3rem;
+      }
+      .pos-tab {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+      }
+      .category-btn {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+      }
+      .items-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .item-card {
+        padding: 12px;
+      }
+      .item-name {
+        font-size: 0.95rem;
+      }
+      .item-price {
+        font-size: 1rem;
+      }
+      .cart-line {
+        padding: 10px;
+      }
+      .qty-btn {
+        padding: 4px 8px;
+        font-size: 0.9rem;
+        min-width: 32px;
+      }
+      .total-row {
+        font-size: 1.1rem;
+      }
+      .minor-row {
+        font-size: 0.85rem;
+      }
+      .btn-primary,
+      .btn-secondary {
+        padding: 12px 16px;
+        font-size: 1rem;
+      }
+      .queue-column-header {
+        font-size: 1rem;
+      }
+      .queue-item-large {
+        font-size: 1rem;
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .queue-item-qty {
+        align-self: flex-end;
+      }
+      .queue-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .btn-status {
+        width: 100%;
+        justify-content: center;
+      }
+      .milk-modal-content,
+      .payment-qr-modal-content {
+        padding: 15px;
+      }
+      .milk-modal-header h3 {
+        font-size: 1.3rem;
+      }
+      .milk-option {
+        padding: 12px 15px;
+        font-size: 1rem;
+      }
+      .cup-option {
+        padding: 10px 12px;
+      }
+      .cup-option i {
+        font-size: 1.5rem;
+      }
+      .syrup-options {
+        grid-template-columns: 1fr !important;
+      }
+      .syrup-option {
+        width: 100%;
+        padding: 12px;
+      }
+      .pin-card h3 {
+        font-size: 1.3rem;
+      }
+      .pin-input {
+        padding: 10px;
+        font-size: 1rem;
+      }
+      input#posCustomerName,
+      input#posCustomerEmail {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .items-grid {
+        grid-template-columns: 1fr;
+      }
+      .pos-tabs {
+        flex-direction: column;
+      }
+      .pos-tab {
+        width: 100%;
+      }
+    }
+
+    /* Landscape orientation for tablets */
+    @media (max-width: 1024px) and (orientation: landscape) {
+      .pos-grid {
+        grid-template-columns: 1fr 380px;
+      }
+      .cart-list {
+        max-height: 250px;
+      }
+      .queue-list {
+        max-height: 400px;
+      }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+      .item-card,
+      .category-btn,
+      .pos-tab,
+      .qty-btn,
+      .btn-primary,
+      .btn-secondary {
+        min-height: 44px;
+      }
+      .milk-option,
+      .cup-option {
+        min-height: 50px;
       }
     }
   </style>
@@ -753,6 +1219,34 @@
         <div class="minor-row"><span>Subtotal</span><span id="posSubtotal">€0.00</span></div>
         <div class="minor-row"><span>Pfand</span><span id="posPfand">€0.00</span></div>
         <div class="total-row"><span>Total</span><span id="posTotal">€0.00</span></div>
+
+        <!-- Change Calculator -->
+        <div class="change-calculator">
+          <h4><i class="fas fa-calculator"></i> Change Calculator</h4>
+          <div id="changeAlertArea"></div>
+          
+          <div class="change-input-group">
+            <label>Amount Due (€)</label>
+            <input type="text" id="changeAmountDue" value="0.00" readonly>
+          </div>
+
+          <div class="change-input-group">
+            <label>Amount Given (€)</label>
+            <input type="number" id="changeAmountGiven" placeholder="0.00" step="0.01" min="0">
+            <div class="quick-amounts">
+              <button class="quick-btn" onclick="setQuickAmount(10)">€10</button>
+              <button class="quick-btn" onclick="setQuickAmount(20)">€20</button>
+              <button class="quick-btn" onclick="setQuickAmount(50)">€50</button>
+              <button class="quick-btn" onclick="setExactAmount()">Exact</button>
+            </div>
+          </div>
+
+          <button class="btn-primary btn-calculate" onclick="calculateChange()">
+            <i class="fas fa-calculator"></i> Calculate Change
+          </button>
+
+          <div id="changeDisplay" class="change-display"></div>
+        </div>
 
         <div style="margin-top:12px;">
           <label style="display:block;color:#5c4033;margin-bottom:6px;">Customer (optional)</label>
@@ -881,6 +1375,225 @@
     // Close terminal payment modal
     document.getElementById('terminalPaymentClose')?.addEventListener('click', () => {
       document.getElementById('terminalPaymentModal').style.display = 'none';
+    });
+
+    // Change Calculator Functions
+    window.updateChangeCalculator = function() {
+      const totalElement = document.getElementById('posTotal');
+      if (totalElement) {
+        const totalText = totalElement.textContent.replace('€', '').replace(',', '').trim();
+        const total = parseFloat(totalText) || 0;
+        const amountDueInput = document.getElementById('changeAmountDue');
+        if (amountDueInput) {
+          amountDueInput.value = total.toFixed(2);
+          // Clear change display if amount due changed
+          const changeDisplay = document.getElementById('changeDisplay');
+          if (changeDisplay) {
+            changeDisplay.style.display = 'none';
+          }
+        }
+      }
+    };
+
+    function setQuickAmount(amount) {
+      const amountGivenInput = document.getElementById('changeAmountGiven');
+      if (amountGivenInput) {
+        amountGivenInput.value = amount.toFixed(2);
+        amountGivenInput.focus();
+      }
+    }
+
+    function setExactAmount() {
+      const amountDueInput = document.getElementById('changeAmountDue');
+      const amountGivenInput = document.getElementById('changeAmountGiven');
+      if (amountDueInput && amountGivenInput) {
+        const total = parseFloat(amountDueInput.value) || 0;
+        amountGivenInput.value = total.toFixed(2);
+        amountGivenInput.focus();
+      }
+    }
+
+    function calculateChange() {
+      const amountDueInput = document.getElementById('changeAmountDue');
+      const amountGivenInput = document.getElementById('changeAmountGiven');
+      const changeDisplay = document.getElementById('changeDisplay');
+      const alertArea = document.getElementById('changeAlertArea');
+
+      if (!amountDueInput || !amountGivenInput || !changeDisplay || !alertArea) return;
+
+      const amountDue = parseFloat(amountDueInput.value) || 0;
+      const amountGiven = parseFloat(amountGivenInput.value) || 0;
+
+      // Clear previous alerts
+      alertArea.innerHTML = '';
+
+      // Validation
+      if (amountGiven === 0) {
+        showChangeAlert('Please enter amount given!', 'error');
+        changeDisplay.style.display = 'none';
+        return;
+      }
+
+      if (amountGiven < amountDue) {
+        const missing = amountDue - amountGiven;
+        showChangeAlert(`⚠️ Too little! Still need €${missing.toFixed(2)}`, 'warning');
+        changeDisplay.style.display = 'none';
+        return;
+      }
+
+      const change = amountGiven - amountDue;
+
+      // Display change
+      changeDisplay.innerHTML = `
+        <div class="change-label">Change</div>
+        <div class="change-amount">€${change.toFixed(2)}</div>
+        ${change > 0 ? renderChangeBreakdown(change) : '<p style="opacity: 0.8;">Exact amount - No change!</p>'}
+      `;
+      
+      changeDisplay.style.display = 'block';
+      changeDisplay.classList.add('show');
+
+      // Play success sound (optional)
+      playChangeSound();
+    }
+
+    function renderChangeBreakdown(amount) {
+      const denominations = [
+        { value: 50, label: '€50 Bill', icon: '💵' },
+        { value: 20, label: '€20 Bill', icon: '💵' },
+        { value: 10, label: '€10 Bill', icon: '💵' },
+        { value: 5, label: '€5 Bill', icon: '💵' },
+        { value: 2, label: '€2 Coin', icon: '🪙' },
+        { value: 1, label: '€1 Coin', icon: '🪙' },
+        { value: 0.50, label: '50 Cent', icon: '🪙' },
+        { value: 0.20, label: '20 Cent', icon: '🪙' },
+        { value: 0.10, label: '10 Cent', icon: '🪙' },
+        { value: 0.05, label: '5 Cent', icon: '🪙' },
+        { value: 0.02, label: '2 Cent', icon: '🪙' },
+        { value: 0.01, label: '1 Cent', icon: '🪙' }
+      ];
+
+      let remaining = Math.round(amount * 100) / 100;
+      const breakdown = [];
+
+      denominations.forEach(denom => {
+        const count = Math.floor(remaining / denom.value);
+        if (count > 0) {
+          breakdown.push({
+            ...denom,
+            count: count
+          });
+          remaining = Math.round((remaining - (count * denom.value)) * 100) / 100;
+        }
+      });
+
+      if (breakdown.length === 0) return '';
+
+      return `
+        <div class="change-breakdown">
+          <h3>💰 Change Breakdown:</h3>
+          ${breakdown.map(item => `
+            <div class="bill-row">
+              <span>
+                <span class="bill-icon">${item.icon}</span>
+                ${item.label}
+              </span>
+              <span class="bill-count">${item.count}×</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function showChangeAlert(message, type) {
+      const alertArea = document.getElementById('changeAlertArea');
+      if (!alertArea) return;
+
+      const alert = document.createElement('div');
+      alert.className = `change-alert change-alert-${type} show`;
+      alert.textContent = message;
+      alertArea.appendChild(alert);
+
+      setTimeout(() => {
+        alert.remove();
+      }, 5000);
+    }
+
+    function playChangeSound() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+      } catch (e) {
+        // Ignore audio errors
+      }
+    }
+
+    // Auto-calculate on Enter key and update calculator
+    document.addEventListener('DOMContentLoaded', () => {
+      const amountGivenInput = document.getElementById('changeAmountGiven');
+      if (amountGivenInput) {
+        amountGivenInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            calculateChange();
+          }
+        });
+      }
+
+      // Update change calculator when cart total changes
+      const totalElement = document.getElementById('posTotal');
+      if (totalElement) {
+        // Initial update
+        updateChangeCalculator();
+        
+        // Watch for changes to the total element
+        const observer = new MutationObserver(() => {
+          updateChangeCalculator();
+        });
+
+        observer.observe(totalElement, { 
+          childList: true, 
+          subtree: true, 
+          characterData: true,
+          attributes: false
+        });
+
+        // Also watch for changes to the entire cart list
+        const cartList = document.getElementById('cartList');
+        if (cartList) {
+          const cartObserver = new MutationObserver(() => {
+            setTimeout(updateChangeCalculator, 100);
+          });
+          cartObserver.observe(cartList, { 
+            childList: true, 
+            subtree: true 
+          });
+        }
+      }
+    });
+
+    // Override renderCart to update change calculator (if pos.js is loaded after this)
+    window.addEventListener('load', () => {
+      // Try to hook into renderCart if it exists
+      if (typeof renderCart === 'function') {
+        const originalRenderCart = renderCart;
+        window.renderCart = function() {
+          originalRenderCart.apply(this, arguments);
+          setTimeout(updateChangeCalculator, 50);
+        };
+      }
     });
   </script>
 </body>

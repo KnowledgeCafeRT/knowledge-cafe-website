@@ -426,6 +426,10 @@
     const tEl = document.getElementById('posTaxes'); if (tEl) tEl.textContent = formatPrice(taxes);
     const pEl = document.getElementById('posPfand'); if (pEl) pEl.textContent = formatPrice(pfand);
     const totEl = document.getElementById('posTotal'); if (totEl) totEl.textContent = formatPrice(total);
+    // Update change calculator if it exists
+    if (typeof window.updateChangeCalculator === 'function') {
+      window.updateChangeCalculator();
+    }
   }
 
   function clearCart() { cart = {}; renderCart(); }
