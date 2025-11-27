@@ -74,10 +74,30 @@ class NavigationManager {
     this.updateNavigation();
   }
 
-  loadCurrentUser() {
+  async loadCurrentUser() {
+    // Check localStorage first
     const userData = localStorage.getItem('kcafe_current_user');
     if (userData) {
       this.currentUser = JSON.parse(userData);
+    }
+
+    // Also check Supabase session if available
+    if (typeof window.supabase !== 'undefined' && typeof window.getSupabaseClient === 'function') {
+      try {
+        const supabase = await window.getSupabaseClient();
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session && session.user) {
+            this.currentUser = {
+              id: session.user.id,
+              email: session.user.email,
+              name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User'
+            };
+          }
+        }
+      } catch (error) {
+        console.log('Supabase not available or error checking session:', error);
+      }
     }
   }
 
@@ -108,11 +128,35 @@ class NavigationManager {
         }
       }
     });
+
+    // Update login link in navigation (for index.html style navigation)
+    const navLoginLink = document.getElementById('navLoginLink');
+    if (navLoginLink) {
+      if (this.currentUser) {
+        navLoginLink.href = 'profile.html';
+        navLoginLink.textContent = 'profile';
+      } else {
+        navLoginLink.href = 'login.html';
+        navLoginLink.textContent = 'login';
+      }
+    }
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => { 
-  new NavigationManager(); 
+  const navManager = new NavigationManager();
+  
+  // Update navigation periodically to catch login/logout events
+  setInterval(() => {
+    navManager.loadCurrentUser();
+    navManager.updateNavigation();
+  }, 2000);
+  
+  // Listen for storage changes (login/logout from other tabs)
+  window.addEventListener('storage', () => {
+    navManager.loadCurrentUser();
+    navManager.updateNavigation();
+  });
 });
 
 console.log('☕ Knowledge Café front-end loaded.');

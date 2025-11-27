@@ -16,7 +16,7 @@
             <a href="#home" class="nav-link">home</a>
             <a href="#about" class="nav-link">about</a>
             <a href="#menu" class="nav-link">menu</a>
-            <a href="#login" class="nav-link">login</a>
+            <a href="login.html" class="nav-link" id="navLoginLink">login</a>
         </div>
     </nav>
 
@@ -28,7 +28,7 @@
         <div class="hero-cafe">café</div>
         <div class="hero-content">
             <p class="hero-subtitle">Made by students who know<br/>the grind. Come for the coffee, stay for the vibes. Every tuesday in building 5 from 11 - 14h</p>
-            <button class="cta-button">Order now</button>
+            <a href="order.html" class="cta-button">Order now</a>
         </div>
         <div class="hero-image">
             <img src="assets/images/coffee-splash.png" alt="Coffee splash" class="splash-image">
@@ -71,9 +71,10 @@
         <h2 class="menu-title">MENU</h2>
         
         <div class="menu-container">
-            <!-- Hot Drinks -->
+            <!-- Hot & Cold Drinks -->
             <div class="menu-category">
                 <div class="menu-grid">
+                    <!-- Hot Drinks -->
                     <div class="menu-item">
                         <img src="assets/images/espresso.png" alt="Espresso">
                         <h4>Espresso</h4>
@@ -104,7 +105,6 @@
                         <h4>Americano</h4>
                         <p class="price">1.50€ (Students)<br>2.00€ (Staff)</p>
                     </div>
-                    
                     <div class="menu-item">
                         <img src="assets/images/tea.png" alt="Tea">
                         <h4>Tea</h4>
@@ -120,13 +120,13 @@
                         <h4>Cinnamon Bun<br/>Latte</h4>
                         <p class="price">3.00€ (Students)<br>3.50€ (Staff)</p>
                     </div>
-                </div>
-                <div class="category-label hot-drinks-label">HOT DRINKS</div>
-            </div>
-
-            <!-- Cold Drinks -->
-            <div class="menu-category">
-                <div class="menu-grid cold-drinks">
+                    <div class="menu-item">
+                        <img src="assets/images/hot-chocolate.png" alt="Hot Chocolate">
+                        <h4>Hot Chocolate</h4>
+                        <p class="price">2.90€ (Students)<br>3.40€ (Staff)</p>
+                    </div>
+                    
+                    <!-- Cold Drinks -->
                     <div class="menu-item">
                         <img src="assets/images/redbull.png" alt="RedBull">
                         <h4>RedBull</h4>
@@ -143,77 +143,44 @@
                         <p class="price">1.50€</p>
                     </div>
                 </div>
-                <div class="category-label cold-drinks-label">COLD DRINKS</div>
+                <div class="category-label hot-drinks-label">hot drinks</div>
+                <div class="category-label cold-drinks-label">cold drinks</div>
             </div>
 
-            <!-- Extra Snacks -->
-            <div class="menu-category">
-                <div class="menu-grid snacks">
+            <!-- Syrup Pumps -->
+            <div class="menu-category syrup-category">
+                <div class="menu-grid syrup-grid">
                     <div class="menu-item">
-                        <img src="assets/images/vanilla-wafer.png" alt="Vanilla Wafer Sticks">
-                        <h4>Vanilla Wafer Sticks</h4>
-                        <p class="price">0.50€</p>
+                        <img src="assets/images/syrup-vanilla.png" alt="Vanilla Syrup">
+                        <h4>Vanilla Sirup Pump</h4>
+                        <p class="price">0.30€</p>
                     </div>
                     <div class="menu-item">
-                        <img src="assets/images/fruit-bar.png" alt="Fruit Bar">
-                        <h4>Fruit Bar</h4>
-                        <p class="price">0.50€</p>
+                        <img src="assets/images/syrup-hazelnut.png" alt="Hazelnut Syrup">
+                        <h4>Hazelnut Sirup Pump</h4>
+                        <p class="price">0.30€</p>
                     </div>
                     <div class="menu-item">
-                        <img src="assets/images/tomato-bottle.png" alt="Tomato Bottle Stopper">
-                        <h4>Tomato Bottle Stopper</h4>
-                        <p class="price">1.00€</p>
+                        <img src="assets/images/syrup-pumpkin.png" alt="Pumpkin Spice Syrup">
+                        <h4>Pumpkin Spice Sirup Pump</h4>
+                        <p class="price">0.30€</p>
                     </div>
                     <div class="menu-item">
-                        <img src="assets/images/sandwich-bagel.png" alt="Sandwich Bagel">
-                        <h4>Sandwich Bagel</h4>
-                        <p class="price">2.00€</p>
+                        <img src="assets/images/syrup-spekuloos.png" alt="Spekuloos Syrup">
+                        <h4>Spekuloos Sirup Pump</h4>
+                        <p class="price">0.30€</p>
                     </div>
                     <div class="menu-item">
-                        <img src="assets/images/gingerbread-bagel.png" alt="Gingerbread Bagel">
-                        <h4>Gingerbread Bagel</h4>
-                        <p class="price">0.50€</p>
+                        <img src="assets/images/syrup-gingerbread.png" alt="Gingerbread Syrup">
+                        <h4>Gingerbread Sirup Pump</h4>
+                        <p class="price">0.30€</p>
                     </div>
                 </div>
-                <div class="category-label snacks-label">EXTRA SNACKS</div>
+                <div class="category-label syrup-label">extra pump?<br/>Sirup!!!!</div>
             </div>
         </div>
 
         <p class="menu-note">*All coffees are available with cow or oat milk. We exclusively use oat milk from Oatly and cow milk by Bioland Schwarzwaldmilch.<br/><br/>A fee of 2€ is charged for cups, which will be returned after giving the cup back. To go cups cost 0.20€</p>
-    </section>
-
-    <!-- Syrup Section -->
-    <section class="syrup-section">
-        <div class="syrup-container">
-            <div class="syrup-label">extra pump?<br/>Sirup!!!!</div>
-            <div class="syrup-grid">
-                <div class="syrup-item">
-                    <img src="assets/images/vanilla-wafer.png" alt="Vanilla Syrup">
-                    <h4>Vanilla Sirup Pump</h4>
-                    <p class="price">0.30€</p>
-                </div>
-                <div class="syrup-item">
-                    <img src="assets/images/fruit-bar.png" alt="Hazelnut Syrup">
-                    <h4>Hazelnut Sirup Pump</h4>
-                    <p class="price">0.30€</p>
-                </div>
-                <div class="syrup-item">
-                    <img src="assets/images/tomato-bottle.png" alt="Pumpkin Spice Syrup">
-                    <h4>Pumpkin Spice Sirup Pump</h4>
-                    <p class="price">0.30€</p>
-                </div>
-                <div class="syrup-item">
-                    <img src="assets/images/sandwich-bagel.png" alt="Spekuloos Syrup">
-                    <h4>Spekuloos Sirup Pump</h4>
-                    <p class="price">0.30€</p>
-                </div>
-                <div class="syrup-item">
-                    <img src="assets/images/gingerbread-bagel.png" alt="Gingerbread Syrup">
-                    <h4>Gingerbread Sirup Pump</h4>
-                    <p class="price">0.30€</p>
-                </div>
-            </div>
-        </div>
     </section>
 
     <!-- Visit Us Section -->

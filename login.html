@@ -4,162 +4,390 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Knowledge Café</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Climate+Crisis:wght@400&family=Italiana&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .login-page {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      background: #F2EAD9;
+      overflow: hidden;
+      padding-top: 200px;
+    }
+
+    .login-card {
+      width: 629px;
+      min-height: 784px;
+      margin: 0 auto;
+      position: relative;
+      background: #E4D8BD;
+      border-radius: 53px;
+      padding: 62px 90px;
+      box-sizing: border-box;
+    }
+
+    .login-title-container {
+      width: 451px;
+      height: 62px;
+      margin-bottom: 48px;
+    }
+
+    .login-title {
+      width: 451px;
+      height: 62px;
+      color: #214598;
+      font-size: 47.29px;
+      font-family: 'Climate Crisis', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 56.30px;
+      margin: 0;
+    }
+
+    .login-cafe {
+      width: 219px;
+      height: 55px;
+      color: #214598;
+      font-size: 47.29px;
+      font-family: 'Italiana', serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 56.30px;
+      margin: 0 0 48px 0;
+    }
+
+    .login-welcome {
+      width: 424px;
+      height: 47px;
+      color: #214598;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 17.86px;
+      margin-bottom: 66px;
+    }
+
+    .login-heading {
+      width: 58px;
+      height: 26px;
+      color: #214598;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 17.86px;
+      margin-bottom: 0;
+    }
+
+    .login-divider {
+      width: 50px;
+      height: 1px;
+      background: #214598;
+      margin: 0 0 40px 0;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+
+    .remember-me input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #214598;
+    }
+
+    .remember-me label {
+      color: #214598;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 17.86px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .guest-section {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(33, 69, 152, 0.2);
+    }
+
+    .guest-button {
+      text-decoration: none;
+      margin-top: 0;
+    }
+
+    .guest-button .login-button-text {
+      font-size: 18px;
+      letter-spacing: 1px;
+      line-height: 1.2;
+    }
+
+    .guest-button {
+      width: auto;
+      min-width: 269px;
+      padding: 0 20px;
+    }
+
+    .login-form-group {
+      margin-bottom: 40px;
+    }
+
+    .login-label {
+      display: block;
+      width: 100%;
+      height: 38px;
+      color: #214598;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 17.86px;
+      margin-bottom: 10px;
+    }
+
+    .login-input {
+      width: 339px;
+      height: 28px;
+      background: #F2EAD9;
+      border: none;
+      border-radius: 0;
+      padding: 0 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      color: #214598;
+      box-sizing: border-box;
+    }
+
+    .login-input:focus {
+      outline: none;
+    }
+
+    .login-button {
+      width: 269px;
+      height: 55px;
+      background: #214598;
+      border-radius: 61px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    .login-button-text {
+      color: white;
+      font-size: 32.34px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 38.50px;
+      letter-spacing: 2.26px;
+    }
+
+    .login-button:hover {
+      opacity: 0.9;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #214598;
+    }
+
+    .auth-tab {
+      background: none;
+      border: none;
+      color: #214598;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      line-height: 17.86px;
+      cursor: pointer;
+      padding: 0;
+      opacity: 0.5;
+      transition: opacity 0.3s, color 0.3s;
+    }
+
+    .auth-tab.active {
+      opacity: 1;
+      color: #214598;
+      font-weight: 600;
+      border-bottom: 2px solid #214598;
+      padding-bottom: 5px;
+      margin-bottom: 0;
+    }
+
+    .auth-tab {
+      border-bottom: 2px solid transparent;
+      padding-bottom: 5px;
+      margin-bottom: 0;
+    }
+
+    .auth-tab:hover {
+      opacity: 1;
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .signup-link {
+      color: #214598;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 20px;
+      display: inline-block;
+    }
+
+    .signup-link:hover {
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .login-card {
+        width: 90%;
+        max-width: 629px;
+        padding: 40px 30px;
+      }
+
+      .login-title-container,
+      .login-title {
+        width: 100%;
+      }
+
+      .login-cafe {
+        width: auto;
+      }
+
+      .login-welcome {
+        width: 100%;
+      }
+
+      .login-input {
+        width: 100%;
+        max-width: 339px;
+      }
+
+      .login-button {
+        width: 100%;
+        max-width: 269px;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Navigation -->
   <nav class="navbar">
-    <div class="nav-container">
-      <div class="nav-logo">
-        <i class="fas fa-coffee"></i>
-        <span>Knowledge Café</span>
-      </div>
-      <ul class="nav-menu">
-        <li><a href="/index.html" class="nav-link">Home</a></li>
-        <li><a href="/index.html#about" class="nav-link">About</a></li>
-        <li><a href="/index.html#menu" class="nav-link">Menu</a></li>
-        <li><a href="/order.html" class="nav-link">Order</a></li>
-        <li><a href="/index.html#loyalty" class="nav-link">Loyalty Card</a></li>
-        <li><a href="/index.html#events" class="nav-link">Events</a></li>
-        <li><a href="/index.html#contact" class="nav-link">Contact</a></li>
-      </ul>
-      <div class="hamburger">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
+    <div class="nav-links">
+      <a href="index.html#home" class="nav-link">home</a>
+      <a href="index.html#about" class="nav-link">about</a>
+      <a href="index.html#menu" class="nav-link">menu</a>
+      <a href="login.html" class="nav-link">login</a>
     </div>
   </nav>
 
-  <!-- Login Section -->
-  <main class="auth-page">
-    <div class="container">
-      <div class="auth-container">
-        <div class="auth-card">
-          <div class="auth-header">
-            <div class="auth-logo">
-              <i class="fas fa-coffee"></i>
-              <h1>Knowledge Café</h1>
-            </div>
-            <p>Welcome back! Sign in to your account</p>
-          </div>
-
-          <div class="auth-tabs">
-            <button class="auth-tab active" data-tab="login">Log In</button>
-            <button class="auth-tab" data-tab="register">Sign Up</button>
-          </div>
-
-          <!-- Login Form -->
-          <form class="auth-form active" id="loginForm">
-            <div class="form-group">
-              <label for="loginEmail">Email</label>
-              <input type="email" id="loginEmail" placeholder="your.email@university.edu" required>
-            </div>
-            <div class="form-group">
-              <label for="loginPassword">Password</label>
-              <input type="password" id="loginPassword" placeholder="Enter your password" required>
-            </div>
-            <div class="form-options">
-              <label class="checkbox-label">
-                <input type="checkbox" id="rememberMe">
-                <span class="checkmark"></span>
-                Remember me
-              </label>
-              <a href="#" class="forgot-link">Forgot password?</a>
-            </div>
-            <button type="submit" class="btn btn-primary auth-btn">
-              <i class="fas fa-sign-in-alt"></i>
-              Log In
-            </button>
-          </form>
-
-          <!-- Register Form -->
-          <form class="auth-form" id="registerForm">
-            <div class="form-group">
-              <label for="registerName">Full Name</label>
-              <input type="text" id="registerName" placeholder="John Doe" required>
-            </div>
-            <div class="form-group">
-              <label for="registerEmail">Email</label>
-              <input type="email" id="registerEmail" placeholder="john.doe@university.edu" required>
-            </div>
-            <div class="form-group">
-              <label for="registerStudentId">Student ID (Optional)</label>
-              <input type="text" id="registerStudentId" placeholder="12345678">
-            </div>
-            <div class="form-group">
-              <label for="registerPassword">Password</label>
-              <input type="password" id="registerPassword" placeholder="Create a password" required>
-            </div>
-            <div class="form-group">
-              <label for="confirmPassword">Confirm Password</label>
-              <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-            </div>
-            <div class="form-options">
-              <label class="checkbox-label">
-                <input type="checkbox" id="agreeTerms" required>
-                <span class="checkmark"></span>
-                I agree to the <a href="#" class="terms-link">Terms & Conditions</a>
-              </label>
-            </div>
-            <button type="submit" class="btn btn-primary auth-btn">
-              <i class="fas fa-user-plus"></i>
-              Create Account
-            </button>
-          </form>
-
-          <div class="auth-divider">
-            <span>or</span>
-          </div>
-
-          <div class="guest-option">
-            <p>Don't want to create an account?</p>
-            <a href="/order.html" class="btn btn-secondary">
-              <i class="fas fa-shopping-cart"></i>
-              Continue as Guest
-            </a>
-          </div>
-        </div>
-
-        <div class="auth-benefits">
-          <h3>Why create an account?</h3>
-          <div class="benefit-list">
-            <div class="benefit-item">
-              <i class="fas fa-history"></i>
-              <div>
-                <h4>Order History</h4>
-                <p>Track all your past orders and reorder favorites</p>
-              </div>
-            </div>
-            <div class="benefit-item">
-              <i class="fas fa-coffee"></i>
-              <div>
-                <h4>Loyalty Rewards</h4>
-                <p>Earn stamps and get your 10th coffee free</p>
-              </div>
-            </div>
-            <div class="benefit-item">
-              <i class="fas fa-bolt"></i>
-              <div>
-                <h4>Faster Checkout</h4>
-                <p>Save your preferences for quicker ordering</p>
-              </div>
-            </div>
-            <div class="benefit-item">
-              <i class="fas fa-bell"></i>
-              <div>
-                <h4>Special Offers</h4>
-                <p>Get notified about events and promotions</p>
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- Login Page -->
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-title-container">
+        <h1 class="login-title">Knowledge</h1>
       </div>
-    </div>
-  </main>
+      <div class="login-cafe">CAFÉ</div>
+      
+      <p class="login-welcome">Welcome back! LOG IN to your account or sign up</p>
+      
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">LOG IN</button>
+        <button class="auth-tab" data-tab="register">SIGN UP</button>
+      </div>
 
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form active">
+        <div class="login-form-group">
+          <label for="loginEmail" class="login-label">Email</label>
+          <input type="email" id="loginEmail" class="login-input" required>
+        </div>
+
+        <div class="login-form-group">
+          <label for="loginPassword" class="login-label">password</label>
+          <input type="password" id="loginPassword" class="login-input" required>
+        </div>
+
+        <div class="remember-me">
+          <input type="checkbox" id="rememberMe" name="rememberMe">
+          <label for="rememberMe">remember password</label>
+        </div>
+
+        <button type="submit" class="login-button">
+          <span class="login-button-text">LOG IN</span>
+        </button>
+      </form>
+
+      <!-- Guest Option -->
+      <div class="guest-section">
+        <a href="order.html" class="login-button guest-button">
+          <span class="login-button-text">CONTINUE AS GUEST</span>
+        </a>
+      </div>
+
+      <!-- Sign Up Form -->
+      <form id="registerForm" class="auth-form">
+        <div class="login-form-group">
+          <label for="registerName" class="login-label">Full Name</label>
+          <input type="text" id="registerName" class="login-input" required>
+        </div>
+
+        <div class="login-form-group">
+          <label for="registerEmail" class="login-label">Email</label>
+          <input type="email" id="registerEmail" class="login-input" required>
+        </div>
+
+        <div class="login-form-group">
+          <label for="registerPassword" class="login-label">password</label>
+          <input type="password" id="registerPassword" class="login-input" required>
+        </div>
+
+        <div class="login-form-group">
+          <label for="confirmPassword" class="login-label">confirm password</label>
+          <input type="password" id="confirmPassword" class="login-input" required>
+        </div>
+
+        <button type="submit" class="login-button">
+          <span class="login-button-text">SIGN UP</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="session-manager.js"></script>
   <script src="auth.js"></script>
 </body>
 </html>
