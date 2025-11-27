@@ -21,27 +21,31 @@ body {
     font-family: 'Montserrat', sans-serif;
     color: var(--text-dark);
     background: var(--beige);
-    overflow-x: visible;
+    overflow-x: hidden;
     min-height: 100vh;
     font-weight: 400;
 }
 
 html {
-    overflow-x: visible;
+    overflow-x: hidden;
 }
 
 /* Navigation */
 .navbar {
     position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     width: 100%;
-    background: var(--bg);
+    background: #F2EAD9 !important;
     padding: 112px 0 0 162px;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     z-index: 1000;
     box-shadow: none;
+    background-color: #F2EAD9;
+    background-image: none;
 }
 
 .nav-links {
@@ -57,10 +61,10 @@ html {
     text-decoration: none;
     color: var(--primary-blue);
     font-family: 'Montserrat', sans-serif;
-    font-size: 20.49px;
+    font-size: 18px;
     font-weight: 400;
     text-transform: uppercase;
-    line-height: 24.39px;
+    line-height: 22px;
     transition: opacity 0.2s ease;
 }
 
@@ -74,26 +78,30 @@ html {
     background: var(--beige);
     min-height: 100vh;
     position: relative;
-    padding: 137px 0 0 0;
-    overflow: visible;
+    padding: 137px 20px 6rem 20px;
+    overflow-x: hidden;
+    overflow-y: visible;
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .hero-title-wrapper {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     top: 137px;
-    width: 100vw;
-    max-width: 1444px;
+    width: 100%;
+    max-width: 1440px;
     z-index: 1;
     pointer-events: none;
-    padding: 0 20px;
+    padding: 0;
     box-sizing: border-box;
 }
 
 .hero-title {
     font-family: 'Climate Crisis', sans-serif;
-    font-size: clamp(4rem, 158.73px, 12vw);
+    font-size: clamp(4rem, 158.73px, 11vw);
     font-weight: 400;
     color: var(--primary-blue);
     line-height: 188.96px;
@@ -102,22 +110,25 @@ html {
     margin: 0;
     padding: 0;
     white-space: nowrap;
-    text-align: center;
+    text-align: left;
+    box-sizing: border-box;
 }
 
 .hero-content {
     position: relative;
     margin-left: 106px;
-    margin-top: 609px;
+    margin-top: 500px;
     width: 404px;
     max-width: calc(100% - 212px);
+    margin-bottom: 4rem;
 }
 
 .hero-cafe {
     position: absolute;
-    right: calc(50vw - 200px);
-    top: 159px;
-    width: 201.49px;
+    right: 20px;
+    top: 296px;
+    width: auto;
+    max-width: calc(100% - 40px);
     font-family: 'Italiana', serif;
     color: var(--primary-blue);
     font-size: clamp(3rem, 97.20px, 8vw);
@@ -125,7 +136,12 @@ html {
     text-transform: uppercase;
     line-height: 115.71px;
     margin: 0;
-    text-align: left;
+    text-align: right;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: visible;
+    z-index: 2;
+    padding: 0;
 }
 
 .hero-subtitle {
@@ -511,7 +527,7 @@ html {
 
 .visit-info h3 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 25.81px;
+    font-size: 20px;
     color: var(--primary-blue);
     margin-bottom: 0.8rem;
     font-weight: 400;
@@ -520,7 +536,7 @@ html {
 
 .visit-info p {
     font-family: 'Montserrat', sans-serif;
-    font-size: 25.81px;
+    font-size: 18px;
     font-weight: 400;
     color: var(--primary-blue);
     line-height: 1.5;
@@ -562,7 +578,7 @@ html {
 
 .footer-knowledge {
     font-family: 'Montserrat', sans-serif;
-    font-size: 26.03px;
+    font-size: 18px;
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.26px;
@@ -574,10 +590,10 @@ html {
 
 .footer-cafe {
     font-family: 'Italiana', serif;
-    font-size: 97.20px;
+    font-size: 60px;
     font-weight: 400;
     text-transform: uppercase;
-    line-height: 115.71px;
+    line-height: 72px;
     color: white;
     width: 201.49px;
     height: 115.43px;
@@ -585,11 +601,11 @@ html {
 
 .footer-tagline {
     font-family: 'Montserrat', sans-serif;
-    font-size: 26.57px;
+    font-size: 16px;
     font-weight: 400;
     opacity: 1;
     text-transform: uppercase;
-    line-height: 31.63px;
+    line-height: 20px;
     color: white;
     margin-top: 1rem;
     width: 193px;
@@ -606,11 +622,11 @@ html {
     font-family: 'Montserrat', sans-serif;
     color: white;
     text-decoration: none;
-    font-size: 24px;
+    font-size: 16px;
     font-weight: 400;
     transition: opacity 0.3s;
     text-transform: uppercase;
-    line-height: 28.57px;
+    line-height: 20px;
 }
 
 .footer-nav a:hover {
@@ -619,20 +635,21 @@ html {
 
 .footer-social h3 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 23.39px;
+    font-size: 18px;
     font-weight: 400;
     margin-bottom: 1.5rem;
     text-transform: uppercase;
-    line-height: 27.84px;
+    line-height: 22px;
     color: white;
     width: 355px;
     height: 56px;
 }
 
 .instagram-preview {
-    width: 535px;
-    height: 392px;
+    width: 400px;
+    height: 300px;
     background: white;
+    max-width: 100%;
 }
 
 .instagram-preview iframe {
@@ -647,11 +664,11 @@ html {
     justify-content: space-between;
     padding-top: 2rem;
     border-top: 1px solid white;
-    font-size: 26.57px;
+    font-size: 14px;
     font-weight: 400;
     opacity: 1;
     text-transform: uppercase;
-    line-height: 31.63px;
+    line-height: 18px;
     color: white;
     max-width: 1400px;
     margin: 0 auto;
@@ -661,10 +678,10 @@ html {
     color: white;
     text-decoration: none;
     transition: opacity 0.3s;
-    font-size: 26.57px;
+    font-size: 14px;
     font-weight: 400;
     text-transform: uppercase;
-    line-height: 31.63px;
+    line-height: 18px;
 }
 
 .impressum:hover {
