@@ -251,6 +251,7 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 .about-left,
 .about-right {
     flex: 1;
+    position: relative;
 }
 
 .about-center {
@@ -259,6 +260,7 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .about-heading {
@@ -270,6 +272,22 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     color: white;
     width: 228.82px;
     height: 230.85px;
+}
+
+.about-arrow {
+    position: absolute;
+    width: 21.11938rem;
+    height: 6.58888rem;
+    opacity: 0.8;
+    z-index: 0;
+    top: 0;
+    right: -5rem;
+    transform: rotate(29.79deg);
+}
+
+.coffee-bag {
+    position: relative;
+    z-index: 1;
 }
 
 .about-item {
@@ -325,7 +343,7 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 /* Menu Section */
 .menu-section {
     background: var(--beige);
-    padding: 6rem 4rem;
+    padding: 4rem 4rem;
 }
 
 .menu-title {
@@ -333,7 +351,7 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     font-size: 96px;
     color: var(--primary-blue);
     text-align: left;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
     margin-left: 2rem;
     font-weight: 400;
     text-transform: uppercase;
@@ -349,8 +367,8 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 .menu-category {
     background: var(--menu-beige);
     border-radius: 50px;
-    padding: 3rem;
-    margin-bottom: 2.5rem;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
     position: relative;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     width: 1292px;
@@ -360,8 +378,8 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 2.5rem;
-    margin-bottom: 2rem;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .menu-grid.cold-drinks {
@@ -377,18 +395,18 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 }
 
 .menu-item img {
-    width: 128px;
-    height: 128px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border-radius: 50%;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .menu-item h4 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 15.95px;
+    font-size: 14px;
     color: var(--primary-blue);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
     font-weight: 400;
     letter-spacing: 0.16px;
 }
@@ -404,10 +422,10 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 
 .menu-item .price {
     font-family: 'Montserrat', sans-serif;
-    font-size: 17.68px;
+    font-size: 14px;
     color: var(--primary-blue);
     font-weight: 400;
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .category-label {

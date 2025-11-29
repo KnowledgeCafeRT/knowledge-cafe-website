@@ -7,11 +7,12 @@ const PRODUCT_CATALOG = [
     { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
     { id: 'cafe-latte', name: 'Cafe Latte', priceStudent: 2.70, priceStaff: 3.20 },
     { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
-    { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 },
-    { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 3.00, priceStaff: 3.50 }
+    { id: 'pumpkin-spice', name: 'Pumpkin Spice Latte', priceStudent: 3.00, priceStaff: 3.50 },
+    { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 3.00, priceStaff: 3.50 },
+    { id: 'hot-chocolate', name: 'Hot Chocolate', priceStudent: 2.90, priceStaff: 3.40 }
   ]},
   { id: 'drinks', title: 'Drinks', items: [
-    { id: 'softdrinks', name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
+    { id: 'softdrinks', name: 'Softdrinks', priceStudent: 1.50, priceStaff: 1.50 },
     { id: 'wasser', name: 'Water', priceStudent: 1.00, priceStaff: 1.00 },
     { id: 'redbull', name: 'RedBull', priceStudent: 2.00, priceStaff: 2.00 }
   ]},
@@ -143,7 +144,7 @@ function showMilkModal(product) {
   }
 }
 
-function addCoffeeToCart(product, milkType, syrupId = null) {
+function addCoffeeToCart(product, milkType, syrupId = null, extraShot = false) {
   const cart = loadCart();
   const role = getRole();
   const usePfand = getPfandSetting();
@@ -161,25 +162,38 @@ function addCoffeeToCart(product, milkType, syrupId = null) {
     }
   }
   
-  // Create unique key for coffee with milk and syrup selection
-  const cartKey = `${product.id}_${milkType}_${syrupId || 'none'}`;
+  // Get extra shot price if selected
+  let extraShotPrice = 0;
+  if (extraShot) {
+    const addonsCategory = PRODUCT_CATALOG.find(cat => cat.id === 'addons');
+    const extraShotItem = addonsCategory?.items.find(item => item.id === 'extra-shot');
+    if (extraShotItem) {
+      extraShotPrice = priceFor(extraShotItem, role);
+    }
+  }
+  
+  // Create unique key for coffee with milk, syrup, and extra shot selection
+  const cartKey = `${product.id}_${milkType}_${syrupId || 'none'}_${extraShot ? 'extra' : 'normal'}`;
   
   if (!cart[cartKey]) {
     const milkLabel = milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
     const syrupLabel = syrupName ? ` + ${syrupName}` : '';
+    const extraShotLabel = extraShot ? ' + Extra Shot' : '';
     cart[cartKey] = { 
       id: product.id,
-      name: product.name + milkLabel + syrupLabel, 
-      price: unitPrice + syrupPrice, 
+      name: product.name + milkLabel + syrupLabel + extraShotLabel, 
+      price: unitPrice + syrupPrice + extraShotPrice,
       qty: 0,
       pfand: usePfand,
       milk: milkType,
       syrup: syrupId || null,
-      syrupPrice: syrupPrice
+      syrupPrice: syrupPrice,
+      extraShot: extraShot,
+      extraShotPrice: extraShotPrice
     };
   }
   
-  cart[cartKey].price = unitPrice + syrupPrice;
+  cart[cartKey].price = unitPrice + syrupPrice + extraShotPrice;
   cart[cartKey].pfand = usePfand;
   cart[cartKey].qty += 1; 
   
@@ -189,7 +203,8 @@ function addCoffeeToCart(product, milkType, syrupId = null) {
   const pfandText = usePfand ? ' (with Pfand)' : '';
   const milkText = milkType === 'cow' ? ' with Cow Milk' : ' with Oat Milk';
   const syrupText = syrupName ? ` + ${syrupName}` : '';
-  showToast(`${product.name}${milkText}${syrupText} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
+  const extraShotText = extraShot ? ' + Extra Shot' : '';
+  showToast(`${product.name}${milkText}${syrupText}${extraShotText} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
 }
 
 function addToCart(product) {
@@ -228,34 +243,254 @@ function addToCart(product) {
 
 function clearCart() { saveCart({}); renderCart(); }
 
+// Image mapping for menu items
+const ITEM_IMAGES = {
+  'americano': 'assets/images/americano.png',
+  'espresso': 'assets/images/espresso.png',
+  'espresso-doppio': 'assets/images/espresso-doppio.png',
+  'cappuccino': 'assets/images/cappuccino.png',
+  'latte-macchiato': 'assets/images/latte-macchiato.png',
+  'cafe-latte': 'assets/images/caffe-latte.png',
+  'tea': 'assets/images/tea.png',
+  'pumpkin-spice': 'assets/images/caffe-mocha.png',
+  'cinnamon-bun-latte': 'assets/images/latte-macchiato-caramel.png',
+  'hot-chocolate': 'assets/images/hot-chocolate.png',
+  'softdrinks': 'assets/images/softdrinks.png',
+  'wasser': 'assets/images/water.png',
+  'redbull': 'assets/images/redbull.png',
+  'syrup-vanilla': 'assets/images/syrup-vanilla.png',
+  'syrup-hazelnut': 'assets/images/syrup-hazelnut.png',
+  'syrup-pumpkin': 'assets/images/syrup-pumpkin.png',
+  'syrup-spekuloos': 'assets/images/syrup-spekuloos.png',
+  'syrup-gingerbread': 'assets/images/syrup-gingerbread.png',
+  'togo': 'assets/images/water.png', // placeholder
+  'extra-shot': 'assets/images/espresso.png' // placeholder
+};
+
 function renderCategories() {
-  const container = document.getElementById('categories'); if (!container) return; container.innerHTML = '';
-  PRODUCT_CATALOG.forEach(cat => {
-    const section = document.createElement('section'); section.className = 'order-category';
-    section.innerHTML = `<h3>${cat.title}</h3><div class="order-items"></div>`;
-    const itemsWrap = section.querySelector('.order-items');
-    const role = getRole();
-    cat.items.forEach(item => {
-      const el = document.createElement('button'); el.className = 'order-item'; el.type = 'button';
+  const container = document.getElementById('categories'); 
+  if (!container) return; 
+  container.innerHTML = '';
+  
+  // Separate hot drinks and cold drinks into different categories
+  const coffeeCategory = PRODUCT_CATALOG.find(cat => cat.id === 'coffee');
+  const drinksCategory = PRODUCT_CATALOG.find(cat => cat.id === 'drinks');
+  
+  // Hot Drinks Category
+  if (coffeeCategory) {
+    const hotCategoryDiv = document.createElement('div');
+    hotCategoryDiv.className = 'menu-category';
+    
+    const hotGridDiv = document.createElement('div');
+    hotGridDiv.className = 'menu-grid';
+    
+    coffeeCategory.items.forEach(item => {
+      const menuItemWrapper = document.createElement('div');
+      menuItemWrapper.className = 'menu-item-wrapper';
+      
+      const menuItem = document.createElement('button');
+      menuItem.className = 'menu-item';
+      menuItem.type = 'button';
+      menuItem.dataset.itemId = item.id;
+      menuItem.style.cursor = 'pointer';
+      menuItem.style.border = 'none';
+      menuItem.style.background = 'transparent';
+      menuItem.style.padding = '0';
+      menuItem.style.width = '100%';
+      
       const studentPrice = priceFor(item, 'student');
       const staffPrice = priceFor(item, 'staff');
-      const main = role === 'student' ? studentPrice : staffPrice;
-      const sub = role === 'student' ? staffPrice : studentPrice;
-      const subLabel = role === 'student' ? 'Staff' : 'Student';
-      el.innerHTML = `
-        <span class="order-item-name">${item.name}</span>
-        <span style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
-          <span class="order-item-price">${formatPrice(main)}</span>
-          <span class="order-item-subprice">${subLabel}: ${formatPrice(sub)}</span>
-        </span>`;
-      el.addEventListener('click', () => addToCart(item)); itemsWrap.appendChild(el);
+      const imageSrc = ITEM_IMAGES[item.id] || 'assets/images/espresso.png';
+      
+      const priceHtml = `<p class="price">${studentPrice.toFixed(2)}€ (Students)<br>${staffPrice.toFixed(2)}€ (Staff)</p>`;
+      
+      menuItem.innerHTML = `
+        <img src="${imageSrc}" alt="${item.name}">
+        <h4>${item.name}</h4>
+        ${priceHtml}
+      `;
+      
+      // Add click handler - show options for coffee items, direct add for others
+      if (isCoffeeItem(item)) {
+        menuItem.addEventListener('click', () => toggleCoffeeOptions(item.id, menuItemWrapper));
+      } else {
+        menuItem.addEventListener('click', () => addToCart(item));
+      }
+      
+      // Create options panel (initially hidden)
+      if (isCoffeeItem(item)) {
+        const optionsPanel = createCoffeeOptionsPanel(item);
+        menuItemWrapper.appendChild(menuItem);
+        menuItemWrapper.appendChild(optionsPanel);
+      } else {
+        menuItemWrapper.appendChild(menuItem);
+      }
+      
+      hotGridDiv.appendChild(menuItemWrapper);
     });
-    container.appendChild(section);
-  });
+    
+    const hotLabelDiv = document.createElement('div');
+    hotLabelDiv.className = 'category-label hot-drinks-label';
+    hotLabelDiv.textContent = 'hot drinks';
+    
+    hotCategoryDiv.appendChild(hotGridDiv);
+    hotCategoryDiv.appendChild(hotLabelDiv);
+    container.appendChild(hotCategoryDiv);
+  }
+  
+  // Cold Drinks Category
+  if (drinksCategory) {
+    const coldCategoryDiv = document.createElement('div');
+    coldCategoryDiv.className = 'menu-category';
+    
+    const coldGridDiv = document.createElement('div');
+    coldGridDiv.className = 'menu-grid cold-drinks';
+    
+    drinksCategory.items.forEach(item => {
+      const menuItem = document.createElement('button');
+      menuItem.className = 'menu-item';
+      menuItem.type = 'button';
+      menuItem.style.cursor = 'pointer';
+      menuItem.style.border = 'none';
+      menuItem.style.background = 'transparent';
+      menuItem.style.padding = '0';
+      
+      const studentPrice = priceFor(item, 'student');
+      const staffPrice = priceFor(item, 'staff');
+      const imageSrc = ITEM_IMAGES[item.id] || 'assets/images/water.png';
+      
+      const priceHtml = studentPrice === staffPrice 
+        ? `<p class="price">${studentPrice.toFixed(2)}€</p>`
+        : `<p class="price">${studentPrice.toFixed(2)}€ (Students)<br>${staffPrice.toFixed(2)}€ (Staff)</p>`;
+      
+      menuItem.innerHTML = `
+        <img src="${imageSrc}" alt="${item.name}">
+        <h4>${item.name}</h4>
+        ${priceHtml}
+      `;
+      
+      menuItem.addEventListener('click', () => addToCart(item));
+      coldGridDiv.appendChild(menuItem);
+    });
+    
+    const coldLabelDiv = document.createElement('div');
+    coldLabelDiv.className = 'category-label cold-drinks-label';
+    coldLabelDiv.textContent = 'cold drinks';
+    
+    coldCategoryDiv.appendChild(coldGridDiv);
+    coldCategoryDiv.appendChild(coldLabelDiv);
+    container.appendChild(coldCategoryDiv);
+  }
   
   // Add heart icons to menu items
   addHeartIcons();
 }
+
+function createCoffeeOptionsPanel(item) {
+  const panel = document.createElement('div');
+  panel.className = 'coffee-options-panel';
+  panel.style.display = 'none';
+  panel.dataset.itemId = item.id;
+  
+  panel.innerHTML = `
+    <div class="coffee-options-content">
+      <div class="option-group">
+        <h5>Choose Milk:</h5>
+        <div class="option-buttons">
+          <button class="option-btn milk-btn" data-milk="cow">Cow Milk</button>
+          <button class="option-btn milk-btn" data-milk="oat">Oat Milk</button>
+        </div>
+      </div>
+      <div class="option-group">
+        <h5>Add Syrup (Optional):</h5>
+        <div class="option-buttons syrup-buttons">
+          <button class="option-btn syrup-btn" data-syrup="">No Syrup</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-vanilla">Vanilla</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-hazelnut">Hazelnut</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-pumpkin">Pumpkin Spice</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-spekuloos">Spekuloos</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-gingerbread">Gingerbread</button>
+        </div>
+      </div>
+      <div class="option-group">
+        <h5>Extra Shot (Optional):</h5>
+        <div class="option-buttons">
+          <button class="option-btn extra-shot-btn" data-extra-shot="false">No</button>
+          <button class="option-btn extra-shot-btn" data-extra-shot="true">Yes (+€0.50)</button>
+        </div>
+      </div>
+      <button class="add-to-cart-btn" data-item-id="${item.id}">Add to Cart</button>
+    </div>
+  `;
+  
+  // Set up event handlers
+  const milkBtns = panel.querySelectorAll('.milk-btn');
+  const syrupBtns = panel.querySelectorAll('.syrup-btn');
+  const extraShotBtns = panel.querySelectorAll('.extra-shot-btn');
+  const addBtn = panel.querySelector('.add-to-cart-btn');
+  
+  milkBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      milkBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+  
+  syrupBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      syrupBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+  
+  extraShotBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      extraShotBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+  
+  addBtn.addEventListener('click', () => {
+    const selectedMilk = panel.querySelector('.milk-btn.selected')?.dataset.milk;
+    const selectedSyrup = panel.querySelector('.syrup-btn.selected')?.dataset.syrup || '';
+    const selectedExtraShot = panel.querySelector('.extra-shot-btn.selected')?.dataset.extraShot === 'true';
+    
+    if (!selectedMilk) {
+      alert('Please select a milk type');
+      return;
+    }
+    
+    addCoffeeToCart(item, selectedMilk, selectedSyrup || null, selectedExtraShot);
+    toggleCoffeeOptions(item.id, panel.parentElement);
+  });
+  
+  // Set default selections
+  milkBtns[0]?.classList.add('selected');
+  syrupBtns[0]?.classList.add('selected');
+  extraShotBtns[0]?.classList.add('selected');
+  
+  return panel;
+}
+
+function toggleCoffeeOptions(itemId, wrapper) {
+  const panel = wrapper.querySelector('.coffee-options-panel');
+  if (!panel) return;
+  
+  // Close all other panels
+  document.querySelectorAll('.coffee-options-panel').forEach(p => {
+    if (p !== panel) {
+      p.style.display = 'none';
+    }
+  });
+  
+  // Toggle this panel
+  if (panel.style.display === 'none' || !panel.style.display) {
+    panel.style.display = 'block';
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
 
 function renderCart() {
   const cartList = document.getElementById('cartItems'); 

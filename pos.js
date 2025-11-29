@@ -40,39 +40,29 @@
   function formatPrice(v) { return `€${v.toFixed(2)}`; }
 
   function gateWithPin() {
-    const gate = document.getElementById('pinGate');
-    if (!gate) {
-      // No PIN gate, initialize immediately
-      initializePOS();
+    // Session checking is now handled by session-check.js
+    // Just verify session exists and initialize POS
+    const posSession = sessionStorage.getItem('pos_session');
+    
+    if (!posSession) {
+      // session-check.js will handle redirect, but just in case:
+      window.location.href = 'pos-login.html';
       return;
     }
-    gate.style.display = 'flex';
-    const pinBtn = document.getElementById('posPinBtn');
-    const pinCancel = document.getElementById('posPinCancel');
-    pinBtn?.addEventListener('click', () => {
-      const input = /** @type {HTMLInputElement} */ (document.getElementById('posPinInput'));
-      const pin = input?.value?.trim();
-      // Simple default PIN 1234 (change in production!)
-      const stored = localStorage.getItem('kcafe_pos_pin') || '1234';
-      if (pin === stored) {
-        gate.style.display = 'none';
-        const posContent = document.getElementById('posContent');
-        if (posContent) posContent.style.display = '';
-        // Initialize POS after unlocking
-        initializePOS();
-      } else {
-        alert('Incorrect PIN');
-        input.value = '';
-      }
-    });
-    pinCancel?.addEventListener('click', () => { window.location.href = '/'; });
-    // Allow Enter key to submit PIN
-    const pinInput = document.getElementById('posPinInput');
-    pinInput?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        pinBtn?.click();
-      }
-    });
+    
+    try {
+      const session = JSON.parse(posSession);
+      // Store session info globally for use in POS
+      window.posSession = session;
+      
+      // Initialize POS
+      initializePOS();
+      
+    } catch (e) {
+      console.error('Error parsing POS session:', e);
+      sessionStorage.removeItem('pos_session');
+      window.location.href = 'pos-login.html';
+    }
   }
 
   function initializePOS() {

@@ -6,14 +6,20 @@ const SUPABASE_CONFIG = {
   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdldnV1aHJlYmtqY3Z2eWFrd3JsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NTc0MzAsImV4cCI6MjA3NjIzMzQzMH0.GkPrWH_w9mszEEQJaKE4FYxYej-_ZUnVVOr4r9ktofQ' // Your Supabase anon key
 };
 
-// Initialize Supabase client
+// Initialize Supabase client with session persistence
 let supabase = null;
 
 // Load Supabase client library and initialize
 async function initSupabase() {
   if (window.supabase) {
-    // Supabase already loaded
-    supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+    // Supabase already loaded - create client with session persistence
+    supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
+      auth: {
+        persistSession: true, // Keep user logged in across sessions
+        autoRefreshToken: true, // Automatically refresh tokens
+        detectSessionInUrl: true // Detect auth callbacks in URL
+      }
+    });
     return supabase;
   }
   
@@ -22,7 +28,14 @@ async function initSupabase() {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
     script.onload = () => {
-      supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+      // Create client with session persistence
+      supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
+        auth: {
+          persistSession: true, // Keep user logged in across sessions
+          autoRefreshToken: true, // Automatically refresh tokens
+          detectSessionInUrl: true // Detect auth callbacks in URL
+        }
+      });
       resolve(supabase);
     };
     script.onerror = () => {

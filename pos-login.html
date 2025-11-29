@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POS Login - Knowledge Café</title>
+  
+  <!-- SECURITY HEADERS -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Climate+Crisis:wght@400&family=Italiana&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #F2EAD9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .login-container {
+      background: #E4D8BD;
+      border-radius: 53px;
+      padding: 3rem 2rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo i {
+      font-size: 4rem;
+      color: #214598;
+    }
+
+    .logo h1 {
+      color: #214598;
+      font-size: 47.29px;
+      font-family: 'Climate Crisis', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      margin: 1rem 0 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .logo .cafe-text {
+      font-family: 'Italiana', serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      margin-top: -0.2rem;
+    }
+
+    .logo p {
+      color: #214598;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    .pin-display {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .pin-dot {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #214598;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .pin-dot.filled {
+      background: #214598;
+      transform: scale(1.2);
+    }
+
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .pin-key {
+      aspect-ratio: 1;
+      border: none;
+      background: #f8f8f8;
+      border-radius: 15px;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pin-key:hover {
+      background: #214598;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .pin-key:active {
+      transform: translateY(0);
+    }
+
+    .pin-key.zero {
+      grid-column: 2;
+    }
+
+    .pin-key.clear {
+      background: #e74c3c;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .error-message {
+      background: #fee;
+      color: #c00;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+      animation: shake 0.5s;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .info-box {
+      background: rgba(33, 69, 152, 0.1);
+      border-left: 4px solid #214598;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #214598;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #214598;
+      font-size: 0.85rem;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #214598;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <i class="fas fa-coffee"></i>
+      <h1>Knowledge <span class="cafe-text">café</span></h1>
+      <p>Kassensystem Login</p>
+    </div>
+
+    <div class="pin-display">
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+      <div class="pin-dot" id="dot4"></div>
+    </div>
+
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="enterDigit('1')">1</button>
+      <button class="pin-key" onclick="enterDigit('2')">2</button>
+      <button class="pin-key" onclick="enterDigit('3')">3</button>
+      <button class="pin-key" onclick="enterDigit('4')">4</button>
+      <button class="pin-key" onclick="enterDigit('5')">5</button>
+      <button class="pin-key" onclick="enterDigit('6')">6</button>
+      <button class="pin-key" onclick="enterDigit('7')">7</button>
+      <button class="pin-key" onclick="enterDigit('8')">8</button>
+      <button class="pin-key" onclick="enterDigit('9')">9</button>
+      <button class="pin-key clear" onclick="clearPin()">
+        <i class="fas fa-backspace"></i>
+      </button>
+      <button class="pin-key zero" onclick="enterDigit('0')">0</button>
+      <button class="pin-key" style="visibility:hidden;"></button>
+    </div>
+
+    <div class="error-message" id="errorMessage"></div>
+    
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p style="margin-top: 1rem; color: #214598;">Prüfe PIN...</p>
+    </div>
+
+    <div class="info-box">
+      <strong>📌 Staff & Manager</strong>
+      <p style="margin-top: 0.5rem;">
+        Staff und Manager nutzen den gleichen PIN<br>
+        Alle haben volle POS-Rechte (inkl. Stornierung)
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>🔒 Sichere Verbindung | Knowledge Café e.V.</p>
+      <p style="margin-top: 0.5rem;">Auto-Logout nach 15 Min Inaktivität</p>
+    </div>
+  </div>
+
+  <script src="rate-limiter.js"></script>
+  <script>
+    // ============================================
+    // PIN CONFIG - ÄNDERE DIESE JEDES SEMESTER!
+    // ============================================
+    // WICHTIG: Staff UND Manager nutzen den GLEICHEN CODE!
+    // Der Unterschied wird automatisch durch PIN erkannt
+    
+    const PINS = {
+      // POS PIN (Staff & Manager - beide nutzen den gleichen Code)
+      '2580': {
+        name: 'POS User',
+        role: 'manager', // Manager permissions für alle
+        permissions: ['sell', 'view_orders', 'accept_payment', 'cancel_orders', 'view_reports', 'manage_cash'],
+        redirect: 'pos.html',
+        canCancel: true // Kann stornieren
+      },
+      
+      // NOTFALL PIN (nur im Notfall!)
+      '3691': {
+        name: 'Notfall',
+        role: 'emergency',
+        permissions: ['sell', 'view_orders', 'accept_payment'],
+        redirect: 'pos.html',
+        isEmergency: true,
+        canCancel: false
+      }
+    };
+
+    let currentPin = '';
+    let failedAttempts = 0;
+    const maxAttempts = 5;
+    const lockoutTime = 15 * 60 * 1000; // 15 Minuten
+
+    function checkLockout() {
+      const lockoutUntil = localStorage.getItem('pos_lockout_until');
+      if (lockoutUntil && Date.now() < parseInt(lockoutUntil)) {
+        const remainingMinutes = Math.ceil((parseInt(lockoutUntil) - Date.now()) / 60000);
+        showError(`🔒 Gesperrt für ${remainingMinutes} Min.`);
+        disableKeypad();
+        return true;
+      }
+      return false;
+    }
+
+    function loadFailedAttempts() {
+      failedAttempts = parseInt(localStorage.getItem('pos_failed_attempts') || '0');
+    }
+
+    function enterDigit(digit) {
+      if (currentPin.length >= 4) return;
+      currentPin += digit;
+      updatePinDisplay();
+      if (currentPin.length === 4) {
+        setTimeout(() => verifyPin(), 300);
+      }
+    }
+
+    function clearPin() {
+      currentPin = '';
+      updatePinDisplay();
+      hideError();
+    }
+
+    function updatePinDisplay() {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`dot${i}`);
+        dot.classList.toggle('filled', i <= currentPin.length);
+      }
+    }
+
+    async function verifyPin() {
+      // Rate Limit Check
+      try {
+        window.rateLimiter.checkLimit('pos_login', 10, 5 * 60 * 1000); // 10 Versuche pro 5 Min
+      } catch (error) {
+        showError(error.message);
+        document.getElementById('loading').classList.remove('show');
+        disableKeypad();
+        return;
+      }
+
+      document.getElementById('loading').classList.add('show');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const pinConfig = PINS[currentPin];
+      
+      if (pinConfig) {
+        // SUCCESS!
+        logSecurityEvent('login_success', {
+          role: pinConfig.role,
+          name: pinConfig.name,
+          isEmergency: pinConfig.isEmergency || false
+        });
+        
+        // Save session
+        sessionStorage.setItem('pos_session', JSON.stringify({
+          role: pinConfig.role,
+          name: pinConfig.name,
+          permissions: pinConfig.permissions,
+          canCancel: pinConfig.canCancel,
+          loginTime: Date.now(),
+          isEmergency: pinConfig.isEmergency || false
+        }));
+        
+        // Reset failed attempts
+        localStorage.removeItem('pos_failed_attempts');
+        failedAttempts = 0;
+        
+        playSound(800, 1000);
+        
+        setTimeout(() => {
+          window.location.href = pinConfig.redirect;
+        }, 500);
+        
+      } else {
+        // FAILED
+        document.getElementById('loading').classList.remove('show');
+        failedAttempts++;
+        localStorage.setItem('pos_failed_attempts', failedAttempts);
+        
+        logSecurityEvent('login_failed', {
+          attemptedPin: currentPin.substring(0, 2) + '**',
+          failedAttempts: failedAttempts
+        });
+        
+        playSound(400, 200);
+        
+        if (failedAttempts >= maxAttempts) {
+          localStorage.setItem('pos_lockout_until', Date.now() + lockoutTime);
+          showError(`🔒 5 Fehlversuche! Gesperrt für 15 Min.`);
+          disableKeypad();
+        } else {
+          showError(`❌ Falscher PIN! Noch ${maxAttempts - failedAttempts} Versuche.`);
+        }
+        
+        currentPin = '';
+        updatePinDisplay();
+      }
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+    }
+
+    function hideError() {
+      document.getElementById('errorMessage').classList.remove('show');
+    }
+
+    function disableKeypad() {
+      document.querySelectorAll('.pin-key').forEach(key => {
+        key.disabled = true;
+        key.style.opacity = '0.5';
+      });
+    }
+
+    function playSound(freq1, freq2) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(freq1, ctx.currentTime);
+        if (freq2) osc.frequency.setValueAtTime(freq2, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.2);
+      } catch (e) {}
+    }
+
+    function logSecurityEvent(event, data) {
+      const log = {
+        timestamp: new Date().toISOString(),
+        event: event,
+        data: data,
+        page: 'pos_login'
+      };
+      
+      const logs = JSON.parse(localStorage.getItem('pos_security_logs') || '[]');
+      logs.push(log);
+      if (logs.length > 1000) logs.shift();
+      localStorage.setItem('pos_security_logs', JSON.stringify(logs));
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') {
+        enterDigit(e.key);
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        clearPin();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadFailedAttempts();
+      checkLockout();
+    });
+  </script>
+</body>
+</html>
+

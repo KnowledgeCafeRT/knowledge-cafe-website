@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Dashboard - Knowledge Café</title>
+  
+  <!-- SECURITY HEADERS -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Climate+Crisis:wght@400&family=Italiana&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #F2EAD9;
+      min-height: 100vh;
+      color: #214598;
+      padding: 2rem;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .dashboard-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .dashboard-title h1 {
+      font-family: 'Climate Crisis', sans-serif;
+      font-size: 47.29px;
+      color: #214598;
+      text-transform: uppercase;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .dashboard-title .cafe-text {
+      font-family: 'Italiana', serif;
+      font-size: 47.29px;
+      text-transform: uppercase;
+      margin-top: -0.2rem;
+    }
+
+    .dashboard-subtitle {
+      font-size: 15px;
+      color: #214598;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    .logout-btn {
+      background: #214598;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 61px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    .logout-btn:hover {
+      opacity: 0.9;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .dashboard-card {
+      background: #E4D8BD;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      color: #214598;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #214598;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .card-content {
+      color: #214598;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .date-selector {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .date-input {
+      padding: 10px;
+      border: 2px solid #214598;
+      border-radius: 8px;
+      background: #F2EAD9;
+      color: #214598;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+    }
+
+    .date-input:focus {
+      outline: none;
+      border-color: #214598;
+    }
+
+    .btn {
+      background: #214598;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.3s;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background: #F2EAD9;
+      color: #214598;
+      border: 2px solid #214598;
+    }
+
+    .btn-secondary:hover {
+      background: #E4D8BD;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stat-item {
+      background: rgba(33, 69, 152, 0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #214598;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #214598;
+    }
+
+    .cash-count-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .cash-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .cash-input-group label {
+      font-size: 14px;
+      text-transform: uppercase;
+      color: #214598;
+      font-weight: 600;
+    }
+
+    .cash-input-group input {
+      padding: 10px;
+      border: 2px solid #214598;
+      border-radius: 8px;
+      background: #F2EAD9;
+      color: #214598;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+    }
+
+    .cash-input-group input:focus {
+      outline: none;
+      border-color: #214598;
+    }
+
+    .cash-total {
+      background: rgba(33, 69, 152, 0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .cash-total-label {
+      font-size: 14px;
+      text-transform: uppercase;
+      color: #214598;
+      margin-bottom: 0.5rem;
+    }
+
+    .cash-total-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #214598;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      color: #214598;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #214598;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .report-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .report-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .report-option input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #214598;
+      cursor: pointer;
+    }
+
+    .report-option label {
+      font-size: 14px;
+      color: #214598;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <div class="dashboard-title">
+        <h1>Finance <span class="cafe-text">Dashboard</span></h1>
+        <p class="dashboard-subtitle">Kassensturz & Berichte</p>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Kassensturz am Tagesende -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <i class="fas fa-calculator card-icon"></i>
+          <h2 class="card-title">Kassensturz am Tagesende</h2>
+        </div>
+        <div class="card-content">
+          <form class="cash-count-form" id="cashCountForm">
+            <div class="cash-input-group">
+              <label>Kassensoll (€)</label>
+              <input type="number" id="expectedCash" step="0.01" min="0" placeholder="0.00" required>
+            </div>
+            <div class="cash-input-group">
+              <label>Kassenist (€)</label>
+              <input type="number" id="actualCash" step="0.01" min="0" placeholder="0.00" required>
+            </div>
+            <div class="cash-input-group">
+              <label>Pfand Kasse (€)</label>
+              <input type="number" id="pfandCash" step="0.01" min="0" placeholder="0.00" required>
+            </div>
+            <div class="cash-total">
+              <div class="cash-total-label">Differenz</div>
+              <div class="cash-total-value" id="cashDifference">€0.00</div>
+            </div>
+            <button type="button" class="btn" onclick="calculateCashDifference()">
+              <i class="fas fa-calculator"></i> Berechnen
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="saveCashCount()">
+              <i class="fas fa-save"></i> Speichern
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tagesberichte -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <i class="fas fa-calendar-day card-icon"></i>
+          <h2 class="card-title">Tagesberichte</h2>
+        </div>
+        <div class="card-content">
+          <div class="date-selector">
+            <input type="date" id="dailyDate" class="date-input" value="">
+          </div>
+          <div class="report-options">
+            <div class="report-option">
+              <input type="checkbox" id="dailyPfand" checked>
+              <label for="dailyPfand">Pfand getrennt anzeigen</label>
+            </div>
+          </div>
+          <button class="btn" onclick="generateDailyReport()">
+            <i class="fas fa-file-alt"></i> Tagesbericht generieren
+          </button>
+          <button class="btn btn-secondary" onclick="exportDailyExcel()">
+            <i class="fas fa-file-excel"></i> Excel Export
+          </button>
+          <div class="loading" id="dailyLoading">
+            <div class="spinner"></div>
+            <p>Generiere Bericht...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wochenberichte -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <i class="fas fa-calendar-week card-icon"></i>
+          <h2 class="card-title">Wochenberichte</h2>
+        </div>
+        <div class="card-content">
+          <div class="date-selector">
+            <label style="font-size: 12px; text-transform: uppercase;">Von:</label>
+            <input type="date" id="weekStart" class="date-input" value="">
+            <label style="font-size: 12px; text-transform: uppercase;">Bis:</label>
+            <input type="date" id="weekEnd" class="date-input" value="">
+          </div>
+          <div class="report-options">
+            <div class="report-option">
+              <input type="checkbox" id="weeklyPfand" checked>
+              <label for="weeklyPfand">Pfand getrennt anzeigen</label>
+            </div>
+          </div>
+          <button class="btn" onclick="generateWeeklyReport()">
+            <i class="fas fa-file-alt"></i> Wochenbericht generieren
+          </button>
+          <button class="btn btn-secondary" onclick="exportWeeklyExcel()">
+            <i class="fas fa-file-excel"></i> Excel Export
+          </button>
+          <div class="loading" id="weeklyLoading">
+            <div class="spinner"></div>
+            <p>Generiere Bericht...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monatsberichte -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <i class="fas fa-calendar-alt card-icon"></i>
+          <h2 class="card-title">Monatsberichte</h2>
+        </div>
+        <div class="card-content">
+          <div class="date-selector">
+            <input type="month" id="monthSelect" class="date-input" value="">
+          </div>
+          <div class="report-options">
+            <div class="report-option">
+              <input type="checkbox" id="monthlyPfand" checked>
+              <label for="monthlyPfand">Pfand getrennt anzeigen</label>
+            </div>
+          </div>
+          <button class="btn" onclick="generateMonthlyReport()">
+            <i class="fas fa-file-alt"></i> Monatsbericht generieren
+          </button>
+          <button class="btn btn-secondary" onclick="exportMonthlyExcel()">
+            <i class="fas fa-file-excel"></i> Excel Export
+          </button>
+          <div class="loading" id="monthlyLoading">
+            <div class="spinner"></div>
+            <p>Generiere Bericht...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Display Area -->
+    <div class="dashboard-card" id="reportDisplay" style="display: none;">
+      <div class="card-header">
+        <i class="fas fa-chart-bar card-icon"></i>
+        <h2 class="card-title" id="reportTitle">Bericht</h2>
+      </div>
+      <div class="card-content" id="reportContent">
+        <!-- Report content will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    // Session Check
+    function checkFinanceSession() {
+      const session = sessionStorage.getItem('finance_session');
+      if (!session) {
+        alert('⚠️ Bitte zuerst einloggen!');
+        window.location.href = 'finance-login.html';
+        return false;
+      }
+      
+      const sessionData = JSON.parse(session);
+      const sessionTimeout = 30 * 60 * 1000; // 30 minutes
+      
+      if (Date.now() - sessionData.loginTime > sessionTimeout) {
+        alert('⏱️ Session abgelaufen! Bitte neu einloggen.');
+        sessionStorage.removeItem('finance_session');
+        window.location.href = 'finance-login.html';
+        return false;
+      }
+      
+      return true;
+    }
+
+    // Logout
+    function logout() {
+      if (confirm('Wirklich ausloggen?')) {
+        sessionStorage.removeItem('finance_session');
+        window.location.href = 'finance-login.html';
+      }
+    }
+
+    // Set default dates
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkFinanceSession()) return;
+
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      
+      document.getElementById('dailyDate').value = `${year}-${month}-${day}`;
+      document.getElementById('monthSelect').value = `${year}-${month}`;
+      
+      // Set week dates (current week)
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - today.getDay() + 1); // Monday
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6); // Sunday
+      
+      document.getElementById('weekStart').value = weekStart.toISOString().split('T')[0];
+      document.getElementById('weekEnd').value = weekEnd.toISOString().split('T')[0];
+    });
+
+    // Cash Count Functions
+    function calculateCashDifference() {
+      const expected = parseFloat(document.getElementById('expectedCash').value) || 0;
+      const actual = parseFloat(document.getElementById('actualCash').value) || 0;
+      const difference = actual - expected;
+      
+      const diffElement = document.getElementById('cashDifference');
+      diffElement.textContent = `€${difference.toFixed(2)}`;
+      
+      if (difference < 0) {
+        diffElement.style.color = '#e74c3c';
+      } else if (difference > 0) {
+        diffElement.style.color = '#27ae60';
+      } else {
+        diffElement.style.color = '#214598';
+      }
+    }
+
+    function saveCashCount() {
+      const expected = parseFloat(document.getElementById('expectedCash').value) || 0;
+      const actual = parseFloat(document.getElementById('actualCash').value) || 0;
+      const pfand = parseFloat(document.getElementById('pfandCash').value) || 0;
+      const difference = actual - expected;
+      
+      const cashCount = {
+        date: new Date().toISOString().split('T')[0],
+        expected: expected,
+        actual: actual,
+        pfand: pfand,
+        difference: difference,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Save to localStorage (in production, save to database)
+      const cashCounts = JSON.parse(localStorage.getItem('cash_counts') || '[]');
+      cashCounts.push(cashCount);
+      localStorage.setItem('cash_counts', JSON.stringify(cashCounts));
+      
+      alert('✅ Kassensturz gespeichert!');
+      
+      // Reset form
+      document.getElementById('cashCountForm').reset();
+      document.getElementById('cashDifference').textContent = '€0.00';
+      document.getElementById('cashDifference').style.color = '#214598';
+    }
+
+    // Report Generation Functions
+    async function generateDailyReport() {
+      const date = document.getElementById('dailyDate').value;
+      const includePfand = document.getElementById('dailyPfand').checked;
+      
+      document.getElementById('dailyLoading').classList.add('show');
+      
+      try {
+        const report = await fetchOrdersForDate(date, includePfand);
+        displayReport('Tagesbericht - ' + date, report);
+      } catch (error) {
+        console.error('Error generating daily report:', error);
+        alert('Fehler beim Generieren des Berichts');
+      } finally {
+        document.getElementById('dailyLoading').classList.remove('show');
+      }
+    }
+
+    async function generateWeeklyReport() {
+      const startDate = document.getElementById('weekStart').value;
+      const endDate = document.getElementById('weekEnd').value;
+      const includePfand = document.getElementById('weeklyPfand').checked;
+      
+      document.getElementById('weeklyLoading').classList.add('show');
+      
+      try {
+        const report = await fetchOrdersForDateRange(startDate, endDate, includePfand);
+        displayReport(`Wochenbericht - ${startDate} bis ${endDate}`, report);
+      } catch (error) {
+        console.error('Error generating weekly report:', error);
+        alert('Fehler beim Generieren des Berichts');
+      } finally {
+        document.getElementById('weeklyLoading').classList.remove('show');
+      }
+    }
+
+    async function generateMonthlyReport() {
+      const month = document.getElementById('monthSelect').value;
+      const includePfand = document.getElementById('monthlyPfand').checked;
+      
+      document.getElementById('monthlyLoading').classList.add('show');
+      
+      try {
+        const [year, monthNum] = month.split('-');
+        const startDate = `${year}-${monthNum}-01`;
+        const lastDay = new Date(year, monthNum, 0).getDate();
+        const endDate = `${year}-${monthNum}-${String(lastDay).padStart(2, '0')}`;
+        
+        const report = await fetchOrdersForDateRange(startDate, endDate, includePfand);
+        displayReport(`Monatsbericht - ${month}`, report);
+      } catch (error) {
+        console.error('Error generating monthly report:', error);
+        alert('Fehler beim Generieren des Berichts');
+      } finally {
+        document.getElementById('monthlyLoading').classList.remove('show');
+      }
+    }
+
+    // Fetch orders from Supabase
+    async function fetchOrdersForDate(date, includePfand) {
+      try {
+        const supabase = await window.getSupabaseClient();
+        if (!supabase) {
+          // Fallback to localStorage
+          return getOrdersFromLocalStorage(date, date, includePfand);
+        }
+
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .eq('created_at::date', date)
+          .order('created_at', { ascending: true });
+
+        if (error) throw error;
+        return processOrders(data || [], includePfand);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        return getOrdersFromLocalStorage(date, date, includePfand);
+      }
+    }
+
+    async function fetchOrdersForDateRange(startDate, endDate, includePfand) {
+      try {
+        const supabase = await window.getSupabaseClient();
+        if (!supabase) {
+          return getOrdersFromLocalStorage(startDate, endDate, includePfand);
+        }
+
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .gte('created_at::date', startDate)
+          .lte('created_at::date', endDate)
+          .order('created_at', { ascending: true });
+
+        if (error) throw error;
+        return processOrders(data || [], includePfand);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        return getOrdersFromLocalStorage(startDate, endDate, includePfand);
+      }
+    }
+
+    function getOrdersFromLocalStorage(startDate, endDate, includePfand) {
+      const orders = JSON.parse(localStorage.getItem('kcafe_order_queue') || '[]');
+      const filtered = orders.filter(order => {
+        const orderDate = order.created_at ? order.created_at.split('T')[0] : new Date(order.timestamp).toISOString().split('T')[0];
+        return orderDate >= startDate && orderDate <= endDate;
+      });
+      return processOrders(filtered, includePfand);
+    }
+
+    function processOrders(orders, includePfand) {
+      let total = 0;
+      let pfandTotal = 0;
+      let orderCount = orders.length;
+      const items = {};
+
+      orders.forEach(order => {
+        const orderTotal = parseFloat(order.total) || 0;
+        const orderPfand = parseFloat(order.pfand_deposit) || 0;
+        
+        total += orderTotal;
+        pfandTotal += orderPfand;
+
+        // Count items
+        if (order.items && Array.isArray(order.items)) {
+          order.items.forEach(item => {
+            const key = item.name || item.id;
+            if (!items[key]) {
+              items[key] = { name: key, quantity: 0, revenue: 0 };
+            }
+            items[key].quantity += item.quantity || 1;
+            items[key].revenue += (parseFloat(item.price) || 0) * (item.quantity || 1);
+          });
+        }
+      });
+
+      return {
+        total: total,
+        pfandTotal: pfandTotal,
+        orderCount: orderCount,
+        items: Object.values(items),
+        includePfand: includePfand
+      };
+    }
+
+    function displayReport(title, report) {
+      document.getElementById('reportTitle').textContent = title;
+      
+      const content = document.getElementById('reportContent');
+      let html = `
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Anzahl Bestellungen</div>
+            <div class="stat-value">${report.orderCount}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Umsatz (ohne Pfand)</div>
+            <div class="stat-value">€${report.total.toFixed(2)}</div>
+          </div>
+      `;
+
+      if (report.includePfand) {
+        html += `
+          <div class="stat-item">
+            <div class="stat-label">Pfand</div>
+            <div class="stat-value">€${report.pfandTotal.toFixed(2)}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Gesamt</div>
+            <div class="stat-value">€${(report.total + report.pfandTotal).toFixed(2)}</div>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="stat-item">
+            <div class="stat-label">Gesamt</div>
+            <div class="stat-value">€${report.total.toFixed(2)}</div>
+          </div>
+        `;
+      }
+
+      html += `</div>`;
+
+      if (report.items.length > 0) {
+        html += `<h3 style="margin-top: 2rem; margin-bottom: 1rem; text-transform: uppercase;">Verkaufte Artikel</h3>`;
+        html += `<table style="width: 100%; border-collapse: collapse;">`;
+        html += `<tr style="border-bottom: 2px solid #214598;">
+          <th style="text-align: left; padding: 0.5rem; text-transform: uppercase;">Artikel</th>
+          <th style="text-align: right; padding: 0.5rem; text-transform: uppercase;">Menge</th>
+          <th style="text-align: right; padding: 0.5rem; text-transform: uppercase;">Umsatz</th>
+        </tr>`;
+        
+        report.items.forEach(item => {
+          html += `<tr style="border-bottom: 1px solid rgba(33,69,152,0.2);">
+            <td style="padding: 0.5rem;">${item.name}</td>
+            <td style="text-align: right; padding: 0.5rem;">${item.quantity}</td>
+            <td style="text-align: right; padding: 0.5rem;">€${item.revenue.toFixed(2)}</td>
+          </tr>`;
+        });
+        
+        html += `</table>`;
+      }
+
+      content.innerHTML = html;
+      document.getElementById('reportDisplay').style.display = 'block';
+      document.getElementById('reportDisplay').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Excel Export Functions
+    function exportDailyExcel() {
+      const date = document.getElementById('dailyDate').value;
+      const includePfand = document.getElementById('dailyPfand').checked;
+      exportToExcel(date, date, `Tagesbericht_${date}`, includePfand);
+    }
+
+    function exportWeeklyExcel() {
+      const startDate = document.getElementById('weekStart').value;
+      const endDate = document.getElementById('weekEnd').value;
+      const includePfand = document.getElementById('weeklyPfand').checked;
+      exportToExcel(startDate, endDate, `Wochenbericht_${startDate}_${endDate}`, includePfand);
+    }
+
+    function exportMonthlyExcel() {
+      const month = document.getElementById('monthSelect').value;
+      const includePfand = document.getElementById('monthlyPfand').checked;
+      const [year, monthNum] = month.split('-');
+      const startDate = `${year}-${monthNum}-01`;
+      const lastDay = new Date(year, monthNum, 0).getDate();
+      const endDate = `${year}-${monthNum}-${String(lastDay).padStart(2, '0')}`;
+      exportToExcel(startDate, endDate, `Monatsbericht_${month}`, includePfand);
+    }
+
+    async function exportToExcel(startDate, endDate, filename, includePfand) {
+      try {
+        const report = await fetchOrdersForDateRange(startDate, endDate, includePfand);
+        
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        
+        // Summary sheet
+        const summaryData = [
+          ['Bericht', `${startDate} bis ${endDate}`],
+          ['Anzahl Bestellungen', report.orderCount],
+          ['Umsatz (ohne Pfand)', report.total.toFixed(2)],
+        ];
+        
+        if (includePfand) {
+          summaryData.push(['Pfand', report.pfandTotal.toFixed(2)]);
+          summaryData.push(['Gesamt', (report.total + report.pfandTotal).toFixed(2)]);
+        } else {
+          summaryData.push(['Gesamt', report.total.toFixed(2)]);
+        }
+        
+        const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+        XLSX.utils.book_append_sheet(wb, ws1, 'Zusammenfassung');
+        
+        // Items sheet
+        const itemsData = [['Artikel', 'Menge', 'Umsatz']];
+        report.items.forEach(item => {
+          itemsData.push([item.name, item.quantity, item.revenue.toFixed(2)]);
+        });
+        
+        const ws2 = XLSX.utils.aoa_to_sheet(itemsData);
+        XLSX.utils.book_append_sheet(wb, ws2, 'Verkaufte Artikel');
+        
+        // Export
+        XLSX.writeFile(wb, `${filename}.xlsx`);
+        alert('✅ Excel-Datei wurde heruntergeladen!');
+      } catch (error) {
+        console.error('Error exporting to Excel:', error);
+        alert('Fehler beim Exportieren nach Excel');
+      }
+    }
+  </script>
+</body>
+</html>
+
