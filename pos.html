@@ -7,13 +7,14 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Climate+Crisis:wght@400&family=Italiana&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     * { box-sizing: border-box; }
     body { 
-      font-family: 'Space Grotesk', sans-serif; 
-      background: #f8f5f0; 
+      font-family: 'Montserrat', sans-serif; 
+      background: #F2EAD9; 
       margin: 0; 
       padding: 0; 
     }
@@ -32,9 +33,10 @@
     }
     .pos-header h1 { 
       margin: 0; 
-      font-family: 'Fredoka', sans-serif;
+      font-family: 'Climate Crisis', sans-serif;
       font-size: 2rem;
-      color: #2c1810;
+      color: #214598;
+      text-transform: uppercase;
     }
     .pos-grid { 
       display: grid; 
@@ -42,11 +44,12 @@
       gap: 24px; 
     }
     .pos-panel { 
-      background: #fff; 
+      background: #E4D8BD; 
       border-radius: 12px; 
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08); 
+      box-shadow: 0 4px 15px rgba(33, 69, 152, 0.1); 
       padding: 20px; 
       min-height: 600px;
+      border: 2px solid rgba(33, 69, 152, 0.1);
     }
     .pos-tabs { 
       display: flex; 
@@ -57,29 +60,31 @@
     .pos-tab { 
       padding: 12px 20px; 
       border-radius: 10px; 
-      background: #f3ece5; 
-      color: #2c1810; 
+      background: #F2EAD9; 
+      color: #214598; 
       cursor: pointer; 
-      border: 2px solid transparent; 
+      border: 2px solid rgba(33, 69, 152, 0.2); 
       font-weight: 600;
       font-size: 1rem;
       transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
     }
     .pos-tab:hover {
-      background: #eadfd4;
+      background: rgba(33, 69, 152, 0.05);
+      border-color: #214598;
     }
     .pos-tab.active { 
-      background: #d4a574; 
-      color: #2c1810; 
-      border-color: #c49060; 
+      background: #214598; 
+      color: #FDF7EA; 
+      border-color: #214598; 
     }
     .price-mode-btn {
       margin-left: auto;
-      background: #8b5e3c;
-      color: #fff;
+      background: #214598;
+      color: #FDF7EA;
     }
     .price-mode-btn:hover {
-      background: #6b4523;
+      background: rgba(33, 69, 152, 0.8);
     }
     .price-mode-btn i {
       margin-right: 5px;
@@ -93,48 +98,63 @@
     .category-btn { 
       padding: 12px 20px; 
       border-radius: 10px; 
-      background: #f3ece5; 
-      border: 2px solid #eadfd4; 
+      background: #F2EAD9; 
+      border: 2px solid rgba(33, 69, 152, 0.2); 
       cursor: pointer; 
       font-weight: 600;
       font-size: 1rem;
-      color: #2c1810;
+      color: #214598;
       transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
     }
     .category-btn:hover {
-      background: #d4a574;
-      border-color: #c49060;
+      background: rgba(33, 69, 152, 0.05);
+      border-color: #214598;
       transform: translateY(-2px);
     }
     .items-grid { 
       display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-      gap: 15px; 
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+      gap: 10px; 
     }
     .item-card { 
-      background: #fff; 
-      border: 2px solid #eadfd4; 
-      border-radius: 12px; 
-      padding: 20px; 
+      background: #F2EAD9; 
+      border: 2px solid rgba(33, 69, 152, 0.2); 
+      border-radius: 10px; 
+      padding: 12px; 
       cursor: pointer; 
       transition: all 0.2s;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     .item-card:hover { 
-      transform: translateY(-4px); 
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      border-color: #d4a574;
+      transform: translateY(-2px); 
+      box-shadow: 0 4px 12px rgba(33, 69, 152, 0.15);
+      border-color: #214598;
+    }
+    .item-card img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 0.4rem;
     }
     .item-name { 
-      font-weight: 700; 
-      color: #2c1810; 
-      font-size: 1.1rem;
-      margin-bottom: 8px;
+      font-weight: 600; 
+      color: #214598; 
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      font-family: 'Montserrat', sans-serif;
+      line-height: 1.2;
     }
     .item-price { 
-      color: #8b5e3c; 
+      color: #214598; 
       font-weight: 700; 
-      font-size: 1.2rem;
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
     }
     .cart-list { 
       display: flex; 
@@ -151,9 +171,9 @@
       gap: 12px; 
       align-items: center; 
       padding: 12px; 
-      border: 2px solid #eadfd4; 
+      border: 2px solid rgba(33, 69, 152, 0.2); 
       border-radius: 10px; 
-      background: #fafafa;
+      background: #F2EAD9;
     }
     .qty-controls { 
       display: flex; 
@@ -162,35 +182,39 @@
     }
     .qty-btn { 
       padding: 6px 12px; 
-      border: 2px solid #eadfd4; 
+      border: 2px solid rgba(33, 69, 152, 0.2); 
       border-radius: 8px; 
-      background: #fff; 
+      background: #F2EAD9; 
       cursor: pointer; 
       font-weight: 700;
       font-size: 1rem;
       min-width: 36px;
       transition: all 0.2s;
+      color: #214598;
+      font-family: 'Montserrat', sans-serif;
     }
     .qty-btn:hover {
-      background: #d4a574;
-      border-color: #c49060;
+      background: rgba(33, 69, 152, 0.1);
+      border-color: #214598;
     }
     .total-row { 
       display: flex; 
       justify-content: space-between; 
       font-weight: 700; 
       margin-top: 12px; 
-      color: #2c1810; 
+      color: #214598; 
       font-size: 1.3rem;
       padding-top: 12px;
-      border-top: 2px solid #eadfd4;
+      border-top: 2px solid rgba(33, 69, 152, 0.2);
+      font-family: 'Montserrat', sans-serif;
     }
     .minor-row { 
       display: flex; 
       justify-content: space-between; 
       margin-top: 6px; 
-      color: #5c4033; 
+      color: #214598; 
       font-size: 0.95rem;
+      font-family: 'Montserrat', sans-serif;
     }
     .actions { 
       display: flex; 
@@ -201,15 +225,16 @@
     .change-calculator {
       margin-top: 20px;
       padding-top: 20px;
-      border-top: 2px solid #eadfd4;
+      border-top: 2px solid rgba(33, 69, 152, 0.2);
     }
     .change-calculator h4 {
-      color: #2c1810;
+      color: #214598;
       font-size: 1.1rem;
       margin-bottom: 15px;
       display: flex;
       align-items: center;
       gap: 8px;
+      font-family: 'Montserrat', sans-serif;
     }
     .change-input-group {
       display: flex;
@@ -219,27 +244,30 @@
     }
     .change-input-group label {
       font-weight: 600;
-      color: #5c4033;
+      color: #214598;
       font-size: 0.95rem;
+      font-family: 'Montserrat', sans-serif;
     }
     .change-input-group input {
       padding: 12px;
       font-size: 1.2rem;
-      border: 2px solid #eadfd4;
+      border: 2px solid rgba(33, 69, 152, 0.2);
       border-radius: 10px;
       text-align: center;
       font-weight: 600;
       transition: all 0.3s;
-      color: #2c1810;
+      color: #214598;
+      background: #F2EAD9;
+      font-family: 'Montserrat', sans-serif;
     }
     .change-input-group input:focus {
       outline: none;
-      border-color: #d4a574;
-      box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.2);
+      border-color: #214598;
+      box-shadow: 0 0 0 3px rgba(33, 69, 152, 0.2);
     }
     .change-input-group input[readonly] {
-      background: #f8f8f8;
-      color: #8b5e3c;
+      background: rgba(33, 69, 152, 0.05);
+      color: #214598;
     }
     .quick-amounts {
       display: grid;
@@ -249,26 +277,28 @@
     }
     .quick-btn {
       padding: 10px;
-      border: 2px solid #d4a574;
-      background: white;
-      color: #8b5e3c;
+      border: 2px solid rgba(33, 69, 152, 0.2);
+      background: #F2EAD9;
+      color: #214598;
       border-radius: 8px;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
     }
     .quick-btn:hover {
-      background: #d4a574;
-      color: #2c1810;
+      background: rgba(33, 69, 152, 0.1);
+      border-color: #214598;
+      color: #214598;
       transform: translateY(-2px);
     }
     .quick-btn:active {
       transform: translateY(0);
     }
     .change-display {
-      background: linear-gradient(135deg, #8b5e3c, #a0522d);
-      color: white;
+      background: #214598;
+      color: #FDF7EA;
       padding: 20px;
       border-radius: 12px;
       text-align: center;
@@ -365,34 +395,40 @@
         }
       }
     .btn-primary { 
-      background: #d4a574; 
-      color: #2c1810; 
+      background: #214598; 
+      color: #FDF7EA; 
       padding: 14px 20px; 
-      border-radius: 10px; 
+      border-radius: 51.10px; 
       border: none; 
       cursor: pointer; 
-      font-weight: 700; 
-      font-size: 1.1rem;
+      font-weight: 600; 
+      font-size: 1rem;
       flex: 1;
       transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .btn-primary:hover {
-      background: #c49060;
+      background: rgba(33, 69, 152, 0.8);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+      box-shadow: 0 10px 25px rgba(33, 69, 152, 0.3);
     }
     .btn-secondary { 
-      background: #f3ece5; 
-      color: #2c1810; 
+      background: #E4D8BD; 
+      color: #214598; 
       padding: 14px 20px; 
-      border-radius: 10px; 
-      border: 2px solid #eadfd4; 
+      border-radius: 51.10px; 
+      border: 2px solid #214598; 
       cursor: pointer; 
       font-weight: 600;
       transition: all 0.2s;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .btn-secondary:hover {
-      background: #eadfd4;
+      background: rgba(33, 69, 152, 0.05);
     }
     .queue-columns-container {
       display: grid;
@@ -404,19 +440,21 @@
       flex-direction: column;
     }
     .queue-column-header {
-      font-family: 'Fredoka', sans-serif;
-      color: #2c1810;
+      font-family: 'Montserrat', sans-serif;
+      color: #FDF7EA !important;
       margin: 0 0 15px 0;
       font-size: 1.3rem;
       padding: 12px 16px;
-      background: #f3ece5;
+      background: #214598;
       border-radius: 10px;
       display: flex;
       align-items: center;
       gap: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
     .queue-column-header i {
-      color: #8b5e3c;
+      color: #FDF7EA;
     }
     .queue-list { 
       display: flex; 
@@ -432,15 +470,15 @@
       }
     }
     .queue-card { 
-      border: 2px solid #eadfd4; 
-      border-left: 6px solid #d4a574; 
+      border: 2px solid rgba(33, 69, 152, 0.2); 
+      border-left: 6px solid #214598; 
       border-radius: 10px; 
       padding: 15px; 
-      background: #fff; 
+      background: #F2EAD9; 
       transition: all 0.2s;
     }
     .queue-card:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(33, 69, 152, 0.15);
     }
     .queue-header {
       margin-bottom: 12px;
@@ -449,9 +487,10 @@
       display: flex; 
       justify-content: space-between; 
       align-items: center;
-      color: #2c1810; 
+      color: #214598; 
       font-size: 0.95rem; 
       margin-bottom: 6px;
+      font-family: 'Montserrat', sans-serif;
     }
     .status-badge {
       padding: 4px 10px;
@@ -464,17 +503,19 @@
     }
     .queue-items { 
       margin: 12px 0; 
-      color: #2c1810; 
+      color: #214598; 
       font-weight: 500;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      font-family: 'Montserrat', sans-serif;
     }
     .queue-item {
-      background: #f3ece5;
+      background: #E4D8BD;
       padding: 6px 12px;
       border-radius: 8px;
       font-size: 0.9rem;
+      color: #214598;
     }
     .queue-items-large {
       margin: 15px 0;
@@ -483,24 +524,25 @@
       gap: 10px;
     }
     .queue-item-large {
-      background: #f3ece5;
+      background: #E4D8BD;
       padding: 14px 18px;
       border-radius: 10px;
       font-size: 1.3rem;
-      color: #2c1810;
+      color: #214598;
       font-weight: 600;
-      border-left: 4px solid #d4a574;
+      border-left: 4px solid #214598;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-family: 'Montserrat', sans-serif;
     }
     .queue-item-large strong {
-      color: #8b5e3c;
+      color: #214598;
       font-size: 1.4rem;
     }
     .queue-item-qty {
-      background: #8b5e3c;
-      color: white;
+      background: #214598;
+      color: #FDF7EA;
       padding: 6px 12px;
       border-radius: 8px;
       font-weight: 700;
@@ -514,12 +556,13 @@
       align-items: center;
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid #eadfd4;
+      border-top: 1px solid rgba(33, 69, 152, 0.2);
     }
     .queue-total {
       font-size: 1.2rem;
-      color: #2c1810;
+      color: #214598;
       font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
     }
     .btn-status {
       padding: 8px 16px;
@@ -550,11 +593,11 @@
       transform: translateY(-2px);
     }
     .btn-status-complete {
-      background: #8b5e3c;
-      color: white;
+      background: #214598;
+      color: #FDF7EA;
     }
     .btn-status-complete:hover {
-      background: #6b4523;
+      background: rgba(33, 69, 152, 0.8);
       transform: translateY(-2px);
     }
     .btn-status-disabled {
@@ -572,7 +615,7 @@
       z-index: 10000;
     }
     .pin-card { 
-      background: #fff; 
+      background: #E4D8BD; 
       padding: 30px; 
       border-radius: 15px; 
       width: 380px; 
@@ -580,25 +623,31 @@
     }
     .pin-card h3 { 
       margin: 0 0 15px; 
-      font-family: 'Fredoka', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-size: 1.5rem;
-      color: #2c1810;
+      color: #214598;
+      font-weight: 600;
     }
     .pin-card p {
-      color: #5c4033;
+      color: #214598;
       margin-bottom: 15px;
+      font-family: 'Montserrat', sans-serif;
     }
     .pin-input { 
       width: 100%; 
       padding: 12px; 
-      border: 2px solid #eadfd4; 
+      border: 2px solid rgba(33, 69, 152, 0.2); 
       border-radius: 8px; 
       margin-bottom: 15px; 
       font-size: 1.1rem;
+      background: #F2EAD9;
+      color: #214598;
+      font-family: 'Montserrat', sans-serif;
     }
     .pin-input:focus {
       outline: none;
-      border-color: #d4a574;
+      border-color: #214598;
+      box-shadow: 0 0 0 3px rgba(33, 69, 152, 0.2);
     }
     .inline { 
       display: inline-flex; 
@@ -606,20 +655,23 @@
       align-items: center; 
     }
     .pos-panel h3 {
-      font-family: 'Fredoka', sans-serif;
-      color: #2c1810;
+      font-family: 'Montserrat', sans-serif;
+      color: #214598;
       margin-top: 0;
       margin-bottom: 15px;
       font-size: 1.3rem;
+      font-weight: 600;
+      text-transform: uppercase;
     }
     select.btn-secondary {
       padding: 10px 14px;
       border-radius: 8px;
-      border: 2px solid #eadfd4;
-      background: #f3ece5;
-      color: #2c1810;
+      border: 2px solid rgba(33, 69, 152, 0.2);
+      background: #F2EAD9;
+      color: #214598;
       font-weight: 600;
       cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
     }
     label.inline {
       display: flex;
@@ -669,16 +721,18 @@
       margin-bottom: 20px;
     }
     .milk-modal-header h3 {
-      font-family: 'Fredoka', sans-serif;
-      color: #2c1810;
+      font-family: 'Montserrat', sans-serif;
+      color: #214598;
       font-size: 1.5rem;
       margin: 0;
+      font-weight: 600;
+      text-transform: uppercase;
     }
     .milk-modal-close {
       background: none;
       border: none;
       font-size: 2rem;
-      color: #5c4033;
+      color: #214598;
       cursor: pointer;
       padding: 0;
       width: 30px;
@@ -690,8 +744,8 @@
       transition: all 0.2s;
     }
     .milk-modal-close:hover {
-      background: #f3ece5;
-      color: #2c1810;
+      background: rgba(33, 69, 152, 0.1);
+      color: #214598;
     }
     .milk-options {
       display: flex;
@@ -703,23 +757,24 @@
       align-items: center;
       gap: 15px;
       padding: 15px 20px;
-      border: 2px solid #eadfd4;
+      border: 2px solid rgba(33, 69, 152, 0.2);
       border-radius: 10px;
-      background: white;
+      background: #F2EAD9;
       cursor: pointer;
       transition: all 0.2s;
       font-size: 1.1rem;
       font-weight: 600;
-      color: #2c1810;
+      color: #214598;
+      font-family: 'Montserrat', sans-serif;
     }
     .milk-option:hover {
-      background: #f3ece5;
-      border-color: #d4a574;
+      background: rgba(33, 69, 152, 0.05);
+      border-color: #214598;
       transform: translateY(-2px);
     }
     .milk-option i {
       font-size: 1.5rem;
-      color: #8b5e3c;
+      color: #214598;
     }
     .cup-options {
       display: flex;
@@ -732,32 +787,34 @@
       justify-content: space-between;
       gap: 15px;
       padding: 16px 20px;
-      border: 2px solid #eadfd4;
+      border: 2px solid rgba(33, 69, 152, 0.2);
       border-radius: 10px;
-      background: white;
+      background: #F2EAD9;
       cursor: pointer;
       transition: all 0.2s;
     }
     .cup-option i {
       font-size: 1.8rem;
-      color: #8b5e3c;
+      color: #214598;
     }
     .cup-option .cup-meta {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       font-weight: 600;
-      color: #2c1810;
+      color: #214598;
+      font-family: 'Montserrat', sans-serif;
     }
     .cup-option .cup-meta small {
-      color: #5c4033;
+      color: #214598;
       font-weight: 500;
       font-size: 0.9rem;
+      opacity: 0.7;
     }
     .cup-option:hover,
     .cup-option.selected {
-      background: #f3ece5;
-      border-color: #d4a574;
+      background: rgba(33, 69, 152, 0.05);
+      border-color: #214598;
       transform: translateY(-2px);
     }
     @keyframes fadeIn {
@@ -805,22 +862,24 @@
       align-items: center;
       margin-bottom: 20px;
       padding-bottom: 15px;
-      border-bottom: 2px solid #eadfd4;
+      border-bottom: 2px solid rgba(33, 69, 152, 0.2);
     }
     .payment-qr-modal-header h3 {
-      font-family: 'Fredoka', sans-serif;
-      color: #2c1810;
+      font-family: 'Montserrat', sans-serif;
+      color: #214598;
       font-size: 1.5rem;
       margin: 0;
       display: flex;
       align-items: center;
       gap: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
     .payment-qr-modal-close {
       background: none;
       border: none;
       font-size: 2rem;
-      color: #5c4033;
+      color: #214598;
       cursor: pointer;
       padding: 0;
       width: 30px;
@@ -832,8 +891,8 @@
       transition: all 0.2s;
     }
     .payment-qr-modal-close:hover {
-      background: #f3ece5;
-      color: #2c1810;
+      background: rgba(33, 69, 152, 0.1);
+      color: #214598;
     }
     .payment-qr-modal-body {
       text-align: center;
@@ -1162,9 +1221,6 @@
         <button id="refreshQueueBtn" class="btn-secondary">
           <i class="fas fa-sync-alt"></i> Refresh Queue
         </button>
-        <button id="exportSalesBtn" class="btn-secondary">
-          <i class="fas fa-file-excel"></i> Export Daily Sales
-        </button>
       </div>
     </div>
 
@@ -1237,7 +1293,7 @@
         </div>
 
         <div style="margin-top:12px;">
-          <label style="display:block;color:#5c4033;margin-bottom:6px;">Customer (optional)</label>
+          <label style="display:block;color:#214598;margin-bottom:6px;">Customer (optional)</label>
           <input id="posCustomerName" class="pin-input" type="text" placeholder="Name" style="margin-bottom:6px;" />
           <input id="posCustomerEmail" class="pin-input" type="email" placeholder="Email" />
         </div>
@@ -1259,7 +1315,7 @@
       </div>
       <div style="padding: 20px;">
         <div style="margin-bottom: 25px;">
-          <h4 style="margin: 0 0 12px 0; color: #2c1810; font-size: 1.1rem;">Choose Milk:</h4>
+          <h4 style="margin: 0 0 12px 0; color: #214598; font-size: 1.1rem;">Choose Milk:</h4>
           <div class="milk-options" style="display: flex; gap: 10px;">
             <button class="milk-option" data-milk="cow" style="flex: 1;">
               <i class="fas fa-mug-hot"></i>
@@ -1272,7 +1328,7 @@
           </div>
         </div>
         <div style="margin-bottom: 25px;">
-          <h4 style="margin: 0 0 12px 0; color: #2c1810; font-size: 1.1rem;">Add Syrup (Optional):</h4>
+          <h4 style="margin: 0 0 12px 0; color: #214598; font-size: 1.1rem;">Add Syrup (Optional):</h4>
           <div class="syrup-options" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
             <button class="syrup-option" id="noSyrupOption" data-syrup="" style="grid-column: 1 / -1;">
               <i class="fas fa-times"></i>
@@ -1301,7 +1357,7 @@
           </div>
         </div>
         <div style="margin-bottom: 25px;">
-          <h4 style="margin: 0 0 12px 0; color: #2c1810; font-size: 1.1rem;">Choose Cup Type:</h4>
+          <h4 style="margin: 0 0 12px 0; color: #214598; font-size: 1.1rem;">Choose Cup Type:</h4>
           <div class="cup-options">
             <button class="cup-option" data-cup="togo" data-label="To Go Cup" data-price-student="0.20" data-price-staff="0.20" data-pfand="false">
               <i class="fas fa-mug-hot"></i>
@@ -1335,7 +1391,7 @@
       </div>
       <div class="payment-qr-modal-body">
         <div style="text-align: center; margin-bottom: 20px;">
-          <p style="font-size: 1.1rem; color: #2c1810; margin-bottom: 10px;">
+            <p style="font-size: 1.1rem; color: #214598; margin-bottom: 10px;">
             Order: <strong id="terminalOrderId">#00000000</strong>
           </p>
           <p style="font-size: 1.3rem; color: #8b5e3c; font-weight: 700; margin-bottom: 20px;">

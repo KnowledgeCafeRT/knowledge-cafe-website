@@ -1,8 +1,25 @@
 // Minimal POS logic reusing the existing product catalog structure and queue format
 
 (function() {
+  // Image mapping for menu items
+  const ITEM_IMAGES = {
+    'americano': 'assets/images/americano.png',
+    'espresso': 'assets/images/espresso.png',
+    'espresso-doppio': 'assets/images/espresso-doppio.png',
+    'cappuccino': 'assets/images/cappuccino.png',
+    'latte-macchiato': 'assets/images/latte-macchiato.png',
+    'cafe-latte': 'assets/images/caffe-latte.png',
+    'tea': 'assets/images/tea.png',
+    'pumpkin-spice': 'assets/images/pumpkin-spice-latte.png',
+    'cinnamon-bun-latte': 'assets/images/latte-macchiato-caramel.png',
+    'hot-chocolate': 'assets/images/hot-chocolate.png',
+    'softdrinks': 'assets/images/softdrinks.png',
+    'wasser': 'assets/images/water.png',
+    'redbull': 'assets/images/redbull.png'
+  };
+
   const PRODUCT_CATALOG = [
-    { id: 'coffee', title: 'Coffee', items: [
+    { id: 'coffee', title: 'Menu', items: [
       { id: 'americano', name: 'Americano', priceStudent: 1.50, priceStaff: 2.00 },
       { id: 'espresso', name: 'Espresso', priceStudent: 1.30, priceStaff: 1.80 },
       { id: 'espresso-doppio', name: 'Espresso Doppio', priceStudent: 1.70, priceStaff: 2.20 },
@@ -12,22 +29,10 @@
       { id: 'hot-chocolate', name: 'Hot Chocolate', priceStudent: 2.90, priceStaff: 3.40 },
       { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
       { id: 'pumpkin-spice', name: 'Pumpkin Spice', priceStudent: 3.00, priceStaff: 3.50 },
-      { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 3.00, priceStaff: 3.50 }
-    ]},
-    { id: 'drinks', title: 'Drinks', items: [
+      { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 3.00, priceStaff: 3.50 },
       { id: 'softdrinks', name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
       { id: 'wasser', name: 'Water', priceStudent: 1.00, priceStaff: 1.00 },
       { id: 'redbull', name: 'RedBull', priceStudent: 2.00, priceStaff: 2.00 }
-    ]},
-    { id: 'addons', title: 'Add ons', items: [
-      { id: 'togo', name: 'To Go', priceStudent: 0.20, priceStaff: 0.20 },
-      { id: 'extra-shot', name: 'Extra Shot', priceStudent: 0.50, priceStaff: 0.50 },
-      { id: 'syrup-pumpkin', name: 'Pumpkin Spice Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-      { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-      { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-      { id: 'syrup-spekuloos', name: 'Spekuloos Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-      { id: 'syrup-gingerbread', name: 'Gingerbread Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-      { id: 'pfand', name: 'Pfand Cup', priceStudent: 2.00, priceStaff: 2.00 }
     ]}
   ];
 
@@ -190,7 +195,9 @@
       const card = document.createElement('div');
       card.className = 'item-card';
       const price = priceMode === 'student' ? item.priceStudent : item.priceStaff;
+      const imageSrc = ITEM_IMAGES[item.id] || 'assets/images/espresso.png';
       card.innerHTML = `
+        <img src="${imageSrc}" alt="${item.name}">
         <div class="item-name">${item.name}</div>
         <div class="item-price">${formatPrice(price)}</div>
       `;
@@ -203,10 +210,21 @@
   let pendingCoffeePrice = null;
 
   function isCoffeeItem(item) {
-    // Tea should not show milk selection
-    if (item.id === 'tea') return false;
+    // Now includes both hot and cold drinks
     const coffeeCategory = PRODUCT_CATALOG.find(cat => cat.id === 'coffee');
     return coffeeCategory && coffeeCategory.items.some(coffee => coffee.id === item.id);
+  }
+
+  function needsCupOptionsOnly(item) {
+    // Espresso, Espresso Doppio, Americano, and Tea only need cup selection, no milk/syrup
+    const cupOnlyItems = ['tea', 'espresso', 'espresso-doppio', 'americano'];
+    return cupOnlyItems.includes(item.id);
+  }
+
+  function isColdDrink(item) {
+    // Cold drinks don't need cup options
+    const coldDrinkIds = ['redbull', 'wasser', 'softdrinks'];
+    return coldDrinkIds.includes(item.id);
   }
 
   function showMilkModal(item, unitPrice) {
@@ -219,11 +237,19 @@
     title.textContent = `Customize ${item.name}`;
     modal.style.display = 'flex';
     
+    const cupOnly = needsCupOptionsOnly(item);
+    
+    // Hide/show milk and syrup sections based on item type
+    const milkSection = document.querySelector('.milk-options')?.parentElement;
+    const syrupSection = document.querySelector('.syrup-options')?.parentElement;
+    if (milkSection) milkSection.style.display = cupOnly ? 'none' : 'block';
+    if (syrupSection) syrupSection.style.display = cupOnly ? 'none' : 'block';
+    
     // Reset selections
     document.querySelectorAll('.milk-option').forEach(opt => opt.classList.remove('selected'));
     document.querySelectorAll('.syrup-option').forEach(opt => opt.classList.remove('selected'));
     const noSyrupOption = document.getElementById('noSyrupOption');
-    if (noSyrupOption) noSyrupOption.classList.add('selected');
+    if (noSyrupOption && !cupOnly) noSyrupOption.classList.add('selected');
     
     // Close modal handlers
     const closeBtn = document.getElementById('milkModalClose');
@@ -235,34 +261,36 @@
       };
     }
     
-    // Milk option handlers
-    const milkOptions = document.querySelectorAll('.milk-option');
-    milkOptions.forEach(option => {
-      option.onclick = () => {
+    // Milk option handlers (only if not cup-only item)
+    if (!cupOnly) {
+      const milkOptions = document.querySelectorAll('.milk-option');
+      milkOptions.forEach(option => {
+        option.onclick = () => {
+          milkOptions.forEach(opt => opt.classList.remove('selected'));
+          option.classList.add('selected');
+        };
+      });
+      if (milkOptions.length > 0) {
         milkOptions.forEach(opt => opt.classList.remove('selected'));
-        option.classList.add('selected');
-      };
-    });
-    if (milkOptions.length > 0) {
-      milkOptions.forEach(opt => opt.classList.remove('selected'));
-      milkOptions[0].classList.add('selected');
-    }
-    
-    // Syrup option handlers
-    const syrupOptions = document.querySelectorAll('.syrup-option');
-    syrupOptions.forEach(option => {
-      option.onclick = () => {
-        syrupOptions.forEach(opt => opt.classList.remove('selected'));
-        if (noSyrupOption) noSyrupOption.classList.remove('selected');
-        option.classList.add('selected');
-      };
-    });
-    
-    if (noSyrupOption) {
-      noSyrupOption.onclick = () => {
-        syrupOptions.forEach(opt => opt.classList.remove('selected'));
-        noSyrupOption.classList.add('selected');
-      };
+        milkOptions[0].classList.add('selected');
+      }
+      
+      // Syrup option handlers
+      const syrupOptions = document.querySelectorAll('.syrup-option');
+      syrupOptions.forEach(option => {
+        option.onclick = () => {
+          syrupOptions.forEach(opt => opt.classList.remove('selected'));
+          if (noSyrupOption) noSyrupOption.classList.remove('selected');
+          option.classList.add('selected');
+        };
+      });
+      
+      if (noSyrupOption) {
+        noSyrupOption.onclick = () => {
+          syrupOptions.forEach(opt => opt.classList.remove('selected'));
+          noSyrupOption.classList.add('selected');
+        };
+      }
     }
     
     // Cup option handlers
@@ -282,14 +310,8 @@
     const addToCartBtn = document.getElementById('addCoffeeToCartBtn');
     if (addToCartBtn) {
       addToCartBtn.onclick = () => {
-        const selectedMilk = document.querySelector('.milk-option.selected')?.getAttribute('data-milk');
-        const selectedSyrup = document.querySelector('.syrup-option.selected')?.getAttribute('data-syrup');
         const selectedCup = document.querySelector('.cup-option.selected');
         
-        if (!selectedMilk) {
-          alert('Please select a milk type');
-          return;
-        }
         if (!selectedCup) {
           alert('Please select a cup type');
           return;
@@ -303,13 +325,31 @@
         const cupPrice = priceMode === 'student' ? cupPriceStudent : cupPriceStaff;
         const cupPfandAmount = cupPfand ? cupPrice : 0;
         
-        const syrupId = selectedSyrup || null;
-        addCoffeeToCart(item, unitPrice, selectedMilk, syrupId, {
-          cupType,
-          cupLabel,
-          cupPrice,
-          cupPfandAmount
-        });
+        if (cupOnly) {
+          // For cup-only items, add directly without milk/syrup
+          addItemWithCup(item, unitPrice, {
+            cupType,
+            cupLabel,
+            cupPrice,
+            cupPfandAmount
+          });
+        } else {
+          const selectedMilk = document.querySelector('.milk-option.selected')?.getAttribute('data-milk');
+          const selectedSyrup = document.querySelector('.syrup-option.selected')?.getAttribute('data-syrup');
+          
+          if (!selectedMilk) {
+            alert('Please select a milk type');
+            return;
+          }
+          
+          const syrupId = selectedSyrup || null;
+          addCoffeeToCart(item, unitPrice, selectedMilk, syrupId, {
+            cupType,
+            cupLabel,
+            cupPrice,
+            cupPfandAmount
+          });
+        }
         modal.style.display = 'none';
         pendingCoffeeItem = null;
         pendingCoffeePrice = null;
@@ -359,14 +399,50 @@
     renderCart();
   }
 
+  function addItemWithCup(item, unitPrice, cupConfig) {
+    const cupType = cupConfig?.cupType || 'togo';
+    const cupLabel = cupConfig?.cupLabel ? ` • ${cupConfig.cupLabel}` : '';
+    const cupPrice = cupConfig?.cupPrice || 0;
+    const cupPfandAmount = cupConfig?.cupPfandAmount || 0;
+    const cartKey = `${item.id}_${cupType}`;
+    
+    if (!cart[cartKey]) {
+      cart[cartKey] = { 
+        id: cartKey,
+        productId: item.id,
+        name: item.name + cupLabel, 
+        price: unitPrice + cupPrice, 
+        qty: 0, 
+        pfand: cupPfandAmount > 0,
+        cupType,
+        cupPrice,
+        cupLabel: cupConfig?.cupLabel || '',
+        pfandPerUnit: cupPfandAmount
+      };
+    }
+    cart[cartKey].qty += 1;
+    renderCart();
+  }
+
   function addToCart(item, unitPrice) {
+    // Cold drinks don't need customization - add directly
+    if (isColdDrink(item)) {
+      const key = item.id;
+      if (!cart[key]) {
+        cart[key] = { id: key, productId: item.id, name: item.name, price: unitPrice, qty: 0, pfand: false };
+      }
+      cart[key].qty += 1;
+      renderCart();
+      return;
+    }
+    
     // Check if it's a coffee item - show milk selection modal
     if (isCoffeeItem(item)) {
       showMilkModal(item, unitPrice);
       return;
     }
     
-    // For non-coffee items, add directly
+    // For other non-coffee items, add directly
     const key = item.id;
     if (!cart[key]) {
       cart[key] = { id: key, productId: item.id, name: item.name, price: unitPrice, qty: 0, pfand: item.id === 'pfand' };
@@ -1220,7 +1296,6 @@
   function setupButtons() {
     document.getElementById('clearCart')?.addEventListener('click', clearCart);
     document.getElementById('submitOrder')?.addEventListener('click', submitOrder);
-    document.getElementById('exportSalesBtn')?.addEventListener('click', showSalesExportModal);
     document.getElementById('refreshQueueBtn')?.addEventListener('click', () => {
       console.log('Manual refresh triggered');
       renderQueue();

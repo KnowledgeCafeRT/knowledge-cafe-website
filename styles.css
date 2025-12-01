@@ -5,7 +5,18 @@
     box-sizing: border-box;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Climate+Crisis:wght@400&family=Italiana&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Climate+Crisis:wght@400&family=Italiana&family=Caveat:wght@400&family=Kalam:wght@400&display=swap');
+
+/* Pecita Font - Add font files to assets/fonts/ directory */
+@font-face {
+    font-family: 'Pecita';
+    src: url('assets/fonts/Pecita.woff2') format('woff2'),
+         url('assets/fonts/Pecita.woff') format('woff'),
+         url('assets/fonts/Pecita.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
 
 :root {
     --primary-blue: #214598;
@@ -102,13 +113,25 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     background: var(--beige);
     min-height: 100vh;
     position: relative;
-    padding: 137px 20px 6rem 20px;
+    padding: 137px 0 6rem 20px;
     overflow-x: hidden;
     overflow-y: visible;
     max-width: 1440px;
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100%;
+    background: var(--beige);
+    z-index: -1;
 }
 
 .hero-title-wrapper {
@@ -213,57 +236,61 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 
 .hero-image {
     position: absolute;
-    right: 0;
-    top: 0;
-    width: 394.88px;
-    height: 854.55px;
+    right: -70px;
+    top: 400px;
+    width: 950px;
+    height: 700px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .splash-image {
-    width: 100%;
+    width: auto;
     height: 100%;
-    object-fit: cover;
+    max-width: none;
+    object-fit: contain;
+    object-position: right top;
     filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+    transform: rotate(-8deg);
 }
 
 /* About Section */
 .about {
     background: var(--primary-blue);
-    padding: 6rem 4rem;
+    padding: 3rem 4rem 6rem 4rem;
     color: white;
     position: relative;
-    overflow: hidden;
-}
-
-.about-container {
+    overflow: visible;
     display: flex;
-    gap: 3rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    align-items: flex-start;
-    position: relative;
-}
-
-.about-left,
-.about-right {
-    flex: 1;
-    position: relative;
-}
-
-.about-center {
-    flex: 0.4;
-    text-align: center;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    position: relative;
+    align-items: flex-start;
+    min-height: 959px;
 }
 
-.about-heading {
+.WhoAreWePage {
+    width: 1440px;
+    min-height: 959px;
+    position: relative;
+    background: var(--primary-blue);
+    overflow: visible;
+    max-width: calc(100% - 8rem);
+    margin: 0 auto;
+    padding-bottom: 2rem;
+}
+
+@media (max-width: 1440px) {
+    .WhoAreWePage {
+        width: 100%;
+        max-width: 100%;
+        transform: scale(0.8);
+        transform-origin: center;
+    }
+}
+
+.about-heading,
+.WhoAreWe {
     font-family: 'Italiana', serif;
     font-size: 64.80px;
     font-weight: 400;
@@ -272,22 +299,52 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     color: white;
     width: 228.82px;
     height: 230.85px;
+    text-align: center;
+    word-wrap: break-word;
 }
 
-.about-arrow {
+.Arrow1 {
     position: absolute;
-    width: 21.11938rem;
-    height: 6.58888rem;
-    opacity: 0.8;
+    width: 301px;
+    height: 210px;
     z-index: 0;
-    top: 0;
-    right: -5rem;
-    transform: rotate(29.79deg);
+    pointer-events: none;
 }
 
-.coffee-bag {
-    position: relative;
-    z-index: 1;
+.Grafik1 {
+    width: 344.25px;
+    height: 344.25px;
+    position: absolute;
+    box-shadow: none;
+}
+
+.Arrow3 {
+    position: absolute;
+    width: 170px;
+    height: 326px;
+    opacity: 0.6;
+    z-index: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    pointer-events: none;
+}
+
+.Arrow5 {
+    position: absolute;
+    width: 100px;
+    height: 53px;
+    z-index: 0;
+    pointer-events: none;
+    right: 500px;
+    top: 78%;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 1200px) {
+    .Arrow3 {
+        display: none;
+    }
 }
 
 .about-item {
@@ -324,20 +381,91 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     text-decoration: underline;
 }
 
+.BigThanksToHochlandKaffeeForKeepingUsBuzzingForOver60YearsTheyVeBeenPerfectingEthicalDirectTradeAndRoastingWithCareSoEveryCupIsFullOfFlavorAndGoodVibes {
+    width: 300px;
+    height: 231px;
+}
+
+.BigThanksToHochlandKaffeeForKeepingUsBuzzingForOver60YearsTheyVeBeenPerfectingEthicalDirectTradeAndRoastingWithCareSoEveryCupIsFullOfFlavorAndGoodVibes span {
+    color: white;
+    font-size: 20.25px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    line-height: 32.40px;
+    word-wrap: break-word;
+    letter-spacing: 0.05em;
+}
+
+.WeReEsbBusinessSchoolStudentsRunningANonProfitCafForStudentsOnCampusTuesdaysImxStudentsServeAndThurdaysIbStudentsTakeOver {
+    width: 274px;
+    height: 306px;
+    color: white;
+    font-size: 20.25px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    line-height: 32.40px;
+    word-wrap: break-word;
+}
+
+.WeProvideHighQualityAndAffordableSpecialtyCoffeeToTheUniversityCommunityAndBringPeopleCloserThroughHighlyEngagedBaristasAsWellAsHighValueAndSustainableMaterialsToPromoteTheSocialExchangeBetweenStudyProgrammesAndFaculties {
+    width: 442px;
+    color: white;
+    font-size: 20.49px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    text-transform: capitalize;
+    line-height: 32.78px;
+    word-wrap: break-word;
+}
+
 .coffee-bag,
 .mascot,
 .coffee-cup {
     max-width: 344px;
     margin-bottom: 1.5rem;
-    box-shadow: 0px 4.05px 4.66px rgba(0, 0, 0, 0.25);
+    box-shadow: none;
 }
 
 .mascot {
     max-width: 197px;
 }
 
-.coffee-cup {
-    max-width: 258px;
+.Grafik2 {
+    width: 197px;
+    height: 363px;
+    position: absolute;
+}
+
+.CoffeeCup {
+    width: 258px;
+    height: 258px;
+    position: absolute;
+}
+
+.Coffee,
+.Students,
+.Mission {
+    font-family: 'Italiana', serif;
+    font-size: 61.74px;
+    margin-bottom: 1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 73.49px;
+    color: white;
+    letter-spacing: 0.1em;
+}
+
+.Coffee {
+    letter-spacing: 0.15em;
+}
+
+.Mission {
+    font-size: 55px;
+    line-height: 60px;
+}
+
+.Text {
+    /* Empty class for structure */
 }
 
 /* Menu Section */
@@ -348,37 +476,43 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 
 .menu-title {
     font-family: 'Italiana', serif;
-    font-size: 96px;
+    font-size: 80px;
     color: var(--primary-blue);
     text-align: left;
     margin-bottom: 2rem;
     margin-left: 2rem;
     font-weight: 400;
     text-transform: uppercase;
-    width: 315px;
-    height: 100px;
+    width: 260px;
+    height: 85px;
+}
+
+.menu-star {
+    font-size: 30px;
+    vertical-align: super;
 }
 
 .menu-container {
-    max-width: 1292px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
 .menu-category {
     background: var(--menu-beige);
     border-radius: 50px;
-    padding: 2rem;
+    padding: 1.2rem;
     margin-bottom: 1.5rem;
     position: relative;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    width: 1292px;
+    width: 1100px;
     height: auto;
 }
+
 
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 1.5rem;
+    gap: 1.2rem;
     margin-bottom: 1rem;
 }
 
@@ -387,7 +521,11 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 }
 
 .menu-grid.syrup-grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, max-content);
+    gap: 3.2rem;
+    justify-items: start;
+    justify-content: start;
+    margin-left: 2rem;
 }
 
 .menu-item {
@@ -395,20 +533,94 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 }
 
 .menu-item img {
-    width: 100px;
-    height: 100px;
+    width: 85px;
+    height: 85px;
     object-fit: cover;
     border-radius: 50%;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+/* Ensure coffee images match hot chocolate and pumpkin spice latte size */
+.menu-item img[src*="espresso"]:not([src*="syrup"]),
+.menu-item img[src*="espresso-doppio"],
+.menu-item img[src*="cappuccino"],
+.menu-item img[src*="latte-macchiato"]:not([src*="caramel"]),
+.menu-item img[src*="caffe-latte"],
+.menu-item img[src*="americano"],
+.menu-item img[src*="tea"] {
+    width: 85px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.syrup-grid .menu-item img {
+    margin-bottom: 0.1rem;
+}
+
+.menu-item img[src*="pumpkin-spice-latte"],
+.menu-item img[src*="latte-macchiato-caramel"],
+.menu-item img[src*="hot-chocolate"] {
+    width: 115px;
+    height: 115px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.menu-item img[src*="redbull"] {
+    border-radius: 0;
+    object-fit: contain;
+    width: 85px;
+    height: 85px;
+}
+
+.menu-item img[src*="softdrinks"] {
+    border-radius: 0;
+    object-fit: contain;
+}
+
+.menu-item img[src*="syrup-vanilla"],
+.menu-item img[src*="syrup-hazelnut"],
+.menu-item img[src*="syrup-pumpkin"],
+.menu-item img[src*="syrup-spekuloos"],
+.menu-item img[src*="syrup-gingerbread"] {
+    border-radius: 0;
+    object-fit: contain;
+    width: 80px;
+    height: 80px;
+}
+
+.syrup-grid .menu-item img[src*="espresso"] {
+    width: 80px;
+    height: 80px;
+    border-radius: 0;
+    object-fit: contain;
+}
+
+.syrup-grid .menu-item h4 {
+    font-size: 12px;
+    margin-bottom: 0.05rem;
+    margin-top: 0;
+    line-height: 1.2;
+}
+
+.syrup-grid .menu-item .price {
+    font-size: 12px;
+    margin-top: 0.1rem;
+}
+
+.syrup-grid .menu-item {
+    padding: 0;
+    margin: 0;
 }
 
 .menu-item h4 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     color: var(--primary-blue);
     margin-bottom: 0.2rem;
     font-weight: 400;
-    letter-spacing: 0.16px;
+    letter-spacing: 0.14px;
 }
 
 .menu-item .subtitle {
@@ -422,10 +634,15 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 
 .menu-item .price {
     font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     color: var(--primary-blue);
     font-weight: 400;
     line-height: 1.3;
+}
+
+.menu-item.empty-placeholder {
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .category-label {
@@ -443,14 +660,71 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     font-family: 'Montserrat', sans-serif;
 }
 
+.HotDrinks {
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    width: 328px;
+    height: 81px;
+    color: white;
+    font-size: 26.718px;
+    font-family: 'Pecita', cursive;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: uppercase;
+    white-space: pre-wrap;
+    transform: translateY(-50%) rotate(-12deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .hot-drinks-label {
     top: 30%;
     transform: translateY(-50%) rotate(-12deg);
 }
 
+.ColdDrinks {
+    position: absolute;
+    right: 50px;
+    top: 78%;
+    width: 328px;
+    height: 81px;
+    color: white;
+    font-size: 35px;
+    font-family: 'Pecita', cursive;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: uppercase;
+    white-space: pre-wrap;
+    transform: translateY(-50%) rotate(-12deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .cold-drinks-label {
     top: 70%;
     transform: translateY(-50%) rotate(-12deg);
+}
+
+.SyrupLabel {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    width: 328px;
+    height: 81px;
+    color: white;
+    font-size: 26.718px;
+    font-family: 'Pecita', cursive;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: uppercase;
+    white-space: pre-wrap;
+    transform: translateY(-50%) rotate(-12deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .syrup-label {
@@ -475,12 +749,14 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 .menu-note {
     font-family: 'Montserrat', sans-serif;
     text-align: left;
-    font-size: 18.93px;
+    font-size: 10px;
     font-weight: 400;
     color: var(--primary-blue);
-    margin-top: 2rem;
-    line-height: 1.6;
-    max-width: 1369px;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Syrup Section */
@@ -559,9 +835,9 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 .visit {
     background: var(--menu-beige);
     display: flex;
-    padding: 6rem 4rem;
+    padding: 0 0 0 4rem;
     gap: 5rem;
-    align-items: center;
+    align-items: stretch;
     overflow: hidden;
 }
 
@@ -607,14 +883,18 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
 
 .visit-image {
     flex: 1;
-    max-width: 659px;
+    max-width: none;
+    margin-right: 0;
+    display: flex;
+    align-items: stretch;
 }
 
 .visit-image img {
     width: 100%;
-    height: 439px;
+    height: 100%;
     object-fit: cover;
     border-radius: 0;
+    display: block;
 }
 
 /* Footer */
@@ -832,12 +1112,671 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     .menu-title {
         font-size: clamp(3rem, 96px, 8vw);
     }
-    
-    .visit-title {
-        font-size: clamp(2.5rem, 77.96px, 8vw);
+}
+
+/* Checkout Page Styles */
+.checkout-page {
+    padding-top: 280px;
+    padding-bottom: 4rem;
+    background: var(--beige) !important;
+    min-height: 100vh;
+}
+
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Progress Steps */
+.checkout-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+    padding: 4rem 3rem;
+    background: transparent !important;
+    border-radius: 20px;
+    box-shadow: none !important;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-blue);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+}
+
+.progress-step.completed {
+    opacity: 1;
+    color: var(--primary-blue) !important;
+    text-shadow: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+}
+
+.progress-step.active {
+    opacity: 1;
+    color: var(--primary-blue) !important;
+    transform: scale(1.1);
+    font-weight: 600;
+    text-shadow: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+}
+
+.progress-step.completed span,
+.progress-step.active span {
+    color: var(--primary-blue) !important;
+}
+
+.progress-step span {
+    color: var(--primary-blue) !important;
+}
+
+.step-icon {
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    transition: all 0.3s ease;
+    color: var(--primary-blue) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+.progress-step.completed .step-icon,
+.progress-step.active .step-icon {
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    outline: none !important;
+    color: var(--primary-blue) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+.progress-step:not(.completed):not(.active) .step-icon {
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    outline: none !important;
+    color: var(--primary-blue) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+.progress-step.completed .step-icon i,
+.progress-step.active .step-icon i {
+    color: var(--primary-blue) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+.progress-step:not(.completed):not(.active) .step-icon i,
+.step-icon i {
+    color: var(--primary-blue) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+.progress-line {
+    width: 80px;
+    height: 2px;
+    background: rgba(33, 69, 152, 0.2);
+    margin: 0 1rem;
+    transition: all 0.3s ease;
+}
+
+.progress-line.completed {
+    background: var(--primary-blue) !important;
+}
+
+/* Checkout Content */
+.checkout-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.checkout-card {
+    background: var(--menu-beige);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(33, 69, 152, 0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 2px solid rgba(33, 69, 152, 0.1);
+}
+
+.checkout-card .card-header {
+    background: var(--primary-blue) !important;
+    color: var(--cream) !important;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.checkout-card .card-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.3rem;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cream) !important;
+}
+
+.checkout-card .card-header h3 i {
+    color: var(--cream) !important;
+}
+
+.checkout-card .card-body {
+    padding: 1.5rem;
+    background: var(--menu-beige);
+}
+
+.edit-link {
+    color: var(--cream);
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}
+
+.edit-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Order Summary */
+.summary-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(33, 69, 152, 0.1);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.summary-name {
+    color: var(--primary-blue);
+    font-size: 0.95rem;
+}
+
+.summary-price {
+    color: var(--primary-blue);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.order-totals {
+    border-top: 2px solid rgba(33, 69, 152, 0.2);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--primary-blue);
+}
+
+.total-row.final-total {
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-top: 2px solid var(--primary-blue);
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+}
+
+/* Payment Options */
+.payment-options {
+    margin-bottom: 1.5rem;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid rgba(33, 69, 152, 0.2);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    background: var(--beige);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.payment-option.selected {
+    border-color: var(--primary-blue);
+    background: rgba(33, 69, 152, 0.05);
+}
+
+.payment-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-blue) !important;
+    color: var(--primary-blue) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.payment-icon i {
+    color: var(--primary-blue) !important;
+}
+
+.payment-info {
+    flex: 1;
+}
+
+.payment-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: var(--cream) !important;
+    font-size: 1rem;
+}
+
+.payment-info p {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    color: var(--cream) !important;
+    opacity: 0.9;
+}
+
+.payment-option.selected .payment-info h4,
+.payment-option.selected .payment-info p {
+    color: var(--cream) !important;
+}
+
+.payment-radio input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-blue) !important;
+}
+
+.payment-security {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(33, 69, 152, 0.1);
+}
+
+.security-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.security-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(33, 69, 152, 0.05);
+    border-radius: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    color: var(--primary-blue);
+}
+
+.security-badge i {
+    color: var(--primary-blue);
+}
+
+/* Customer Form */
+.customer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: var(--primary-blue);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="date"] {
+    padding: 0.75rem 1rem;
+    border: 2px solid rgba(33, 69, 152, 0.2);
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: var(--primary-blue);
+    background: var(--beige);
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+.form-group input::placeholder {
+    color: rgba(33, 69, 152, 0.4);
+}
+
+/* Time Slots */
+.time-slots-container {
+    margin-top: 0.5rem;
+}
+
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.time-slot {
+    padding: 0.75rem;
+    border: 2px solid rgba(33, 69, 152, 0.2);
+    border-radius: 8px;
+    background: var(--beige);
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    color: var(--primary-blue);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.time-slot:hover {
+    border-color: var(--primary-blue);
+    background: rgba(33, 69, 152, 0.05);
+}
+
+.time-slot.selected {
+    background: var(--primary-blue) !important;
+    color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+}
+
+/* Override time-slot-btn from style.css */
+.time-slot-btn {
+    border-color: rgba(33, 69, 152, 0.2) !important;
+    background: var(--beige) !important;
+    color: var(--primary-blue) !important;
+}
+
+.time-slot-btn:hover {
+    background: rgba(33, 69, 152, 0.05) !important;
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 2px 8px rgba(33, 69, 152, 0.2) !important;
+}
+
+.time-slot-btn.selected {
+    background: var(--primary-blue) !important;
+    color: var(--primary-blue) !important;
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 2px 8px rgba(33, 69, 152, 0.3) !important;
+}
+
+.time-slot-btn.disabled {
+    background: rgba(33, 69, 152, 0.05) !important;
+    border-color: rgba(33, 69, 152, 0.2) !important;
+    color: var(--primary-blue) !important;
+    opacity: 0.4 !important;
+}
+
+.time-slot-btn.disabled:hover {
+    background: rgba(33, 69, 152, 0.05) !important;
+    border-color: rgba(33, 69, 152, 0.2) !important;
+}
+
+.time-slot.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: rgba(33, 69, 152, 0.05);
+}
+
+.schedule-note {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(33, 69, 152, 0.05);
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    color: var(--primary-blue);
+}
+
+.schedule-note i {
+    color: var(--primary-blue);
+    margin-top: 0.1rem;
+}
+
+/* Checkout Actions */
+.checkout-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.checkout-actions .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 51.10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.checkout-actions .btn-primary {
+    background: var(--primary-blue);
+    color: var(--cream);
+}
+
+.checkout-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(33, 69, 152, 0.3);
+}
+
+.checkout-actions .btn-secondary {
+    background: var(--menu-beige);
+    color: var(--primary-blue);
+    border: 2px solid var(--primary-blue);
+}
+
+.checkout-actions .btn-secondary:hover {
+    background: rgba(33, 69, 152, 0.05);
+}
+
+/* Override brown colors from style.css */
+.checkout-page * {
+    --brown-override: var(--primary-blue) !important;
+}
+
+.checkout-card .card-header,
+.progress-line.completed,
+.payment-icon,
+.payment-option.selected,
+.time-slot.selected,
+.time-slot-btn.selected,
+.checkout-actions .btn-primary {
+    background-color: var(--primary-blue) !important;
+    background: var(--primary-blue) !important;
+    color: var(--cream) !important;
+    border-color: var(--primary-blue) !important;
+}
+
+.checkout-card .card-header h3,
+.checkout-card .card-header h3 * {
+    color: var(--cream) !important;
+}
+
+.progress-step.completed,
+.progress-step.active {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+.progress-step.completed .step-icon,
+.progress-step.active .step-icon,
+.step-icon {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    outline: none !important;
+    color: var(--primary-blue) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+.progress-step.completed .step-icon,
+.progress-step.active .step-icon {
+    color: var(--primary-blue) !important;
+}
+
+.progress-step.completed,
+.progress-step.active,
+.summary-name,
+.summary-price,
+.total-row,
+.form-group label,
+.time-slot,
+.schedule-note,
+.security-badge {
+    color: var(--primary-blue) !important;
+}
+
+.payment-info h4,
+.payment-info p {
+    color: var(--cream) !important;
+}
+
+.payment-radio input[type="radio"],
+.form-group input[type="radio"] {
+    accent-color: var(--primary-blue) !important;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .checkout-content {
+        grid-template-columns: 1fr;
     }
     
-    .footer-cafe {
-        font-size: clamp(3rem, 97.20px, 8vw);
+    .checkout-progress {
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .progress-step {
+        font-size: 12px;
+    }
+    
+    .step-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .progress-line {
+        width: 50px;
+        margin: 0 0.5rem;
+    }
+    
+    .checkout-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .checkout-actions .btn {
+        width: 100%;
+        max-width: 300px;
     }
 }
