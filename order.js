@@ -23,7 +23,8 @@ const PRODUCT_CATALOG = [
     { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
     { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
     { id: 'syrup-spekuloos', name: 'Spekuloos Syrup', priceStudent: 0.30, priceStaff: 0.30 },
-    { id: 'syrup-gingerbread', name: 'Gingerbread Syrup', priceStudent: 0.30, priceStaff: 0.30 }
+    { id: 'syrup-gingerbread', name: 'Gingerbread Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+    { id: 'extra-espresso-shot', name: 'Extra Espresso Shot', priceStudent: 0.50, priceStaff: 0.50 }
   ]}
 ];
 
@@ -65,10 +66,20 @@ function priceFor(item, role) {
 let pendingCoffeeItem = null;
 
 function isCoffeeItem(item) {
-  // Tea should not show milk selection
-  if (item.id === 'tea') return false;
   const coffeeCategory = PRODUCT_CATALOG.find(cat => cat.id === 'coffee');
   return coffeeCategory && coffeeCategory.items.some(coffee => coffee.id === item.id);
+}
+
+function needsCupOptionsOnly(item) {
+  // Espresso, Espresso Doppio, Americano, and Tea only need cup selection, no milk/syrup
+  const cupOnlyItems = ['tea', 'espresso', 'espresso-doppio', 'americano'];
+  return cupOnlyItems.includes(item.id);
+}
+
+function isColdDrink(item) {
+  // Cold drinks don't need cup options
+  const coldDrinkIds = ['redbull', 'wasser', 'softdrinks'];
+  return coldDrinkIds.includes(item.id);
 }
 
 function showMilkModal(product) {
@@ -144,10 +155,9 @@ function showMilkModal(product) {
   }
 }
 
-function addCoffeeToCart(product, milkType, syrupId = null, extraShot = false) {
+function addCoffeeToCart(product, milkType, syrupId = null, extraShot = false, cupType = 'togo', cupPrice = 0.20, usePfand = false) {
   const cart = loadCart();
   const role = getRole();
-  const usePfand = getPfandSetting();
   const unitPrice = priceFor(product, role);
   
   // Get syrup info if selected
@@ -172,8 +182,13 @@ function addCoffeeToCart(product, milkType, syrupId = null, extraShot = false) {
     }
   }
   
-  // Create unique key for coffee with milk, syrup, and extra shot selection
-  const cartKey = `${product.id}_${milkType}_${syrupId || 'none'}_${extraShot ? 'extra' : 'normal'}`;
+  // Adjust cup price based on selection
+  const finalCupPrice = cupType === 'pfand' ? 2.00 : 0.20;
+  const finalUsePfand = cupType === 'pfand';
+  const cupLabel = cupType === 'pfand' ? ' • Normal Cup (Pfand)' : ' • To Go Cup';
+  
+  // Create unique key for coffee with milk, syrup, extra shot, and cup selection
+  const cartKey = `${product.id}_${milkType}_${syrupId || 'none'}_${extraShot ? 'extra' : 'normal'}_${cupType}`;
   
   if (!cart[cartKey]) {
     const milkLabel = milkType === 'cow' ? ' (Cow Milk)' : ' (Oat Milk)';
@@ -181,30 +196,32 @@ function addCoffeeToCart(product, milkType, syrupId = null, extraShot = false) {
     const extraShotLabel = extraShot ? ' + Extra Shot' : '';
     cart[cartKey] = { 
       id: product.id,
-      name: product.name + milkLabel + syrupLabel + extraShotLabel, 
-      price: unitPrice + syrupPrice + extraShotPrice,
+      name: product.name + milkLabel + syrupLabel + extraShotLabel + cupLabel, 
+      price: unitPrice + syrupPrice + extraShotPrice + finalCupPrice,
       qty: 0,
-      pfand: usePfand,
+      pfand: finalUsePfand,
       milk: milkType,
       syrup: syrupId || null,
       syrupPrice: syrupPrice,
       extraShot: extraShot,
-      extraShotPrice: extraShotPrice
+      extraShotPrice: extraShotPrice,
+      cupType: cupType,
+      cupPrice: finalCupPrice
     };
   }
   
-  cart[cartKey].price = unitPrice + syrupPrice + extraShotPrice;
-  cart[cartKey].pfand = usePfand;
+  cart[cartKey].price = unitPrice + syrupPrice + extraShotPrice + finalCupPrice;
+  cart[cartKey].pfand = finalUsePfand;
   cart[cartKey].qty += 1; 
   
   saveCart(cart); 
   renderCart();
   
-  const pfandText = usePfand ? ' (with Pfand)' : '';
+  const pfandText = finalUsePfand ? ' (with Pfand)' : '';
   const milkText = milkType === 'cow' ? ' with Cow Milk' : ' with Oat Milk';
   const syrupText = syrupName ? ` + ${syrupName}` : '';
   const extraShotText = extraShot ? ' + Extra Shot' : '';
-  showToast(`${product.name}${milkText}${syrupText}${extraShotText} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
+  showToast(`${product.name}${milkText}${syrupText}${extraShotText}${cupLabel} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
 }
 
 function addToCart(product) {
@@ -252,9 +269,10 @@ const ITEM_IMAGES = {
   'latte-macchiato': 'assets/images/latte-macchiato.png',
   'cafe-latte': 'assets/images/caffe-latte.png',
   'tea': 'assets/images/tea.png',
-  'pumpkin-spice': 'assets/images/caffe-mocha.png',
+  'pumpkin-spice': 'assets/images/pumpkin-spice-latte.png',
   'cinnamon-bun-latte': 'assets/images/latte-macchiato-caramel.png',
   'hot-chocolate': 'assets/images/hot-chocolate.png',
+  'extra-espresso-shot': 'assets/images/espresso.png',
   'softdrinks': 'assets/images/softdrinks.png',
   'wasser': 'assets/images/water.png',
   'redbull': 'assets/images/redbull.png',
@@ -272,19 +290,26 @@ function renderCategories() {
   if (!container) return; 
   container.innerHTML = '';
   
-  // Separate hot drinks and cold drinks into different categories
   const coffeeCategory = PRODUCT_CATALOG.find(cat => cat.id === 'coffee');
   const drinksCategory = PRODUCT_CATALOG.find(cat => cat.id === 'drinks');
+  const addonsCategory = PRODUCT_CATALOG.find(cat => cat.id === 'addons');
   
-  // Hot Drinks Category
-  if (coffeeCategory) {
-    const hotCategoryDiv = document.createElement('div');
-    hotCategoryDiv.className = 'menu-category';
+  // Hot & Cold Drinks Category (same as index.html structure)
+  if (coffeeCategory && drinksCategory) {
+    const hotColdCategoryDiv = document.createElement('div');
+    hotColdCategoryDiv.className = 'menu-category';
     
-    const hotGridDiv = document.createElement('div');
-    hotGridDiv.className = 'menu-grid';
+    const menuGridDiv = document.createElement('div');
+    menuGridDiv.className = 'menu-grid';
     
-    coffeeCategory.items.forEach(item => {
+    // Define the exact order matching index.html
+    const hotDrinksOrder = ['espresso', 'espresso-doppio', 'cappuccino', 'latte-macchiato', 'cafe-latte', 'americano', 'tea', 'pumpkin-spice', 'cinnamon-bun-latte', 'hot-chocolate'];
+    
+    // Render hot drinks in exact order
+    hotDrinksOrder.forEach(itemId => {
+      const item = coffeeCategory.items.find(i => i.id === itemId);
+      if (!item) return;
+      
       const menuItemWrapper = document.createElement('div');
       menuItemWrapper.className = 'menu-item-wrapper';
       
@@ -298,55 +323,70 @@ function renderCategories() {
       menuItem.style.padding = '0';
       menuItem.style.width = '100%';
       
-      const studentPrice = priceFor(item, 'student');
-      const staffPrice = priceFor(item, 'staff');
+      const role = getRole();
+      const currentPrice = priceFor(item, role);
       const imageSrc = ITEM_IMAGES[item.id] || 'assets/images/espresso.png';
       
-      const priceHtml = `<p class="price">${studentPrice.toFixed(2)}€ (Students)<br>${staffPrice.toFixed(2)}€ (Staff)</p>`;
+      // Format name with <br/> for specific items - match index.html exactly
+      let nameHtml = item.name;
+      if (item.id === 'cappuccino') {
+        nameHtml = 'Cappucino'; // Match index.html spelling
+      } else if (item.id === 'cafe-latte') {
+        nameHtml = 'Cafe Latte'; // Match index.html spelling
+      } else if (item.id === 'pumpkin-spice') {
+        nameHtml = 'Pumpkin Spice<br/>Latte';
+      } else if (item.id === 'cinnamon-bun-latte') {
+        nameHtml = 'Cinnamon Bun<br/>Latte';
+      }
+      
+      const priceHtml = `<p class="price">${currentPrice.toFixed(2)}€</p>`;
       
       menuItem.innerHTML = `
         <img src="${imageSrc}" alt="${item.name}">
-        <h4>${item.name}</h4>
+        <h4>${nameHtml}</h4>
         ${priceHtml}
       `;
       
-      // Add click handler - show options for coffee items, direct add for others
+      // Add click handler - show options for coffee items
       if (isCoffeeItem(item)) {
         menuItem.addEventListener('click', () => toggleCoffeeOptions(item.id, menuItemWrapper));
-      } else {
+        if (needsCupOptionsOnly(item)) {
+          const optionsPanel = createCupOptionsPanel(item);
+          menuItemWrapper.appendChild(menuItem);
+          menuItemWrapper.appendChild(optionsPanel);
+        } else {
+          const optionsPanel = createCoffeeOptionsPanel(item);
+          menuItemWrapper.appendChild(menuItem);
+          menuItemWrapper.appendChild(optionsPanel);
+        }
+      } else if (isColdDrink(item)) {
+        // Cold drinks - no options, add directly
         menuItem.addEventListener('click', () => addToCart(item));
-      }
-      
-      // Create options panel (initially hidden)
-      if (isCoffeeItem(item)) {
-        const optionsPanel = createCoffeeOptionsPanel(item);
         menuItemWrapper.appendChild(menuItem);
-        menuItemWrapper.appendChild(optionsPanel);
       } else {
+        // Other items (like syrups) - add directly
+        menuItem.addEventListener('click', () => addToCart(item));
         menuItemWrapper.appendChild(menuItem);
       }
       
-      hotGridDiv.appendChild(menuItemWrapper);
+      menuGridDiv.appendChild(menuItemWrapper);
     });
     
-    const hotLabelDiv = document.createElement('div');
-    hotLabelDiv.className = 'category-label hot-drinks-label';
-    hotLabelDiv.textContent = 'hot drinks';
+    // Add empty placeholders
+    const placeholder1 = document.createElement('div');
+    placeholder1.className = 'menu-item empty-placeholder';
+    menuGridDiv.appendChild(placeholder1);
     
-    hotCategoryDiv.appendChild(hotGridDiv);
-    hotCategoryDiv.appendChild(hotLabelDiv);
-    container.appendChild(hotCategoryDiv);
-  }
-  
-  // Cold Drinks Category
-  if (drinksCategory) {
-    const coldCategoryDiv = document.createElement('div');
-    coldCategoryDiv.className = 'menu-category';
+    const placeholder2 = document.createElement('div');
+    placeholder2.className = 'menu-item empty-placeholder';
+    menuGridDiv.appendChild(placeholder2);
     
-    const coldGridDiv = document.createElement('div');
-    coldGridDiv.className = 'menu-grid cold-drinks';
-    
-    drinksCategory.items.forEach(item => {
+    // Add cold drinks in order: redbull, water, softdrinks
+    const coldDrinksOrder = ['redbull', 'wasser', 'softdrinks'];
+    coldDrinksOrder.forEach(itemId => {
+      const item = drinksCategory.items.find(i => i.id === itemId);
+      if (!item) return;
+      
       const menuItem = document.createElement('button');
       menuItem.className = 'menu-item';
       menuItem.type = 'button';
@@ -355,13 +395,11 @@ function renderCategories() {
       menuItem.style.background = 'transparent';
       menuItem.style.padding = '0';
       
-      const studentPrice = priceFor(item, 'student');
-      const staffPrice = priceFor(item, 'staff');
+      const role = getRole();
+      const currentPrice = priceFor(item, role);
       const imageSrc = ITEM_IMAGES[item.id] || 'assets/images/water.png';
       
-      const priceHtml = studentPrice === staffPrice 
-        ? `<p class="price">${studentPrice.toFixed(2)}€</p>`
-        : `<p class="price">${studentPrice.toFixed(2)}€ (Students)<br>${staffPrice.toFixed(2)}€ (Staff)</p>`;
+      const priceHtml = `<p class="price">${currentPrice.toFixed(2)}€</p>`;
       
       menuItem.innerHTML = `
         <img src="${imageSrc}" alt="${item.name}">
@@ -370,16 +408,52 @@ function renderCategories() {
       `;
       
       menuItem.addEventListener('click', () => addToCart(item));
-      coldGridDiv.appendChild(menuItem);
+      menuGridDiv.appendChild(menuItem);
     });
     
-    const coldLabelDiv = document.createElement('div');
-    coldLabelDiv.className = 'category-label cold-drinks-label';
-    coldLabelDiv.textContent = 'cold drinks';
+    // Add HotDrinks label
+    const hotDrinksLabel = document.createElement('div');
+    hotDrinksLabel.setAttribute('data-layer', 'hot drinks');
+    hotDrinksLabel.className = 'HotDrinks';
+    hotDrinksLabel.style.cssText = 'width: 328px; height: 81px; color: white; font-size: 26.718px; font-family: \'Pecita\', cursive; font-weight: 400; line-height: normal; text-transform: uppercase; white-space: pre-wrap';
+    hotDrinksLabel.textContent = 'hot drinks';
     
-    coldCategoryDiv.appendChild(coldGridDiv);
-    coldCategoryDiv.appendChild(coldLabelDiv);
-    container.appendChild(coldCategoryDiv);
+    // Add ColdDrinks label
+    const coldDrinksLabel = document.createElement('div');
+    coldDrinksLabel.setAttribute('data-layer', 'cold drinks');
+    coldDrinksLabel.className = 'ColdDrinks';
+    coldDrinksLabel.style.cssText = 'width: 328px; height: 81px; color: white; font-size: 35px; font-family: \'Pecita\', cursive; font-weight: 400; line-height: normal; text-transform: uppercase; white-space: pre-wrap';
+    coldDrinksLabel.textContent = 'cold drinks';
+    
+    // Add Arrow5 SVG
+    const arrow5Div = document.createElement('div');
+    arrow5Div.setAttribute('data-svg-wrapper', '');
+    arrow5Div.setAttribute('data-layer', 'Arrow 5');
+    arrow5Div.className = 'Arrow5';
+    arrow5Div.innerHTML = `
+      <svg width="251" height="134" viewBox="0 0 251 134" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g filter="url(#filter0_g_49_106)">
+          <path d="M118.941 124.583L119.71 126.456L118.941 124.583ZM245.609 19.9349C246.243 20.8559 246.011 22.1169 245.09 22.7513L230.081 33.0904C229.16 33.7249 227.899 33.4926 227.265 32.5716C226.63 31.6506 226.863 30.3897 227.784 29.7552L241.125 20.5649L231.934 7.22407C231.3 6.30308 231.532 5.04214 232.453 4.40768C233.374 3.77322 234.635 4.0055 235.269 4.92649L245.609 19.9349ZM5.94106 69.0836L7.83211 68.3594C16.5674 91.1678 37.2808 107.594 59.4743 116.903C70.5482 121.548 81.9114 124.384 92.194 125.356C102.508 126.331 111.584 125.416 118.172 122.71L118.941 124.583L119.71 126.456C112.298 129.501 102.499 130.398 91.813 129.388C81.0956 128.375 69.3338 125.431 57.9077 120.638C35.1013 111.072 13.3147 93.9988 4.05 69.8078L5.94106 69.0836ZM118.941 124.583L118.172 122.71C121.304 121.424 124.765 118.786 128.582 114.971C132.377 111.179 136.398 106.351 140.669 100.843C144.939 95.3358 149.415 89.2073 154.138 82.8104C158.853 76.4251 163.803 69.7884 168.986 63.3177C179.335 50.3971 190.704 38.02 203.161 29.5351C215.646 21.0301 229.371 16.3407 244.308 19.0922L243.941 21.0837L243.574 23.0752C230.011 20.5767 217.361 24.7623 205.441 32.8823C193.491 41.0224 182.423 53.0202 172.147 65.8496C167.017 72.2538 162.108 78.8359 157.397 85.2161C152.694 91.5849 148.178 97.7688 143.87 103.324C139.563 108.878 135.42 113.863 131.445 117.836C127.492 121.787 123.579 124.868 119.71 126.456L118.941 124.583Z" fill="white"/>
+        </g>
+        <defs>
+          <filter id="filter0_g_49_106" x="-9.53674e-07" y="4.86374e-05" width="250.016" height="133.835" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+            <feTurbulence type="fractalNoise" baseFrequency="0.44893375039100647 0.44893375039100647" numOctaves="3" seed="3300" />
+            <feDisplacementMap in="shape" scale="8.1000003814697266" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%" />
+            <feMerge result="effect1_texture_49_106">
+              <feMergeNode in="displacedImage"/>
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
+    `;
+    
+    hotColdCategoryDiv.appendChild(menuGridDiv);
+    hotColdCategoryDiv.appendChild(hotDrinksLabel);
+    hotColdCategoryDiv.appendChild(coldDrinksLabel);
+    hotColdCategoryDiv.appendChild(arrow5Div);
+    container.appendChild(hotColdCategoryDiv);
   }
   
   // Add heart icons to menu items
@@ -405,11 +479,11 @@ function createCoffeeOptionsPanel(item) {
         <h5>Add Syrup (Optional):</h5>
         <div class="option-buttons syrup-buttons">
           <button class="option-btn syrup-btn" data-syrup="">No Syrup</button>
-          <button class="option-btn syrup-btn" data-syrup="syrup-vanilla">Vanilla</button>
-          <button class="option-btn syrup-btn" data-syrup="syrup-hazelnut">Hazelnut</button>
-          <button class="option-btn syrup-btn" data-syrup="syrup-pumpkin">Pumpkin Spice</button>
-          <button class="option-btn syrup-btn" data-syrup="syrup-spekuloos">Spekuloos</button>
-          <button class="option-btn syrup-btn" data-syrup="syrup-gingerbread">Gingerbread</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-vanilla">Vanilla (+€0.30)</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-hazelnut">Hazelnut (+€0.30)</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-pumpkin">Pumpkin Spice (+€0.30)</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-spekuloos">Spekuloos (+€0.30)</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-gingerbread">Gingerbread (+€0.30)</button>
         </div>
       </div>
       <div class="option-group">
@@ -417,6 +491,13 @@ function createCoffeeOptionsPanel(item) {
         <div class="option-buttons">
           <button class="option-btn extra-shot-btn" data-extra-shot="false">No</button>
           <button class="option-btn extra-shot-btn" data-extra-shot="true">Yes (+€0.50)</button>
+        </div>
+      </div>
+      <div class="option-group">
+        <h5>Choose Cup Type:</h5>
+        <div class="option-buttons">
+          <button class="option-btn cup-btn" data-cup="togo" data-price="0.20">To Go Cup (+€0.20)</button>
+          <button class="option-btn cup-btn" data-cup="pfand" data-price="2.00">Normal Cup (Pfand) (+€2.00 refundable)</button>
         </div>
       </div>
       <button class="add-to-cart-btn" data-item-id="${item.id}">Add to Cart</button>
@@ -427,6 +508,7 @@ function createCoffeeOptionsPanel(item) {
   const milkBtns = panel.querySelectorAll('.milk-btn');
   const syrupBtns = panel.querySelectorAll('.syrup-btn');
   const extraShotBtns = panel.querySelectorAll('.extra-shot-btn');
+  const cupBtns = panel.querySelectorAll('.cup-btn');
   const addBtn = panel.querySelector('.add-to-cart-btn');
   
   milkBtns.forEach(btn => {
@@ -450,17 +532,32 @@ function createCoffeeOptionsPanel(item) {
     });
   });
   
+  cupBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      cupBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+  
   addBtn.addEventListener('click', () => {
     const selectedMilk = panel.querySelector('.milk-btn.selected')?.dataset.milk;
     const selectedSyrup = panel.querySelector('.syrup-btn.selected')?.dataset.syrup || '';
     const selectedExtraShot = panel.querySelector('.extra-shot-btn.selected')?.dataset.extraShot === 'true';
+    const selectedCup = panel.querySelector('.cup-btn.selected')?.dataset.cup;
     
     if (!selectedMilk) {
       alert('Please select a milk type');
       return;
     }
+    if (!selectedCup) {
+      alert('Please select a cup type');
+      return;
+    }
     
-    addCoffeeToCart(item, selectedMilk, selectedSyrup || null, selectedExtraShot);
+    const cupPrice = parseFloat(panel.querySelector('.cup-btn.selected')?.dataset.price || '0');
+    const usePfand = selectedCup === 'pfand';
+    
+    addCoffeeToCart(item, selectedMilk, selectedSyrup || null, selectedExtraShot, selectedCup, cupPrice, usePfand);
     toggleCoffeeOptions(item.id, panel.parentElement);
   });
   
@@ -468,8 +565,95 @@ function createCoffeeOptionsPanel(item) {
   milkBtns[0]?.classList.add('selected');
   syrupBtns[0]?.classList.add('selected');
   extraShotBtns[0]?.classList.add('selected');
+  cupBtns[0]?.classList.add('selected');
   
   return panel;
+}
+
+function createCupOptionsPanel(item) {
+  const panel = document.createElement('div');
+  panel.className = 'coffee-options-panel';
+  panel.style.display = 'none';
+  panel.dataset.itemId = item.id;
+  
+  const role = getRole();
+  const togoPrice = role === 'student' ? 0.20 : 0.20;
+  const pfandPrice = role === 'student' ? 2.00 : 2.00;
+  
+  panel.innerHTML = `
+    <div class="coffee-options-content">
+      <div class="option-group">
+        <h5>Choose Cup Type:</h5>
+        <div class="option-buttons">
+          <button class="option-btn cup-btn" data-cup="togo" data-price="${togoPrice}">To Go Cup (+€${togoPrice.toFixed(2)})</button>
+          <button class="option-btn cup-btn" data-cup="pfand" data-price="${pfandPrice}">Normal Cup (Pfand) (+€${pfandPrice.toFixed(2)} refundable)</button>
+        </div>
+      </div>
+      <button class="add-to-cart-btn" data-item-id="${item.id}">Add to Cart</button>
+    </div>
+  `;
+  
+  // Set up event handlers
+  const cupBtns = panel.querySelectorAll('.cup-btn');
+  const addBtn = panel.querySelector('.add-to-cart-btn');
+  
+  cupBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      cupBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+  
+  addBtn.addEventListener('click', () => {
+    const selectedCup = panel.querySelector('.cup-btn.selected')?.dataset.cup;
+    
+    if (!selectedCup) {
+      alert('Please select a cup type');
+      return;
+    }
+    
+    const cupPrice = parseFloat(panel.querySelector('.cup-btn.selected')?.dataset.price || '0');
+    const usePfand = selectedCup === 'pfand';
+    
+    addItemWithCup(item, selectedCup, cupPrice, usePfand);
+    toggleCoffeeOptions(item.id, panel.parentElement);
+  });
+  
+  // Set default selection
+  cupBtns[0]?.classList.add('selected');
+  
+  return panel;
+}
+
+function addItemWithCup(item, cupType, cupPrice, usePfand) {
+  const cart = loadCart();
+  const role = getRole();
+  const unitPrice = priceFor(item, role);
+  
+  const cartKey = `${item.id}_${cupType}`;
+  const cupLabel = cupType === 'pfand' ? ' • Normal Cup (Pfand)' : ' • To Go Cup';
+  
+  if (!cart[cartKey]) {
+    cart[cartKey] = { 
+      id: item.id,
+      name: item.name + cupLabel, 
+      price: unitPrice + cupPrice,
+      qty: 0,
+      pfand: usePfand,
+      cupType: cupType,
+      cupPrice: cupPrice
+    };
+  }
+  
+  cart[cartKey].price = unitPrice + cupPrice;
+  cart[cartKey].pfand = usePfand;
+  cart[cartKey].qty += 1; 
+  
+  saveCart(cart); 
+  renderCart();
+  
+  const pfandText = usePfand ? ' (with Pfand)' : '';
+  showToast(`${item.name}${cupLabel} added (${role === 'student' ? 'Student' : 'Staff'} price)${pfandText}`);
 }
 
 function toggleCoffeeOptions(itemId, wrapper) {

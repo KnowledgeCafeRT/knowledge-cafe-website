@@ -13,16 +13,23 @@
   <style>
     .order-page {
       background: var(--beige);
-      padding: 200px 4rem 6rem;
+      padding: 180px 4rem 4rem 4rem;
       min-height: 100vh;
     }
 
+    .order-page .page-content {
+      padding: 0;
+      max-width: none;
+    }
+
     .order-header {
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
+      margin-top: 0;
     }
 
     .order-header .menu-title {
       margin-bottom: 2rem;
+      margin-left: 2rem;
     }
 
     .order-controls {
@@ -49,17 +56,11 @@
     .order-categories {
       display: flex;
       flex-direction: column;
-      gap: 2.5rem;
-    }
-
-    .order-page .menu-container {
-      width: 100%;
-      max-width: 1292px;
+      gap: 1.5rem;
     }
 
     .order-page .menu-category {
-      width: 100%;
-      max-width: 1292px;
+      background: var(--menu-beige) !important;
     }
 
     .menu-item-wrapper {
@@ -70,7 +71,7 @@
     .coffee-options-panel {
       margin-top: 1rem;
       padding: 1.5rem;
-      background: rgba(242, 234, 217, 0.8);
+      background: var(--menu-beige);
       border-radius: 15px;
       border: 2px solid var(--primary-blue);
     }
@@ -99,7 +100,7 @@
     .option-btn {
       padding: 0.5rem 1rem;
       border: 2px solid var(--primary-blue);
-      background: white;
+      background: var(--menu-beige);
       color: var(--primary-blue);
       border-radius: 20px;
       font-family: 'Montserrat', sans-serif;
@@ -138,11 +139,168 @@
       cursor: pointer;
       text-transform: uppercase;
       margin-top: 0.5rem;
-      transition: opacity 0.2s;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
     }
 
     .add-to-cart-btn:hover {
-      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(33, 69, 152, 0.3);
+    }
+
+    .order-page .btn-primary {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 0.75rem 2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .order-page .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(33, 69, 152, 0.3);
+    }
+
+    .order-page .btn-secondary {
+      background: transparent;
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+      border-radius: 25px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 0.5rem 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .order-page .btn-secondary:hover {
+      background: var(--primary-blue);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .order-page .favorites-btn {
+      background: var(--menu-beige);
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+      border-radius: 25px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .order-page .favorites-btn:hover {
+      background: var(--primary-blue);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(33, 69, 152, 0.3);
+    }
+
+    .order-page .role-toggle {
+      background: var(--menu-beige);
+      border: 2px solid var(--primary-blue);
+      border-radius: 999px;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .order-page .role-option {
+      background: transparent;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+    }
+
+    .order-page .role-option:hover {
+      background: rgba(33, 69, 152, 0.1);
+    }
+
+    .order-page .role-option input:checked + span {
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    .order-page .milk-option,
+    .order-page .syrup-option {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--primary-blue);
+      background: var(--menu-beige);
+      color: var(--primary-blue);
+      border-radius: 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .order-page .milk-option:hover,
+    .order-page .syrup-option:hover {
+      background: var(--primary-blue);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .order-page .milk-option.selected,
+    .order-page .syrup-option.selected {
+      background: var(--primary-blue);
+      color: white;
+    }
+
+    .order-page .menu-note {
+      font-size: 10px;
+    }
+
+    .order-page .order-cart {
+      background: var(--menu-beige) !important;
+    }
+
+    .order-page .cart-header {
+      background: var(--menu-beige);
+    }
+
+    .order-page .cart-header h3 {
+      color: var(--primary-blue) !important;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .order-page .cart-summary {
+      background: var(--menu-beige);
+    }
+
+    .order-page .summary-row {
+      color: var(--primary-blue) !important;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .order-page .summary-row span {
+      color: var(--primary-blue) !important;
+    }
+
+    .order-page #subtotal {
+      color: var(--primary-blue) !important;
+      font-weight: 700;
     }
 
     @media (max-width: 1400px) {
@@ -168,12 +326,6 @@
       <div class="order-header">
         <h2 class="menu-title">ORDER</h2>
         <div class="order-controls">
-          <div class="favorites-section">
-            <button class="favorites-btn" id="favoritesBtn" title="View Favorites">
-              <i class="fas fa-heart"></i>
-              <span>Favorites</span>
-            </button>
-          </div>
           <div class="role-toggle" id="roleToggle">
             <span class="role-label">Pricing:</span>
             <label class="role-option">
@@ -185,21 +337,14 @@
               <span>Staff</span>
             </label>
           </div>
-          <div class="pfand-toggle" id="pfandToggle">
-            <label class="pfand-option">
-              <input type="checkbox" id="usePfand" checked>
-              <span class="pfand-label">
-                <i class="fas fa-recycle"></i>
-                Use Pfand Cups (+€2.00 deposit)
-              </span>
-            </label>
-          </div>
         </div>
       </div>
 
       <div class="menu-container">
         <div id="categories" class="order-categories"></div>
       </div>
+      
+      <p class="menu-note">*All coffees are available with cow or oat milk. We exclusively use oat milk from Oatly and cow milk by Bioland Schwarzwaldmilch.<br/><br/>A fee of 2€ is charged for cups, which will be returned after giving the cup back. To go cups cost 0.20€</p>
     </div>
 
       <aside class="order-cart">
@@ -290,23 +435,23 @@
             </button>
             <button class="syrup-option" data-syrup="syrup-vanilla">
               <i class="fas fa-candy-cane"></i>
-              <span>Vanilla</span>
+              <span>Vanilla (+€0.30)</span>
             </button>
             <button class="syrup-option" data-syrup="syrup-hazelnut">
               <i class="fas fa-candy-cane"></i>
-              <span>Hazelnut</span>
+              <span>Hazelnut (+€0.30)</span>
             </button>
             <button class="syrup-option" data-syrup="syrup-pumpkin">
               <i class="fas fa-candy-cane"></i>
-              <span>Pumpkin Spice</span>
+              <span>Pumpkin Spice (+€0.30)</span>
             </button>
             <button class="syrup-option" data-syrup="syrup-spekuloos">
               <i class="fas fa-candy-cane"></i>
-              <span>Spekuloos</span>
+              <span>Spekuloos (+€0.30)</span>
             </button>
             <button class="syrup-option" data-syrup="syrup-gingerbread">
               <i class="fas fa-candy-cane"></i>
-              <span>Gingerbread</span>
+              <span>Gingerbread (+€0.30)</span>
             </button>
           </div>
         </div>
