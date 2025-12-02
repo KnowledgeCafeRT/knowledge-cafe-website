@@ -29,6 +29,17 @@
       { id: 'softdrinks', name: 'Softdrinks', priceStudent: 2.00, priceStaff: 2.00 },
       { id: 'wasser', name: 'Water', priceStudent: 1.00, priceStaff: 1.00 },
       { id: 'redbull', name: 'RedBull', priceStudent: 2.00, priceStaff: 2.00 }
+    ]},
+    { id: 'addons', title: 'Add ons', items: [
+      { id: 'togo', name: 'To Go', priceStudent: 0.20, priceStaff: 0.20 },
+      { id: 'extra-shot', name: 'Extra Shot', priceStudent: 0.50, priceStaff: 0.50 },
+      { id: 'syrup-pumpkin', name: 'Pumpkin Spice Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+      { id: 'syrup-hazelnut', name: 'Hazelnut Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+      { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+      { id: 'syrup-spekuloos', name: 'Spekuloos Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+      { id: 'syrup-gingerbread', name: 'Gingerbread Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+      { id: 'syrup-cinnamon', name: 'Cinnamon Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+      { id: 'pfand', name: 'Pfand Cup', priceStudent: 2.00, priceStaff: 2.00 }
     ]}
   ];
 

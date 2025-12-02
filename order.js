@@ -22,6 +22,7 @@ const PRODUCT_CATALOG = [
     { id: 'syrup-vanilla', name: 'Vanilla Syrup', priceStudent: 0.30, priceStaff: 0.30 },
     { id: 'syrup-spekuloos', name: 'Spekuloos Syrup', priceStudent: 0.30, priceStaff: 0.30 },
     { id: 'syrup-gingerbread', name: 'Gingerbread Syrup', priceStudent: 0.30, priceStaff: 0.30 },
+    { id: 'syrup-cinnamon', name: 'Cinnamon Syrup', priceStudent: 0.30, priceStaff: 0.30 },
     { id: 'extra-espresso-shot', name: 'Extra Espresso Shot', priceStudent: 0.50, priceStaff: 0.50 }
   ]}
 ];
@@ -277,6 +278,7 @@ const ITEM_IMAGES = {
   'syrup-pumpkin': 'assets/images/syrup-pumpkin.png',
   'syrup-spekuloos': 'assets/images/syrup-spekuloos.png',
   'syrup-gingerbread': 'assets/images/syrup-gingerbread.png',
+  'syrup-cinnamon': 'assets/images/syrup-gingerbread.png', // Using gingerbread image as placeholder, replace with cinnamon image when available
   'togo': 'assets/images/water.png', // placeholder
   'extra-shot': 'assets/images/espresso.png' // placeholder
 };
@@ -435,6 +437,7 @@ function createCoffeeOptionsPanel(item) {
           <button class="option-btn syrup-btn" data-syrup="syrup-pumpkin">Pumpkin Spice (+€0.30)</button>
           <button class="option-btn syrup-btn" data-syrup="syrup-spekuloos">Spekuloos (+€0.30)</button>
           <button class="option-btn syrup-btn" data-syrup="syrup-gingerbread">Gingerbread (+€0.30)</button>
+          <button class="option-btn syrup-btn" data-syrup="syrup-cinnamon">Cinnamon (+€0.30)</button>
         </div>
       </div>
       <div class="option-group">
