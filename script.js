@@ -25,14 +25,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// Navbar background change on scroll
+// Navbar background change and size reduction on scroll
 window.addEventListener('scroll', () => {
   const navbar = document.querySelector('.navbar');
   if (!navbar) return;
   if (window.scrollY > 100) {
+    navbar.classList.add('scrolled');
     navbar.style.background = 'rgba(255, 255, 255, 0.98)';
     navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
   } else {
+    navbar.classList.remove('scrolled');
     navbar.style.background = 'rgba(255, 255, 255, 0.95)';
     navbar.style.boxShadow = 'none';
   }

@@ -411,48 +411,7 @@ function renderCategories() {
       menuGridDiv.appendChild(menuItem);
     });
     
-    // Add HotDrinks label
-    const hotDrinksLabel = document.createElement('div');
-    hotDrinksLabel.setAttribute('data-layer', 'hot drinks');
-    hotDrinksLabel.className = 'HotDrinks';
-    hotDrinksLabel.style.cssText = 'width: 328px; height: 81px; color: white; font-size: 26.718px; font-family: \'Pecita\', cursive; font-weight: 400; line-height: normal; text-transform: uppercase; white-space: pre-wrap';
-    hotDrinksLabel.textContent = 'hot drinks';
-    
-    // Add ColdDrinks label
-    const coldDrinksLabel = document.createElement('div');
-    coldDrinksLabel.setAttribute('data-layer', 'cold drinks');
-    coldDrinksLabel.className = 'ColdDrinks';
-    coldDrinksLabel.style.cssText = 'width: 328px; height: 81px; color: white; font-size: 35px; font-family: \'Pecita\', cursive; font-weight: 400; line-height: normal; text-transform: uppercase; white-space: pre-wrap';
-    coldDrinksLabel.textContent = 'cold drinks';
-    
-    // Add Arrow5 SVG
-    const arrow5Div = document.createElement('div');
-    arrow5Div.setAttribute('data-svg-wrapper', '');
-    arrow5Div.setAttribute('data-layer', 'Arrow 5');
-    arrow5Div.className = 'Arrow5';
-    arrow5Div.innerHTML = `
-      <svg width="251" height="134" viewBox="0 0 251 134" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g filter="url(#filter0_g_49_106)">
-          <path d="M118.941 124.583L119.71 126.456L118.941 124.583ZM245.609 19.9349C246.243 20.8559 246.011 22.1169 245.09 22.7513L230.081 33.0904C229.16 33.7249 227.899 33.4926 227.265 32.5716C226.63 31.6506 226.863 30.3897 227.784 29.7552L241.125 20.5649L231.934 7.22407C231.3 6.30308 231.532 5.04214 232.453 4.40768C233.374 3.77322 234.635 4.0055 235.269 4.92649L245.609 19.9349ZM5.94106 69.0836L7.83211 68.3594C16.5674 91.1678 37.2808 107.594 59.4743 116.903C70.5482 121.548 81.9114 124.384 92.194 125.356C102.508 126.331 111.584 125.416 118.172 122.71L118.941 124.583L119.71 126.456C112.298 129.501 102.499 130.398 91.813 129.388C81.0956 128.375 69.3338 125.431 57.9077 120.638C35.1013 111.072 13.3147 93.9988 4.05 69.8078L5.94106 69.0836ZM118.941 124.583L118.172 122.71C121.304 121.424 124.765 118.786 128.582 114.971C132.377 111.179 136.398 106.351 140.669 100.843C144.939 95.3358 149.415 89.2073 154.138 82.8104C158.853 76.4251 163.803 69.7884 168.986 63.3177C179.335 50.3971 190.704 38.02 203.161 29.5351C215.646 21.0301 229.371 16.3407 244.308 19.0922L243.941 21.0837L243.574 23.0752C230.011 20.5767 217.361 24.7623 205.441 32.8823C193.491 41.0224 182.423 53.0202 172.147 65.8496C167.017 72.2538 162.108 78.8359 157.397 85.2161C152.694 91.5849 148.178 97.7688 143.87 103.324C139.563 108.878 135.42 113.863 131.445 117.836C127.492 121.787 123.579 124.868 119.71 126.456L118.941 124.583Z" fill="white"/>
-        </g>
-        <defs>
-          <filter id="filter0_g_49_106" x="-9.53674e-07" y="4.86374e-05" width="250.016" height="133.835" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-            <feTurbulence type="fractalNoise" baseFrequency="0.44893375039100647 0.44893375039100647" numOctaves="3" seed="3300" />
-            <feDisplacementMap in="shape" scale="8.1000003814697266" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%" />
-            <feMerge result="effect1_texture_49_106">
-              <feMergeNode in="displacedImage"/>
-            </feMerge>
-          </filter>
-        </defs>
-      </svg>
-    `;
-    
     hotColdCategoryDiv.appendChild(menuGridDiv);
-    hotColdCategoryDiv.appendChild(hotDrinksLabel);
-    hotColdCategoryDiv.appendChild(coldDrinksLabel);
-    hotColdCategoryDiv.appendChild(arrow5Div);
     container.appendChild(hotColdCategoryDiv);
   }
   

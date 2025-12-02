@@ -20,15 +20,63 @@
     .order-page .page-content {
       padding: 0;
       max-width: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .order-page .order-main-content {
+      display: grid !important;
+      grid-template-columns: auto 420px !important;
+      gap: 2rem !important;
+      align-items: flex-start !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-top: 0 !important;
+    }
+    
+    .order-page .menu-section {
+      min-width: 0 !important;
+      max-width: calc(100vw - 480px) !important;
+      overflow: visible !important;
+      grid-column: 1 !important;
+      width: 100% !important;
+      margin-top: -40px !important;
+      padding-top: 0 !important;
+    }
+    
+    .order-page .order-header {
+      margin-bottom: 1.5rem !important;
+    }
+    
+    .order-page .order-cart {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      grid-column: 2 !important;
+      position: sticky !important;
+      top: 360px !important;
+    }
+    
+    .order-page .cart-line-name {
+      font-weight: 600 !important;
+      font-size: 14px !important;
+      color: var(--primary-blue) !important;
+      display: block !important;
+    }
+    
+    .order-page .cart-line {
+      padding: 0.8rem !important;
+      margin-bottom: 0.5rem !important;
     }
 
     .order-header {
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       margin-top: 0;
     }
 
     .order-header .menu-title {
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       margin-left: 2rem;
     }
 
@@ -42,6 +90,50 @@
 
     .menu-item {
       transition: transform 0.2s, opacity 0.2s;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: center !important;
+    }
+    
+    .order-page .menu-item h4 {
+      font-weight: 700 !important;
+      font-size: 12px !important;
+      margin-bottom: 0.2rem !important;
+      margin-top: 0.2rem !important;
+      display: block !important;
+      visibility: visible !important;
+      color: var(--primary-blue) !important;
+      opacity: 1 !important;
+      white-space: normal !important;
+      word-wrap: break-word !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+    }
+    
+    .order-page .menu-item img {
+      margin-bottom: 0.3rem !important;
+      width: 75px !important;
+      height: 75px !important;
+    }
+    
+    .order-page .menu-item .price {
+      font-weight: 700 !important;
+      font-size: 12px !important;
+      margin-top: 0.1rem !important;
+      display: block !important;
+      visibility: visible !important;
+      color: var(--primary-blue) !important;
+      opacity: 1 !important;
+      overflow: visible !important;
+    }
+    
+    .order-page .menu-item {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      overflow: visible !important;
+      padding: 0.4rem !important;
     }
 
     .menu-item:hover {
@@ -61,6 +153,33 @@
 
     .order-page .menu-category {
       background: var(--menu-beige) !important;
+      width: 1000px !important;
+      max-width: calc((100vw - 500px) / 0.85) !important;
+      padding: 1.2rem !important;
+      box-sizing: border-box !important;
+      overflow: visible !important;
+    }
+    
+    .order-page .menu-grid {
+      overflow: visible !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 0.8rem !important;
+    }
+    
+    .order-page .menu-item-wrapper {
+      overflow: visible !important;
+    }
+    
+    .order-page .menu-container {
+      transform: scale(0.85) !important;
+    }
+    
+    .order-page .menu-container {
+      transform: scale(0.85) !important;
+      transform-origin: left center !important;
+      margin: 0 0 0 -80px !important;
+      max-width: 100% !important;
+      overflow: visible !important;
     }
 
     .menu-item-wrapper {
@@ -272,6 +391,19 @@
 
     .order-page .order-cart {
       background: var(--menu-beige) !important;
+      position: sticky !important;
+      top: 200px !important;
+      width: 100% !important;
+      max-width: 400px !important;
+      max-height: calc(100vh - 220px) !important;
+      overflow-y: auto !important;
+      border-radius: 25px !important;
+      padding: 1.5rem !important;
+      box-shadow: 0 4px 15px rgba(33, 69, 152, 0.1) !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      z-index: 10 !important;
     }
 
     .order-page .cart-header {
@@ -287,6 +419,7 @@
 
     .order-page .cart-summary {
       background: var(--menu-beige);
+      margin-top: 1rem !important;
     }
 
     .order-page .summary-row {
@@ -340,26 +473,29 @@
         </div>
       </div>
 
-      <div class="menu-container">
-        <div id="categories" class="order-categories"></div>
-      </div>
-      
-      <p class="menu-note">*All coffees are available with cow or oat milk. We exclusively use oat milk from Oatly and cow milk by Bioland Schwarzwaldmilch.<br/><br/>A fee of 2€ is charged for cups, which will be returned after giving the cup back. To go cups cost 0.20€</p>
-    </div>
+      <div class="order-main-content">
+        <div class="menu-section">
+          <div class="menu-container">
+            <div id="categories" class="order-categories"></div>
+          </div>
+          
+          <p class="menu-note">*All coffees are available with cow or oat milk. We exclusively use oat milk from Oatly and cow milk by Bioland Schwarzwaldmilch.<br/><br/>A fee of 2€ is charged for cups, which will be returned after giving the cup back. To go cups cost 0.20€</p>
+        </div>
 
-      <aside class="order-cart">
-        <div class="cart-header">
-          <h3>Your Order</h3>
-          <button id="clearCart" class="btn btn-secondary" style="padding:8px 14px">Clear</button>
-        </div>
-        <ul id="cartItems" class="cart-items"></ul>
-        <div class="cart-summary">
-          <div class="summary-row"><span>Subtotal</span><span id="subtotal">€0.00</span></div>
-        </div>
-        <div class="cart-actions">
-          <a href="/checkout.html" class="btn btn-primary" id="checkoutBtn">Checkout</a>
-        </div>
-      </aside>
+        <aside class="order-cart">
+          <div class="cart-header">
+            <h3>Your Order</h3>
+            <button id="clearCart" class="btn btn-secondary" style="padding:8px 14px">Clear</button>
+          </div>
+          <ul id="cartItems" class="cart-items"></ul>
+          <div class="cart-summary">
+            <div class="summary-row"><span>Subtotal</span><span id="subtotal">€0.00</span></div>
+          </div>
+          <div class="cart-actions">
+            <a href="/checkout.html" class="btn btn-primary" id="checkoutBtn">Checkout</a>
+          </div>
+        </aside>
+      </div>
     </div>
   </main>
 

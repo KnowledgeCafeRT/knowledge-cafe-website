@@ -93,11 +93,19 @@ class SessionManager {
         password
       });
 
-      if (error) throw error;
+      if (error) {
+        // Log failed login attempt
+        await this.logAuthAction(email, 'login_failed', error.message);
+        throw error;
+      }
 
       if (data.session) {
         this.currentUser = data.user;
         await this.loadUserProfile(data.user.id);
+        
+        // Log successful login
+        await this.logAuthAction(email, 'login_success', null, data.user.id);
+        
         return { success: true, user: data.user };
       }
 
@@ -148,6 +156,10 @@ class SessionManager {
 
         this.currentUser = authData.user;
         await this.loadUserProfile(authData.user.id);
+        
+        // Log signup (trigger will also log, but this ensures it happens)
+        await this.logAuthAction(email, 'signup', null, authData.user.id);
+        
         return { success: true, user: authData.user };
       }
 
@@ -161,9 +173,18 @@ class SessionManager {
   async signOut() {
     try {
       const supabase = await window.getSupabaseClient();
+      const userId = this.currentUser?.id;
+      const email = this.currentUser?.email || this.userProfile?.email;
+      
       if (supabase) {
         await supabase.auth.signOut();
       }
+      
+      // Log logout
+      if (email) {
+        await this.logAuthAction(email, 'logout', null, userId);
+      }
+      
       this.currentUser = null;
       this.userProfile = null;
       this.onSessionChange(false);
@@ -171,6 +192,35 @@ class SessionManager {
     } catch (error) {
       console.error('Sign out error:', error);
       return { success: false, error: error.message };
+    }
+  }
+
+  async logAuthAction(email, action, errorMessage = null, userId = null) {
+    try {
+      const supabase = await window.getSupabaseClient();
+      if (!supabase) return;
+
+      // Get IP address and user agent if available
+      const ipAddress = null; // Can be set from request headers if available
+      const userAgent = navigator.userAgent || null;
+
+      const { error } = await supabase
+        .from('auth_logs')
+        .insert({
+          user_id: userId,
+          email: email,
+          action: action,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          error_message: errorMessage
+        });
+
+      if (error) {
+        console.error('Error logging auth action:', error);
+      }
+    } catch (error) {
+      console.error('Error in logAuthAction:', error);
+      // Don't throw - logging failures shouldn't break auth flow
     }
   }
 
