@@ -5,11 +5,9 @@ const PRODUCT_CATALOG = [
     { id: 'espresso-doppio', name: 'Espresso Doppio', priceStudent: 1.70, priceStaff: 2.20 },
     { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.50, priceStaff: 3.00 },
     { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
-    { id: 'cafe-latte', name: 'Cafe Latte', priceStudent: 2.70, priceStaff: 3.20 },
     { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
-    { id: 'pumpkin-spice', name: 'Pumpkin Spice Latte', priceStudent: 3.00, priceStaff: 3.50 },
-    { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 3.00, priceStaff: 3.50 },
-    { id: 'hot-chocolate', name: 'Hot Chocolate', priceStudent: 2.90, priceStaff: 3.40 }
+    { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 2.80, priceStaff: 3.30 },
+    { id: 'hot-chocolate', name: 'Hot Chocolate', priceStudent: 2.50, priceStaff: 3.00 }
   ]},
   { id: 'drinks', title: 'Drinks', items: [
     { id: 'softdrinks', name: 'Softdrinks', priceStudent: 1.50, priceStaff: 1.50 },
@@ -267,9 +265,7 @@ const ITEM_IMAGES = {
   'espresso-doppio': 'assets/images/espresso-doppio.png',
   'cappuccino': 'assets/images/cappuccino.png',
   'latte-macchiato': 'assets/images/latte-macchiato.png',
-  'cafe-latte': 'assets/images/caffe-latte.png',
   'tea': 'assets/images/tea.png',
-  'pumpkin-spice': 'assets/images/pumpkin-spice-latte.png',
   'cinnamon-bun-latte': 'assets/images/latte-macchiato-caramel.png',
   'hot-chocolate': 'assets/images/hot-chocolate.png',
   'extra-espresso-shot': 'assets/images/espresso.png',
@@ -303,7 +299,7 @@ function renderCategories() {
     menuGridDiv.className = 'menu-grid';
     
     // Define the exact order matching index.html
-    const hotDrinksOrder = ['espresso', 'espresso-doppio', 'cappuccino', 'latte-macchiato', 'cafe-latte', 'americano', 'tea', 'pumpkin-spice', 'cinnamon-bun-latte', 'hot-chocolate'];
+    const hotDrinksOrder = ['espresso', 'espresso-doppio', 'cappuccino', 'latte-macchiato', 'americano', 'tea', 'cinnamon-bun-latte', 'hot-chocolate'];
     
     // Render hot drinks in exact order
     hotDrinksOrder.forEach(itemId => {
@@ -331,10 +327,6 @@ function renderCategories() {
       let nameHtml = item.name;
       if (item.id === 'cappuccino') {
         nameHtml = 'Cappucino'; // Match index.html spelling
-      } else if (item.id === 'cafe-latte') {
-        nameHtml = 'Cafe Latte'; // Match index.html spelling
-      } else if (item.id === 'pumpkin-spice') {
-        nameHtml = 'Pumpkin Spice<br/>Latte';
       } else if (item.id === 'cinnamon-bun-latte') {
         nameHtml = 'Cinnamon Bun<br/>Latte';
       }
