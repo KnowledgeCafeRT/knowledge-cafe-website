@@ -4,7 +4,7 @@ const PRODUCT_CATALOG = [
     { id: 'espresso', name: 'Espresso', priceStudent: 1.30, priceStaff: 1.80 },
     { id: 'espresso-doppio', name: 'Espresso Doppio', priceStudent: 1.70, priceStaff: 2.20 },
     { id: 'cappuccino', name: 'Cappuccino', priceStudent: 2.50, priceStaff: 3.00 },
-    { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.00, priceStaff: 2.50 },
+    { id: 'latte-macchiato', name: 'Latte Macchiato', priceStudent: 2.70, priceStaff: 3.20 },
     { id: 'tea', name: 'Tea', priceStudent: 1.00, priceStaff: 1.50 },
     { id: 'cinnamon-bun-latte', name: 'Cinnamon Bun Latte', priceStudent: 2.80, priceStaff: 3.30 },
     { id: 'hot-chocolate', name: 'Hot Chocolate', priceStudent: 2.50, priceStaff: 3.00 }
