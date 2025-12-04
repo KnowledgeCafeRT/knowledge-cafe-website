@@ -345,7 +345,7 @@ body > section:not(.hero):not(.about):not(.menu-section):not(.visit):not(.footer
     z-index: 0;
     pointer-events: none;
     opacity: 0.9;
-    right: 150px;
+    right: 200px;
     top: 50%;
     transform: translateY(-50%) rotate(-12deg);
 }

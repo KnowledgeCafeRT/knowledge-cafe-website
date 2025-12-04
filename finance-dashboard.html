@@ -73,6 +73,49 @@
       margin-top: 0.5rem;
     }
 
+    /* Tab Navigation */
+    .tab-navigation {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #E4D8BD;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      background: none;
+      border: none;
+      padding: 1rem 1.5rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #214598;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+      position: relative;
+      top: 2px;
+    }
+
+    .tab-button:hover {
+      color: #1a3670;
+      background: rgba(33, 69, 152, 0.05);
+    }
+
+    .tab-button.active {
+      color: #214598;
+      border-bottom-color: #214598;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     .logout-btn {
       background: #214598;
       color: white;
@@ -316,6 +359,332 @@
       cursor: pointer;
     }
 
+    /* Live Stats Widget Styles */
+    .live-stats-section {
+      margin-bottom: 2rem;
+    }
+
+    .live-stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .live-stats-header h1 {
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      color: #214598;
+      margin: 0;
+    }
+
+    .refresh-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: #214598;
+      opacity: 0.7;
+    }
+
+    .refresh-indicator.refreshing {
+      opacity: 1;
+    }
+
+    .refresh-indicator i {
+      animation: none;
+    }
+
+    .refresh-indicator.refreshing i {
+      animation: spin 1s linear infinite;
+    }
+
+    .live-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .live-stat-card {
+      background: #E4D8BD;
+      border-radius: 15px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .top-item-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+    }
+
+    #topItemImage {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin: 0 auto 0.5rem;
+      display: none;
+    }
+
+    #topItemImage[src]:not([src=""]) {
+      display: block;
+    }
+
+    #topItem {
+      font-size: 1rem !important;
+      margin-top: 0.5rem;
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .live-stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .live-stat-icon {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .live-stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #214598;
+      margin-bottom: 0.4rem;
+      line-height: 1;
+    }
+
+    .live-stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #214598;
+      opacity: 0.7;
+      margin-bottom: 0.4rem;
+    }
+
+    .live-stat-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 15px;
+      background: rgba(255,255,255,0.5);
+    }
+
+    .live-stat-change.positive {
+      color: #27ae60;
+    }
+
+    .live-stat-change.negative {
+      color: #e74c3c;
+    }
+
+    .live-stat-change.neutral {
+      color: #214598;
+    }
+
+    .variance-alert {
+      background: #E4D8BD;
+      border-radius: 15px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #f39c12;
+    }
+
+    .variance-alert.critical {
+      border-left-color: #e74c3c;
+      background: #fee;
+    }
+
+    .variance-alert.good {
+      border-left-color: #27ae60;
+      background: #efe;
+    }
+
+    .variance-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .variance-header h3 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .variance-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .variance-item {
+      text-align: center;
+    }
+
+    .variance-item-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 0.3rem;
+    }
+
+    .variance-item-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #214598;
+    }
+
+    .hourly-sales {
+      background: #E4D8BD;
+      border-radius: 15px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .hourly-sales h3 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      color: #214598;
+    }
+
+    .hourly-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.4rem;
+      height: 150px;
+      padding: 0.75rem 0;
+    }
+
+    .hour-bar {
+      flex: 1;
+      background: #214598;
+      border-radius: 8px 8px 0 0;
+      position: relative;
+      transition: all 0.3s;
+      cursor: pointer;
+      min-height: 10px;
+    }
+
+    .hour-bar:hover {
+      background: #1a3670;
+      transform: scale(1.1);
+    }
+
+    .hour-label {
+      text-align: center;
+      font-size: 0.7rem;
+      margin-top: 0.5rem;
+      color: #214598;
+    }
+
+    .hour-value {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #214598;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .hour-bar:hover .hour-value {
+      opacity: 1;
+    }
+
+    .top-items {
+      background: #E4D8BD;
+      border-radius: 15px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 1.5rem;
+    }
+
+    .top-items h3 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      color: #214598;
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: #F2EAD9;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .item-row:hover {
+      transform: translateX(5px);
+    }
+
+    .item-rank {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #214598;
+      width: 35px;
+      text-align: center;
+    }
+
+    .item-name {
+      flex: 1;
+      font-weight: 600;
+      color: #214598;
+    }
+
+    .item-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      color: #214598;
+    }
+
+    .item-stats span {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .item-stats .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .item-stats .value {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
     @media (max-width: 768px) {
       .dashboard-grid {
         grid-template-columns: 1fr;
@@ -324,6 +693,19 @@
       .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
+      }
+
+      .live-stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .variance-details {
+        grid-template-columns: 1fr;
+      }
+
+      .item-stats {
+        flex-direction: column;
+        gap: 0.5rem;
       }
     }
   </style>
@@ -340,41 +722,224 @@
       </button>
     </div>
 
-    <div class="dashboard-grid">
-      <!-- Kassensturz am Tagesende -->
-      <div class="dashboard-card">
-        <div class="card-header">
-          <i class="fas fa-calculator card-icon"></i>
-          <h2 class="card-title">Kassensturz am Tagesende</h2>
-        </div>
-        <div class="card-content">
-          <form class="cash-count-form" id="cashCountForm">
-            <div class="cash-input-group">
-              <label>Kassensoll (€)</label>
-              <input type="number" id="expectedCash" step="0.01" min="0" placeholder="0.00" required>
-            </div>
-            <div class="cash-input-group">
-              <label>Kassenist (€)</label>
-              <input type="number" id="actualCash" step="0.01" min="0" placeholder="0.00" required>
-            </div>
-            <div class="cash-input-group">
-              <label>Pfand Kasse (€)</label>
-              <input type="number" id="pfandCash" step="0.01" min="0" placeholder="0.00" required>
-            </div>
-            <div class="cash-total">
-              <div class="cash-total-label">Differenz</div>
-              <div class="cash-total-value" id="cashDifference">€0.00</div>
-            </div>
-            <button type="button" class="btn" onclick="calculateCashDifference()">
-              <i class="fas fa-calculator"></i> Berechnen
-            </button>
-            <button type="button" class="btn btn-secondary" onclick="saveCashCount()">
-              <i class="fas fa-save"></i> Speichern
-            </button>
-          </form>
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button class="tab-button active" onclick="switchTab('dashboard', event)">
+        <i class="fas fa-chart-line"></i> Live Dashboard
+      </button>
+      <button class="tab-button" onclick="switchTab('kassensturz', event)">
+        <i class="fas fa-cash-register"></i> Kassensturz
+      </button>
+      <button class="tab-button" onclick="switchTab('reports', event)">
+        <i class="fas fa-file-alt"></i> Berichte
+      </button>
+    </div>
+
+    <!-- Live Dashboard Tab -->
+    <div id="dashboardTab" class="tab-content active">
+    <!-- Live Stats Widget -->
+    <div class="live-stats-section">
+      <div class="live-stats-header">
+        <h1>📊 Live Dashboard</h1>
+        <div class="refresh-indicator" id="refreshIndicator">
+          <i class="fas fa-sync-alt"></i>
+          <span id="refreshText">Aktualisiert vor <span id="lastUpdate">0</span>s</span>
         </div>
       </div>
 
+      <!-- Variance Alert -->
+      <div id="varianceAlert" style="display: none;"></div>
+
+      <!-- Main Stats Grid -->
+      <div class="live-stats-grid">
+        <div class="live-stat-card">
+          <span class="live-stat-icon">💰</span>
+          <div class="live-stat-value" id="todayRevenue">€0.00</div>
+          <div class="live-stat-label">Umsatz Heute</div>
+          <div class="live-stat-change neutral" id="revenueChange">
+            <i class="fas fa-minus"></i> 0%
+          </div>
+        </div>
+
+        <div class="live-stat-card">
+          <span class="live-stat-icon">📦</span>
+          <div class="live-stat-value" id="todayOrders">0</div>
+          <div class="live-stat-label">Bestellungen Heute</div>
+          <div class="live-stat-change neutral" id="ordersChange">
+            <i class="fas fa-minus"></i> 0%
+          </div>
+        </div>
+
+        <div class="live-stat-card">
+          <span class="live-stat-icon">💳</span>
+          <div class="live-stat-value" id="avgOrderValue">€0.00</div>
+          <div class="live-stat-label">Durchschnitt pro Bestellung</div>
+          <div class="live-stat-change neutral" id="avgChange">
+            <i class="fas fa-minus"></i> 0%
+          </div>
+        </div>
+
+        <div class="live-stat-card">
+          <span class="live-stat-icon">⭐</span>
+          <div class="top-item-container">
+            <img id="topItemImage" src="" alt="">
+            <div class="live-stat-value" id="topItem">-</div>
+          </div>
+          <div class="live-stat-label">Bestseller</div>
+          <div class="live-stat-change neutral">
+            <span id="topItemCount">0</span> verkauft
+          </div>
+        </div>
+      </div>
+
+      <!-- Hourly Sales Chart -->
+      <div class="hourly-sales">
+        <h3>📈 Verkäufe pro Stunde (Heute)</h3>
+        <div class="hourly-chart" id="hourlyChart">
+          <!-- Bars will be generated here -->
+        </div>
+      </div>
+
+      <!-- Top Items -->
+      <div class="top-items">
+        <h3>🏆 Top 5 Produkte (Heute)</h3>
+        <div class="item-list" id="topItemsList">
+          <!-- Items will be generated here -->
+        </div>
+      </div>
+
+      <!-- Profit Metrics -->
+      <div id="profitMetrics" style="display: none; margin-top: 1.5rem;"></div>
+    </div>
+    </div>
+
+    <!-- Kassensturz Tab -->
+    <div id="kassensturzTab" class="tab-content">
+    <div class="dashboard-grid" style="grid-template-columns: 1fr;">
+      <!-- Kassensturz am Tagesende -->
+      <div class="dashboard-card" style="grid-column: 1 / -1;">
+        <div class="card-header">
+          <i class="fas fa-cash-register card-icon"></i>
+          <h2 class="card-title">Kassensturz am Tagesende</h2>
+        </div>
+        <div class="card-content">
+          <!-- Auto-Loaded Daily Summary -->
+          <div class="auto-loaded-section">
+            <h3 style="font-size: 0.9rem; text-transform: uppercase; color: #214598; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-robot"></i> Automatisch berechnet aus heutigen Bestellungen
+            </h3>
+            <div class="auto-stat-grid">
+              <div class="auto-stat">
+                <div class="auto-stat-label">Gesamt Umsatz</div>
+                <div class="auto-stat-value" id="autoTotalRevenue">€0.00</div>
+              </div>
+              <div class="auto-stat">
+                <div class="auto-stat-label">Bar Verkäufe</div>
+                <div class="auto-stat-value" id="autoCashSales">€0.00</div>
+              </div>
+              <div class="auto-stat">
+                <div class="auto-stat-label">Karten Verkäufe</div>
+                <div class="auto-stat-value" id="autoCardSales">€0.00</div>
+              </div>
+              <div class="auto-stat">
+                <div class="auto-stat-label">Pfand Einnahmen</div>
+                <div class="auto-stat-value" id="autoPfandSales">€0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <form id="reconciliationForm">
+            <div class="form-grid">
+              <div class="cash-input-group">
+                <label>
+                  <i class="fas fa-wallet"></i>
+                  Kassen-Eröffnungsbilanz (€)
+                </label>
+                <input type="number" id="openingBalance" step="0.01" min="0" value="100.00" required>
+              </div>
+
+              <div class="cash-input-group">
+                <label>
+                  <i class="fas fa-calculator"></i>
+                  Erwartete Bareinnahmen (€)
+                </label>
+                <input type="number" id="expectedCash" step="0.01" readonly>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="cash-input-group">
+                <label>
+                  <i class="fas fa-money-bill-wave"></i>
+                  Tatsächliches Bargeld gezählt (€)
+                </label>
+                <input type="number" id="actualCash" step="0.01" min="0" placeholder="0.00" required>
+              </div>
+
+              <div class="cash-input-group">
+                <label>
+                  <i class="fas fa-coins"></i>
+                  Pfand Kasse gezählt (€)
+                </label>
+                <input type="number" id="pfandCash" step="0.01" min="0" placeholder="0.00" required>
+              </div>
+            </div>
+
+            <div class="cash-input-group">
+              <label>
+                <i class="fas fa-sticky-note"></i>
+                Notizen (Optional)
+              </label>
+              <textarea id="notes" placeholder="z.B. Fehlende Münzen, Rückgabefehler, etc." style="padding: 0.75rem; border: 2px solid #214598; border-radius: 8px; background: #F2EAD9; color: #214598; font-family: 'Montserrat', sans-serif; font-size: 1rem; resize: vertical; min-height: 80px; width: 100%;"></textarea>
+            </div>
+
+            <div class="button-group">
+              <button type="button" class="btn" onclick="calculateReconciliation()">
+                <i class="fas fa-calculator"></i> Berechnen
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="saveReconciliation()" id="saveBtn" disabled>
+                <i class="fas fa-save"></i> Speichern
+              </button>
+            </div>
+          </form>
+
+          <div class="tip-box">
+            <h4 style="font-size: 0.9rem; text-transform: uppercase; color: #3498db; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-lightbulb"></i> Tipp
+            </h4>
+            <p style="font-size: 0.9rem; color: #214598; line-height: 1.5;">
+              Die erwarteten Bareinnahmen werden automatisch berechnet: Eröffnungsbilanz + heutige Barverkäufe.
+              Vergleichen Sie dies mit dem tatsächlich gezählten Bargeld, um Abweichungen zu erkennen.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="dashboard-card" id="resultsSection" style="display: none; grid-column: 1 / -1;">
+        <!-- Results will be inserted here -->
+      </div>
+
+      <!-- History Section -->
+      <div class="dashboard-card" style="grid-column: 1 / -1;">
+        <div class="card-header">
+          <i class="fas fa-history card-icon"></i>
+          <h2 class="card-title">Kassensturz Historie</h2>
+        </div>
+        <div class="card-content">
+          <div id="historySection">
+            <p style="text-align: center; opacity: 0.7; padding: 2rem;">
+              Noch keine Kassensturz Einträge vorhanden
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- Reports Tab -->
+    <div id="reportsTab" class="tab-content">
+    <div class="dashboard-grid">
       <!-- Tagesberichte -->
       <div class="dashboard-card">
         <div class="card-header">
@@ -476,6 +1041,7 @@
         <!-- Report content will be inserted here -->
       </div>
     </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -511,6 +1077,493 @@
       }
     }
 
+    // Tab Switching
+    function switchTab(tabName, event) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Remove active class from all buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Show selected tab
+      const selectedTab = document.getElementById(tabName + 'Tab');
+      if (selectedTab) {
+        selectedTab.classList.add('active');
+      }
+      
+      // Add active class to clicked button
+      if (event && event.target) {
+        event.target.classList.add('active');
+      } else {
+        // Fallback: find button by tab name
+        document.querySelectorAll('.tab-button').forEach(btn => {
+          if (btn.textContent.toLowerCase().includes(tabName.toLowerCase())) {
+            btn.classList.add('active');
+          }
+        });
+      }
+    }
+
+    // Live Stats Widget Variables
+    let lastUpdateTime = Date.now();
+    let updateInterval = null;
+
+    // Format currency
+    function formatCurrency(value) {
+      return `€${parseFloat(value).toFixed(2)}`;
+    }
+
+    // Format percentage
+    function formatPercentage(value) {
+      const icon = value > 0 ? 'fa-arrow-up' : value < 0 ? 'fa-arrow-down' : 'fa-minus';
+      const className = value > 0 ? 'positive' : value < 0 ? 'negative' : 'neutral';
+      return {
+        html: `<i class="fas ${icon}"></i> ${Math.abs(value).toFixed(1)}%`,
+        className: className
+      };
+    }
+
+    // Get today's date range
+    function getTodayRange() {
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+      return {
+        start: `${todayStr}T00:00:00`,
+        end: `${todayStr}T23:59:59`,
+        date: todayStr
+      };
+    }
+
+    // Get yesterday's date range
+    function getYesterdayRange() {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      return {
+        start: `${yesterdayStr}T00:00:00`,
+        end: `${yesterdayStr}T23:59:59`,
+        date: yesterdayStr
+      };
+    }
+
+    // Fetch orders from Supabase or localStorage
+    async function fetchLiveOrders(startDate, endDate) {
+      try {
+        const supabase = await window.getSupabaseClient();
+        if (supabase) {
+          const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .gte('created_at', startDate)
+            .lte('created_at', endDate);
+          
+          if (error) {
+            console.error('Supabase error:', error);
+            return getOrdersFromLocalStorage(startDate, endDate);
+          }
+          return data || [];
+        } else {
+          return getOrdersFromLocalStorage(startDate, endDate);
+        }
+      } catch (error) {
+        console.error('Error fetching live orders:', error);
+        return getOrdersFromLocalStorage(startDate, endDate);
+      }
+    }
+
+    // Fallback to localStorage for live stats
+    function getOrdersFromLocalStorage(startDate, endDate) {
+      const orders = JSON.parse(localStorage.getItem('kcafe_order_queue') || '[]');
+      return orders.filter(order => {
+        const orderDate = order.created_at || order.createdAt;
+        return orderDate >= startDate && orderDate <= endDate;
+      });
+    }
+
+    // Map item names to image paths
+    function getItemImage(itemName, itemId) {
+      const ITEM_IMAGES = {
+        'americano': 'assets/images/americano.png',
+        'espresso': 'assets/images/espresso.png',
+        'espresso-doppio': 'assets/images/espresso-doppio.png',
+        'cappuccino': 'assets/images/cappuccino.png',
+        'latte-macchiato': 'assets/images/latte-macchiato.png',
+        'tea': 'assets/images/tea.png',
+        'cinnamon-bun-latte': 'assets/images/latte-macchiato-caramel.png',
+        'hot-chocolate': 'assets/images/hot-chocolate.png',
+        'softdrinks': 'assets/images/softdrinks.png',
+        'wasser': 'assets/images/water.png',
+        'water': 'assets/images/water.png',
+        'redbull': 'assets/images/redbull.png',
+        'red bull': 'assets/images/redbull.png'
+      };
+
+      // Try to match by ID first, then by name (case-insensitive)
+      const id = (itemId || '').toLowerCase().trim();
+      const name = (itemName || '').toLowerCase().trim();
+      
+      if (ITEM_IMAGES[id]) return ITEM_IMAGES[id];
+      if (ITEM_IMAGES[name]) return ITEM_IMAGES[name];
+      
+      // Try partial matches
+      for (const key in ITEM_IMAGES) {
+        if (name.includes(key) || key.includes(name)) {
+          return ITEM_IMAGES[key];
+        }
+      }
+      
+      // Default fallback
+      return 'assets/images/espresso.png';
+    }
+
+    // Calculate stats from orders
+    function calculateLiveStats(orders) {
+      const revenue = orders.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
+      const orderCount = orders.length;
+      const avgOrderValue = orderCount > 0 ? revenue / orderCount : 0;
+
+      // Count items
+      const itemCounts = {};
+      orders.forEach(order => {
+        const items = order.items || [];
+        items.forEach(item => {
+          const name = item.name || item.id;
+          const id = item.id || item.name;
+          if (!itemCounts[name]) {
+            itemCounts[name] = { name, id, quantity: 0, revenue: 0 };
+          }
+          itemCounts[name].quantity += item.quantity || 1;
+          itemCounts[name].revenue += (parseFloat(item.price) || 0) * (item.quantity || 1);
+        });
+      });
+
+      const topItems = Object.values(itemCounts)
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, 5);
+
+      return {
+        revenue,
+        orderCount,
+        avgOrderValue,
+        topItems
+      };
+    }
+
+    // Calculate hourly sales
+    function calculateHourlySales(orders) {
+      const hourlySales = Array(24).fill(0);
+      
+      orders.forEach(order => {
+        const orderDate = new Date(order.created_at || order.createdAt);
+        const hour = orderDate.getHours();
+        hourlySales[hour] += parseFloat(order.total) || 0;
+      });
+
+      return hourlySales;
+    }
+
+    // Update stats display
+    async function updateLiveStats() {
+      const refreshIndicator = document.getElementById('refreshIndicator');
+      if (!refreshIndicator) return;
+      
+      refreshIndicator.classList.add('refreshing');
+
+      try {
+        const today = getTodayRange();
+        const yesterday = getYesterdayRange();
+
+        // Fetch today's and yesterday's orders
+        const [todayOrders, yesterdayOrders] = await Promise.all([
+          fetchLiveOrders(today.start, today.end),
+          fetchLiveOrders(yesterday.start, yesterday.end)
+        ]);
+
+        const todayStats = calculateLiveStats(todayOrders);
+        const yesterdayStats = calculateLiveStats(yesterdayOrders);
+
+        // Update revenue
+        const revenueEl = document.getElementById('todayRevenue');
+        if (revenueEl) {
+          revenueEl.textContent = formatCurrency(todayStats.revenue);
+          const revenueChange = yesterdayStats.revenue > 0 
+            ? ((todayStats.revenue - yesterdayStats.revenue) / yesterdayStats.revenue) * 100 
+            : 0;
+          const revenueChangeFormat = formatPercentage(revenueChange);
+          const revenueChangeEl = document.getElementById('revenueChange');
+          if (revenueChangeEl) {
+            revenueChangeEl.innerHTML = revenueChangeFormat.html;
+            revenueChangeEl.className = `live-stat-change ${revenueChangeFormat.className}`;
+          }
+        }
+
+        // Update order count
+        const ordersEl = document.getElementById('todayOrders');
+        if (ordersEl) {
+          ordersEl.textContent = todayStats.orderCount;
+          const ordersChange = yesterdayStats.orderCount > 0 
+            ? ((todayStats.orderCount - yesterdayStats.orderCount) / yesterdayStats.orderCount) * 100 
+            : 0;
+          const ordersChangeFormat = formatPercentage(ordersChange);
+          const ordersChangeEl = document.getElementById('ordersChange');
+          if (ordersChangeEl) {
+            ordersChangeEl.innerHTML = ordersChangeFormat.html;
+            ordersChangeEl.className = `live-stat-change ${ordersChangeFormat.className}`;
+          }
+        }
+
+        // Update average order value
+        const avgEl = document.getElementById('avgOrderValue');
+        if (avgEl) {
+          avgEl.textContent = formatCurrency(todayStats.avgOrderValue);
+          const avgChange = yesterdayStats.avgOrderValue > 0 
+            ? ((todayStats.avgOrderValue - yesterdayStats.avgOrderValue) / yesterdayStats.avgOrderValue) * 100 
+            : 0;
+          const avgChangeFormat = formatPercentage(avgChange);
+          const avgChangeEl = document.getElementById('avgChange');
+          if (avgChangeEl) {
+            avgChangeEl.innerHTML = avgChangeFormat.html;
+            avgChangeEl.className = `live-stat-change ${avgChangeFormat.className}`;
+          }
+        }
+
+        // Update top item
+        const topItemEl = document.getElementById('topItem');
+        const topItemImageEl = document.getElementById('topItemImage');
+        if (topItemEl && todayStats.topItems.length > 0) {
+          const topItem = todayStats.topItems[0];
+          topItemEl.textContent = topItem.name;
+          
+          // Update image
+          if (topItemImageEl) {
+            const imageSrc = getItemImage(topItem.name, topItem.id);
+            topItemImageEl.src = imageSrc;
+            topItemImageEl.alt = topItem.name;
+            topItemImageEl.style.display = 'block';
+          }
+          
+          const topItemCountEl = document.getElementById('topItemCount');
+          if (topItemCountEl) {
+            topItemCountEl.textContent = topItem.quantity;
+          }
+        } else if (topItemImageEl) {
+          topItemImageEl.style.display = 'none';
+        }
+
+        // Update hourly chart
+        updateHourlyChart(calculateHourlySales(todayOrders));
+
+        // Update top items list
+        updateTopItemsList(todayStats.topItems);
+
+        // Calculate and display profit metrics
+        await updateProfitMetrics(todayOrders);
+
+        // Check variance
+        checkVariance(todayStats.revenue, yesterdayStats.revenue);
+
+        lastUpdateTime = Date.now();
+      } catch (error) {
+        console.error('Error updating live stats:', error);
+      } finally {
+        refreshIndicator.classList.remove('refreshing');
+      }
+    }
+
+    // Update hourly chart
+    function updateHourlyChart(hourlySales) {
+      const chart = document.getElementById('hourlyChart');
+      if (!chart) return;
+      
+      chart.innerHTML = '';
+
+      const maxSale = Math.max(...hourlySales, 1);
+      const currentHour = new Date().getHours();
+
+      // Only show hours from 11 AM to 2 PM
+      for (let hour = 11; hour <= 14; hour++) {
+        const sale = hourlySales[hour];
+        const heightPercent = (sale / maxSale) * 100;
+
+        const barContainer = document.createElement('div');
+        barContainer.style.flex = '1';
+        barContainer.style.display = 'flex';
+        barContainer.style.flexDirection = 'column';
+        barContainer.style.alignItems = 'center';
+
+        const bar = document.createElement('div');
+        bar.className = 'hour-bar';
+        bar.style.height = `${Math.max(heightPercent, 5)}%`;
+        
+        if (hour === currentHour) {
+          bar.style.background = '#27ae60';
+        }
+
+        const value = document.createElement('div');
+        value.className = 'hour-value';
+        value.textContent = formatCurrency(sale);
+        bar.appendChild(value);
+
+        const label = document.createElement('div');
+        label.className = 'hour-label';
+        label.textContent = `${hour}:00`;
+
+        barContainer.appendChild(bar);
+        barContainer.appendChild(label);
+        chart.appendChild(barContainer);
+      }
+    }
+
+    // Update top items list
+    function updateTopItemsList(items) {
+      const list = document.getElementById('topItemsList');
+      if (!list) return;
+      
+      list.innerHTML = '';
+
+      if (items.length === 0) {
+        list.innerHTML = '<p style="text-align: center; opacity: 0.7;">Noch keine Verkäufe heute</p>';
+        return;
+      }
+
+      items.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <div class="item-rank">${index + 1}</div>
+          <div class="item-name">${item.name}</div>
+          <div class="item-stats">
+            <span>
+              <div class="label">Menge</div>
+              <div class="value">${item.quantity}×</div>
+            </span>
+            <span>
+              <div class="label">Umsatz</div>
+              <div class="value">${formatCurrency(item.revenue)}</div>
+            </span>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    // Check variance and show alert
+    function checkVariance(todayRevenue, yesterdayRevenue) {
+      const alertDiv = document.getElementById('varianceAlert');
+      if (!alertDiv) return;
+      
+      if (yesterdayRevenue === 0) {
+        alertDiv.style.display = 'none';
+        return;
+      }
+
+      const variance = todayRevenue - yesterdayRevenue;
+      const variancePercent = (variance / yesterdayRevenue) * 100;
+
+      let alertClass = 'variance-alert';
+      let icon = '⚠️';
+      let title = 'Umsatz Abweichung';
+
+      if (Math.abs(variancePercent) > 20) {
+        alertClass += ' critical';
+        icon = '🚨';
+        title = 'Kritische Umsatz Abweichung!';
+      } else if (variancePercent > 10) {
+        alertClass += ' good';
+        icon = '🎉';
+        title = 'Starker Umsatz!';
+      } else if (Math.abs(variancePercent) < 5) {
+        alertDiv.style.display = 'none';
+        return;
+      }
+
+      alertDiv.className = alertClass;
+      alertDiv.style.display = 'block';
+      alertDiv.innerHTML = `
+        <div class="variance-header">
+          <span style="font-size: 2rem;">${icon}</span>
+          <h3>${title}</h3>
+        </div>
+        <p style="margin-bottom: 1rem;">
+          Vergleich zu gestern: ${variancePercent > 0 ? '+' : ''}${variancePercent.toFixed(1)}%
+        </p>
+        <div class="variance-details">
+          <div class="variance-item">
+            <div class="variance-item-label">Gestern</div>
+            <div class="variance-item-value">${formatCurrency(yesterdayRevenue)}</div>
+          </div>
+          <div class="variance-item">
+            <div class="variance-item-label">Heute</div>
+            <div class="variance-item-value">${formatCurrency(todayRevenue)}</div>
+          </div>
+          <div class="variance-item">
+            <div class="variance-item-label">Differenz</div>
+            <div class="variance-item-value" style="color: ${variance > 0 ? '#27ae60' : '#e74c3c'}">
+              ${variance > 0 ? '+' : ''}${formatCurrency(variance)}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Update profit metrics in live dashboard
+    async function updateProfitMetrics(orders) {
+      const profitMetricsEl = document.getElementById('profitMetrics');
+      if (!profitMetricsEl) return;
+
+      try {
+        const report = await processOrders(orders, false);
+        
+        if (report.totalCOGS !== undefined) {
+          profitMetricsEl.innerHTML = `
+            <div class="live-stat-card" style="grid-column: 1 / -1; background: linear-gradient(135deg, #E4D8BD 0%, #d4c8ad 100%);">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                <div style="text-align: center;">
+                  <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.5rem;">Wareneinsatz</div>
+                  <div style="font-size: 1.8rem; font-weight: 700; color: #e74c3c;">€${report.totalCOGS.toFixed(2)}</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.5rem;">Bruttogewinn</div>
+                  <div style="font-size: 1.8rem; font-weight: 700; color: #27ae60;">€${report.grossProfit.toFixed(2)}</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.5rem;">Gewinnmarge</div>
+                  <div style="font-size: 1.8rem; font-weight: 700; color: #214598;">${report.profitMargin.toFixed(1)}%</div>
+                </div>
+              </div>
+            </div>
+          `;
+          profitMetricsEl.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Error updating profit metrics:', error);
+      }
+    }
+
+    // Update "last updated" timer
+    function updateTimer() {
+      const lastUpdateEl = document.getElementById('lastUpdate');
+      if (lastUpdateEl) {
+        const seconds = Math.floor((Date.now() - lastUpdateTime) / 1000);
+        lastUpdateEl.textContent = seconds;
+      }
+    }
+
+    // Initialize live stats
+    async function initLiveStats() {
+      await updateLiveStats();
+      
+      // Auto-refresh every 30 seconds
+      updateInterval = setInterval(updateLiveStats, 30000);
+      
+      // Update timer every second
+      setInterval(updateTimer, 1000);
+    }
+
     // Set default dates
     document.addEventListener('DOMContentLoaded', () => {
       if (!checkFinanceSession()) return;
@@ -531,52 +1584,413 @@
       
       document.getElementById('weekStart').value = weekStart.toISOString().split('T')[0];
       document.getElementById('weekEnd').value = weekEnd.toISOString().split('T')[0];
+
+      // Initialize live stats
+      initLiveStats();
+      
+      // Load today's sales for Kassensturz
+      loadTodaysSales();
+      loadHistory();
     });
 
-    // Cash Count Functions
-    function calculateCashDifference() {
-      const expected = parseFloat(document.getElementById('expectedCash').value) || 0;
-      const actual = parseFloat(document.getElementById('actualCash').value) || 0;
-      const difference = actual - expected;
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (updateInterval) {
+        clearInterval(updateInterval);
+      }
+    });
+
+    // Kassensturz Enhanced Functions
+    let calculatedResult = null;
+
+    // Load today's sales data
+    async function loadTodaysSales() {
+      const today = new Date().toISOString().split('T')[0];
+      let orders = [];
+
+      try {
+        const supabase = await window.getSupabaseClient();
+        if (supabase) {
+          const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .gte('created_at', `${today}T00:00:00`)
+            .lte('created_at', `${today}T23:59:59`);
+          
+          if (!error && data) {
+            orders = data;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading from Supabase:', error);
+      }
+
+      // Fallback to localStorage
+      if (orders.length === 0) {
+        const localOrders = JSON.parse(localStorage.getItem('kcafe_order_queue') || '[]');
+        orders = localOrders.filter(order => {
+          const orderDate = (order.created_at || order.createdAt || '').split('T')[0];
+          return orderDate === today;
+        });
+      }
+
+      // Calculate totals
+      let totalRevenue = 0;
+      let cashSales = 0;
+      let cardSales = 0;
+      let pfandSales = 0;
+
+      orders.forEach(order => {
+        const total = parseFloat(order.total) || 0;
+        const pfand = parseFloat(order.pfand_deposit) || 0;
+        const paymentMethod = order.payment_method || 'cash';
+
+        totalRevenue += total;
+        pfandSales += pfand;
+
+        if (paymentMethod === 'cash') {
+          cashSales += total;
+        } else {
+          cardSales += total;
+        }
+      });
+
+      // Update display
+      const autoTotalEl = document.getElementById('autoTotalRevenue');
+      const autoCashEl = document.getElementById('autoCashSales');
+      const autoCardEl = document.getElementById('autoCardSales');
+      const autoPfandEl = document.getElementById('autoPfandSales');
       
-      const diffElement = document.getElementById('cashDifference');
-      diffElement.textContent = `€${difference.toFixed(2)}`;
+      if (autoTotalEl) autoTotalEl.textContent = formatCurrency(totalRevenue);
+      if (autoCashEl) autoCashEl.textContent = formatCurrency(cashSales);
+      if (autoCardEl) autoCardEl.textContent = formatCurrency(cardSales);
+      if (autoPfandEl) autoPfandEl.textContent = formatCurrency(pfandSales);
+
+      // Update expected cash
+      const openingBalance = parseFloat(document.getElementById('openingBalance')?.value) || 0;
+      const expectedCash = openingBalance + cashSales;
+      const expectedCashEl = document.getElementById('expectedCash');
+      if (expectedCashEl) {
+        expectedCashEl.value = expectedCash.toFixed(2);
+      }
+
+      return { totalRevenue, cashSales, cardSales, pfandSales, expectedCash };
+    }
+
+    // Format currency helper
+    function formatCurrency(value) {
+      return `€${parseFloat(value).toFixed(2)}`;
+    }
+
+    // Calculate reconciliation
+    async function calculateReconciliation() {
+      const data = await loadTodaysSales();
       
-      if (difference < 0) {
-        diffElement.style.color = '#e74c3c';
-      } else if (difference > 0) {
-        diffElement.style.color = '#27ae60';
+      const openingBalance = parseFloat(document.getElementById('openingBalance')?.value) || 0;
+      const expectedCash = data.expectedCash;
+      const actualCash = parseFloat(document.getElementById('actualCash')?.value) || 0;
+      const pfandCash = parseFloat(document.getElementById('pfandCash')?.value) || 0;
+
+      const cashVariance = actualCash - expectedCash;
+      const cashVariancePercent = expectedCash > 0 ? (cashVariance / expectedCash) * 100 : 0;
+
+      const pfandVariance = pfandCash - data.pfandSales;
+      const pfandVariancePercent = data.pfandSales > 0 ? (pfandVariance / data.pfandSales) * 100 : 0;
+
+      // Determine status
+      let status = 'success';
+      let statusIcon = '✅';
+      let statusTitle = 'Perfekt! Keine Abweichungen';
+      let statusClass = 'success';
+
+      const totalVariance = Math.abs(cashVariance) + Math.abs(pfandVariance);
+
+      if (totalVariance > 20) {
+        status = 'danger';
+        statusIcon = '🚨';
+        statusTitle = 'Kritische Abweichung!';
+        statusClass = 'danger';
+      } else if (totalVariance > 5) {
+        status = 'warning';
+        statusIcon = '⚠️';
+        statusTitle = 'Abweichung erkannt';
+        statusClass = 'warning';
+      }
+
+      // Store result
+      calculatedResult = {
+        date: new Date().toISOString().split('T')[0],
+        openingBalance,
+        expectedCash,
+        actualCash,
+        cashVariance,
+        cashVariancePercent,
+        cardSales: data.cardSales,
+        pfandExpected: data.pfandSales,
+        pfandActual: pfandCash,
+        pfandVariance,
+        pfandVariancePercent,
+        totalRevenue: data.totalRevenue,
+        status,
+        notes: document.getElementById('notes')?.value || ''
+      };
+
+      // Display results
+      displayResults(calculatedResult, statusIcon, statusTitle, statusClass);
+
+      // Enable save button
+      const saveBtn = document.getElementById('saveBtn');
+      if (saveBtn) saveBtn.disabled = false;
+    }
+
+    // Display results
+    function displayResults(result, icon, title, statusClass) {
+      const resultsSection = document.getElementById('resultsSection');
+      if (!resultsSection) return;
+      
+      let cashMessage = '';
+      if (Math.abs(result.cashVariance) < 1) {
+        cashMessage = '<div class="variance-message good">✓ Bargeld stimmt perfekt überein!</div>';
+      } else if (Math.abs(result.cashVariance) < 5) {
+        cashMessage = `<div class="variance-message warning">⚠️ Kleine Abweichung: ${result.cashVariance > 0 ? '+' : ''}${formatCurrency(result.cashVariance)} (${result.cashVariancePercent.toFixed(1)}%)</div>`;
       } else {
-        diffElement.style.color = '#214598';
+        cashMessage = `<div class="variance-message danger">🚨 Große Abweichung: ${result.cashVariance > 0 ? '+' : ''}${formatCurrency(result.cashVariance)} (${result.cashVariancePercent.toFixed(1)}%)</div>`;
+      }
+
+      let pfandMessage = '';
+      if (Math.abs(result.pfandVariance) < 1) {
+        pfandMessage = '<div class="variance-message good">✓ Pfand stimmt perfekt überein!</div>';
+      } else if (Math.abs(result.pfandVariance) < 5) {
+        pfandMessage = `<div class="variance-message warning">⚠️ Kleine Abweichung: ${result.pfandVariance > 0 ? '+' : ''}${formatCurrency(result.pfandVariance)} (${result.pfandVariancePercent.toFixed(1)}%)</div>`;
+      } else {
+        pfandMessage = `<div class="variance-message danger">🚨 Große Abweichung: ${result.pfandVariance > 0 ? '+' : ''}${formatCurrency(result.pfandVariance)} (${result.pfandVariancePercent.toFixed(1)}%)</div>`;
+      }
+
+      resultsSection.innerHTML = `
+        <div class="card-header">
+          <i class="fas fa-chart-bar card-icon"></i>
+          <h2 class="card-title">Kassensturz Ergebnis</h2>
+        </div>
+        <div class="card-content">
+          <div class="result-section ${statusClass}">
+            <div class="result-header">
+              <div class="result-icon">${icon}</div>
+              <div class="result-title">${title}</div>
+            </div>
+            
+            <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1.1rem; text-transform: uppercase;">
+              💰 Bargeld
+            </h3>
+            <div class="result-stats">
+              <div class="result-stat">
+                <div class="result-stat-label">Eröffnung</div>
+                <div class="result-stat-value">${formatCurrency(result.openingBalance)}</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-label">Erwartet</div>
+                <div class="result-stat-value">${formatCurrency(result.expectedCash)}</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-label">Gezählt</div>
+                <div class="result-stat-value">${formatCurrency(result.actualCash)}</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-label">Differenz</div>
+                <div class="result-stat-value" style="color: ${result.cashVariance === 0 ? '#27ae60' : result.cashVariance > 0 ? '#27ae60' : '#e74c3c'}">
+                  ${result.cashVariance > 0 ? '+' : ''}${formatCurrency(result.cashVariance)}
+                </div>
+              </div>
+            </div>
+            ${cashMessage}
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1.1rem; text-transform: uppercase;">
+              🍺 Pfand
+            </h3>
+            <div class="result-stats">
+              <div class="result-stat">
+                <div class="result-stat-label">Erwartet</div>
+                <div class="result-stat-value">${formatCurrency(result.pfandExpected)}</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-label">Gezählt</div>
+                <div class="result-stat-value">${formatCurrency(result.pfandActual)}</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-label">Differenz</div>
+                <div class="result-stat-value" style="color: ${result.pfandVariance === 0 ? '#27ae60' : result.pfandVariance > 0 ? '#27ae60' : '#e74c3c'}">
+                  ${result.pfandVariance > 0 ? '+' : ''}${formatCurrency(result.pfandVariance)}
+                </div>
+              </div>
+            </div>
+            ${pfandMessage}
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1.1rem; text-transform: uppercase;">
+              💳 Kartenzahlungen (Referenz)
+            </h3>
+            <div class="result-stats">
+              <div class="result-stat">
+                <div class="result-stat-label">Karte Heute</div>
+                <div class="result-stat-value">${formatCurrency(result.cardSales)}</div>
+              </div>
+              <div class="result-stat">
+                <div class="result-stat-label">Gesamt Umsatz</div>
+                <div class="result-stat-value">${formatCurrency(result.totalRevenue)}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      resultsSection.style.display = 'block';
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Save reconciliation
+    async function saveReconciliation() {
+      if (!calculatedResult) {
+        alert('Bitte zuerst berechnen!');
+        return;
+      }
+
+      const saveBtn = document.getElementById('saveBtn');
+      if (!saveBtn) return;
+      
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Speichert...';
+
+      try {
+        // Save to Supabase if available
+        try {
+          const supabase = await window.getSupabaseClient();
+          if (supabase) {
+            const { error } = await supabase
+              .from('cash_reconciliation')
+              .insert([{
+                date: calculatedResult.date,
+                opening_balance: calculatedResult.openingBalance,
+                expected_cash: calculatedResult.expectedCash,
+                actual_cash: calculatedResult.actualCash,
+                cash_variance: calculatedResult.cashVariance,
+                card_sales: calculatedResult.cardSales,
+                pfand_expected: calculatedResult.pfandExpected,
+                pfand_actual: calculatedResult.pfandActual,
+                pfand_variance: calculatedResult.pfandVariance,
+                total_revenue: calculatedResult.totalRevenue,
+                status: calculatedResult.status,
+                notes: calculatedResult.notes,
+                created_at: new Date().toISOString()
+              }]);
+
+            if (error) throw error;
+          }
+        } catch (error) {
+          console.error('Supabase save error:', error);
+        }
+
+        // Also save to localStorage as backup
+        const history = JSON.parse(localStorage.getItem('cash_reconciliation_history') || '[]');
+        history.unshift({
+          ...calculatedResult,
+          timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('cash_reconciliation_history', JSON.stringify(history.slice(0, 30))); // Keep last 30
+
+        alert('✅ Kassensturz erfolgreich gespeichert!');
+        
+        // Reset form
+        const form = document.getElementById('reconciliationForm');
+        if (form) {
+          form.reset();
+          const openingBalanceEl = document.getElementById('openingBalance');
+          const actualCashEl = document.getElementById('actualCash');
+          if (openingBalanceEl && actualCashEl) {
+            openingBalanceEl.value = actualCashEl.value || '100.00';
+          }
+        }
+        const resultsSection = document.getElementById('resultsSection');
+        if (resultsSection) resultsSection.style.display = 'none';
+        calculatedResult = null;
+        
+        // Reload data
+        loadTodaysSales();
+        loadHistory();
+
+      } catch (error) {
+        console.error('Error saving reconciliation:', error);
+        alert('Fehler beim Speichern. Bitte versuchen Sie es erneut.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fas fa-save"></i> Speichern';
       }
     }
 
-    function saveCashCount() {
-      const expected = parseFloat(document.getElementById('expectedCash').value) || 0;
-      const actual = parseFloat(document.getElementById('actualCash').value) || 0;
-      const pfand = parseFloat(document.getElementById('pfandCash').value) || 0;
-      const difference = actual - expected;
+    // Load history
+    async function loadHistory() {
+      let history = [];
+
+      // Try to load from Supabase
+      try {
+        const supabase = await window.getSupabaseClient();
+        if (supabase) {
+          const { data, error } = await supabase
+            .from('cash_reconciliation')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+          if (!error && data) {
+            history = data.map(h => ({
+              date: h.date,
+              actualCash: h.actual_cash,
+              expectedCash: h.expected_cash,
+              cashVariance: h.cash_variance,
+              pfandActual: h.pfand_actual,
+              pfandVariance: h.pfand_variance,
+              status: h.status,
+              notes: h.notes
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error loading from Supabase:', error);
+      }
+
+      // Fallback to localStorage
+      if (history.length === 0) {
+        history = JSON.parse(localStorage.getItem('cash_reconciliation_history') || '[]');
+      }
+
+      const historySection = document.getElementById('historySection');
+      if (!historySection) return;
+
+      if (history.length === 0) {
+        historySection.innerHTML = '<p style="text-align: center; opacity: 0.7; padding: 2rem;">Noch keine Kassensturz Einträge vorhanden</p>';
+        return;
+      }
+
+      let html = '<table class="history-table"><thead><tr><th>Datum</th><th>Erwartet</th><th>Gezählt</th><th>Differenz</th><th>Pfand Diff.</th><th>Status</th></tr></thead><tbody>';
       
-      const cashCount = {
-        date: new Date().toISOString().split('T')[0],
-        expected: expected,
-        actual: actual,
-        pfand: pfand,
-        difference: difference,
-        timestamp: new Date().toISOString()
-      };
+      history.forEach(h => {
+        const badgeClass = h.status === 'success' ? 'badge-success' : h.status === 'warning' ? 'badge-warning' : 'badge-danger';
+        const statusText = h.status === 'success' ? 'OK' : h.status === 'warning' ? 'Warnung' : 'Kritisch';
+        html += `
+          <tr>
+            <td>${h.date}</td>
+            <td>${formatCurrency(h.expectedCash)}</td>
+            <td>${formatCurrency(h.actualCash)}</td>
+            <td style="color: ${h.cashVariance === 0 ? '#27ae60' : h.cashVariance > 0 ? '#27ae60' : '#e74c3c'}">
+              ${h.cashVariance > 0 ? '+' : ''}${formatCurrency(h.cashVariance)}
+            </td>
+            <td style="color: ${h.pfandVariance === 0 ? '#27ae60' : h.pfandVariance > 0 ? '#27ae60' : '#e74c3c'}">
+              ${h.pfandVariance > 0 ? '+' : ''}${formatCurrency(h.pfandVariance)}
+            </td>
+            <td><span class="badge ${badgeClass}">${statusText}</span></td>
+          </tr>
+        `;
+      });
       
-      // Save to localStorage (in production, save to database)
-      const cashCounts = JSON.parse(localStorage.getItem('cash_counts') || '[]');
-      cashCounts.push(cashCount);
-      localStorage.setItem('cash_counts', JSON.stringify(cashCounts));
-      
-      alert('✅ Kassensturz gespeichert!');
-      
-      // Reset form
-      document.getElementById('cashCountForm').reset();
-      document.getElementById('cashDifference').textContent = '€0.00';
-      document.getElementById('cashDifference').style.color = '#214598';
+      html += '</tbody></table>';
+      historySection.innerHTML = html;
     }
 
     // Report Generation Functions
@@ -653,7 +2067,7 @@
           .order('created_at', { ascending: true });
 
         if (error) throw error;
-        return processOrders(data || [], includePfand);
+        return data || [];
       } catch (error) {
         console.error('Error fetching orders:', error);
         return getOrdersFromLocalStorage(date, date, includePfand);
@@ -691,18 +2105,82 @@
       return processOrders(filtered, includePfand);
     }
 
-    function processOrders(orders, includePfand) {
+    // Calculate COGS for an order
+    async function calculateCOGS(order) {
+      try {
+        const supabase = await window.getSupabaseClient();
+        if (!supabase) return 0;
+
+        const { data: recipes, error } = await supabase
+          .from('product_recipes')
+          .select('*');
+
+        if (error) {
+          console.error('Error fetching recipes for COGS:', error);
+          return 0;
+        }
+
+        if (!recipes || recipes.length === 0) return 0;
+
+        let totalCOGS = 0;
+
+        const items = order.items || [];
+        for (const orderItem of items) {
+          const recipe = recipes.find(r => r.product_id === orderItem.id || r.product_id === orderItem.productId);
+          if (!recipe) continue;
+
+          const ingredients = recipe.ingredients || [];
+          
+          // Get ingredient costs
+          for (const ingredient of ingredients) {
+            const { data: invItem } = await supabase
+              .from('inventory')
+              .select('cost_per_unit')
+              .eq('item_id', ingredient.item_id)
+              .single();
+
+            if (invItem && invItem.cost_per_unit) {
+              const quantity = orderItem.quantity || orderItem.qty || 1;
+              const cost = ingredient.quantity * invItem.cost_per_unit * quantity;
+              totalCOGS += cost;
+            }
+          }
+        }
+
+        return totalCOGS;
+
+      } catch (error) {
+        console.error('Error calculating COGS:', error);
+        return 0;
+      }
+    }
+
+    // Calculate COGS for multiple orders
+    async function calculateTotalCOGS(orders) {
+      let totalCOGS = 0;
+      for (const order of orders) {
+        totalCOGS += await calculateCOGS(order);
+      }
+      return totalCOGS;
+    }
+
+    async function processOrders(orders, includePfand) {
       let total = 0;
       let pfandTotal = 0;
       let orderCount = orders.length;
+      let totalCOGS = 0;
       const items = {};
 
-      orders.forEach(order => {
+      // Calculate COGS for all orders
+      for (const order of orders) {
         const orderTotal = parseFloat(order.total) || 0;
         const orderPfand = parseFloat(order.pfand_deposit) || 0;
         
         total += orderTotal;
         pfandTotal += orderPfand;
+        
+        // Calculate COGS for this order
+        totalCOGS += await calculateCOGS(order);
 
         // Count items
         if (order.items && Array.isArray(order.items)) {
@@ -715,14 +2193,20 @@
             items[key].revenue += (parseFloat(item.price) || 0) * (item.quantity || 1);
           });
         }
-      });
+      }
+
+      const grossProfit = total - totalCOGS;
+      const profitMargin = total > 0 ? (grossProfit / total) * 100 : 0;
 
       return {
         total: total,
         pfandTotal: pfandTotal,
         orderCount: orderCount,
         items: Object.values(items),
-        includePfand: includePfand
+        includePfand: includePfand,
+        totalCOGS: totalCOGS,
+        grossProfit: grossProfit,
+        profitMargin: profitMargin
       };
     }
 
@@ -749,15 +2233,33 @@
             <div class="stat-value">€${report.pfandTotal.toFixed(2)}</div>
           </div>
           <div class="stat-item">
-            <div class="stat-label">Gesamt</div>
+            <div class="stat-label">Gesamt Umsatz</div>
             <div class="stat-value">€${(report.total + report.pfandTotal).toFixed(2)}</div>
           </div>
         `;
       } else {
         html += `
           <div class="stat-item">
-            <div class="stat-label">Gesamt</div>
+            <div class="stat-label">Gesamt Umsatz</div>
             <div class="stat-value">€${report.total.toFixed(2)}</div>
+          </div>
+        `;
+      }
+
+      // Add Profit Metrics
+      if (report.totalCOGS !== undefined) {
+        html += `
+          <div class="stat-item" style="border-left: 4px solid #e74c3c;">
+            <div class="stat-label">Wareneinsatz (COGS)</div>
+            <div class="stat-value" style="color: #e74c3c;">€${report.totalCOGS.toFixed(2)}</div>
+          </div>
+          <div class="stat-item" style="border-left: 4px solid #27ae60;">
+            <div class="stat-label">Bruttogewinn</div>
+            <div class="stat-value" style="color: #27ae60;">€${report.grossProfit.toFixed(2)}</div>
+          </div>
+          <div class="stat-item" style="border-left: 4px solid #214598;">
+            <div class="stat-label">Gewinnmarge</div>
+            <div class="stat-value" style="color: #214598;">${report.profitMargin.toFixed(1)}%</div>
           </div>
         `;
       }

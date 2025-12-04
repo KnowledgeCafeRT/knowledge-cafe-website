@@ -597,6 +597,155 @@
     renderQueue();
   }
 
+  // ============================================
+  // Inventory Management Functions
+  // ============================================
+
+  // Inventory deduction function
+  async function deductInventoryForOrder(order) {
+    const supabase = await window.getSupabaseClient();
+    if (!supabase) {
+      console.warn('Supabase not available - skipping inventory deduction');
+      return;
+    }
+
+    try {
+      // Get recipes for all items in order
+      const { data: recipes, error: recipeError } = await supabase
+        .from('product_recipes')
+        .select('*');
+
+      if (recipeError) {
+        console.error('Error fetching recipes:', recipeError);
+        return;
+      }
+
+      if (!recipes || recipes.length === 0) {
+        console.log('No recipes found in database');
+        return;
+      }
+
+      // Process each order item
+      for (const orderItem of order.items) {
+        // Try to find recipe by product_id matching orderItem.id
+        const recipe = recipes.find(r => r.product_id === orderItem.id || r.product_id === orderItem.productId);
+        
+        if (!recipe) {
+          console.log(`No recipe found for ${orderItem.name || orderItem.id}`);
+          continue;
+        }
+
+        // Deduct each ingredient
+        const ingredients = recipe.ingredients || [];
+        for (const ingredient of ingredients) {
+          const totalQuantity = ingredient.quantity * (orderItem.quantity || orderItem.qty || 1);
+
+          // Update inventory
+          const { error: updateError } = await supabase.rpc('deduct_inventory', {
+            p_item_id: ingredient.item_id,
+            p_quantity: totalQuantity,
+            p_order_id: order.id,
+            p_reason: 'sale'
+          });
+
+          if (updateError) {
+            console.error(`Error deducting ${ingredient.item_id}:`, updateError);
+            continue;
+          }
+
+          // Log history
+          await supabase.from('inventory_history').insert({
+            item_id: ingredient.item_id,
+            item_name: ingredient.item_name || ingredient.item_id,
+            change_type: 'deduction',
+            quantity: -totalQuantity,
+            reason: 'sale',
+            order_id: order.id
+          });
+        }
+      }
+
+      console.log('✅ Inventory deducted for order:', order.id);
+      
+      // Check for low stock alerts
+      await checkLowStockAlerts();
+
+    } catch (error) {
+      console.error('Error deducting inventory:', error);
+    }
+  }
+
+  // Low stock alert function
+  async function checkLowStockAlerts() {
+    const supabase = await window.getSupabaseClient();
+    if (!supabase) return;
+
+    try {
+      const { data: inventory, error } = await supabase
+        .from('inventory')
+        .select('*')
+        .lte('current_stock', 'reorder_point');
+
+      if (error) throw error;
+
+      if (inventory && inventory.length > 0) {
+        showLowStockNotification(inventory);
+      }
+    } catch (error) {
+      console.error('Error checking low stock:', error);
+    }
+  }
+
+  // Show low stock notification
+  function showLowStockNotification(items) {
+    // Remove existing notifications
+    const existing = document.querySelector('.low-stock-notification');
+    if (existing) existing.remove();
+
+    const notification = document.createElement('div');
+    notification.className = 'low-stock-notification';
+    notification.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #f39c12;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 10000;
+      max-width: 300px;
+      font-family: 'Montserrat', sans-serif;
+    `;
+    
+    const itemList = items.slice(0, 3).map(item => item.item_name).join(', ');
+    const moreText = items.length > 3 ? ` und ${items.length - 3} weitere` : '';
+    
+    notification.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem;"></i>
+        <strong>Niedriger Bestand!</strong>
+      </div>
+      <div style="font-size: 0.9rem; margin-bottom: 10px;">
+        ${items.length} Artikel müssen nachbestellt werden
+      </div>
+      <div style="font-size: 0.8rem; opacity: 0.9;">
+        ${itemList}${moreText}
+      </div>
+      <button onclick="this.parentElement.remove()" style="margin-top: 10px; background: white; color: #f39c12; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: 600; width: 100%;">
+        OK
+      </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      if (notification.parentElement) {
+        notification.remove();
+      }
+    }, 10000);
+  }
+
   async function updateOrderStatus(orderId, newStatus) {
     // Try to update in Supabase first
     try {
@@ -619,6 +768,11 @@
             .eq('id', orderId);
           
           if (!updateError) {
+            // 🔥 NEW: Deduct inventory when order completed
+            if (newStatus === 'completed' && !wasCompleted) {
+              await deductInventoryForOrder(orderData);
+            }
+            
             // Track sales when walk-in order is marked as completed
             if (newStatus === 'completed' && !wasCompleted && orderData.source === 'in_person') {
               trackSale({
@@ -652,6 +806,11 @@
       order.status = newStatus;
       order.updatedAt = new Date().toISOString();
       localStorage.setItem('kcafe_order_queue', JSON.stringify(queue));
+      
+      // 🔥 NEW: Deduct inventory when order completed (localStorage fallback)
+      if (newStatus === 'completed' && !wasCompleted) {
+        await deductInventoryForOrder(order);
+      }
       
       // Track sales when walk-in order is marked as completed
       if (newStatus === 'completed' && !wasCompleted && order.source === 'in_person') {
