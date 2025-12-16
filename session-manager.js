@@ -83,20 +83,41 @@ class SessionManager {
 
   async signIn(email, password) {
     try {
+      console.log('SessionManager.signIn called');
       const supabase = await window.getSupabaseClient();
       if (!supabase) {
+        console.error('Supabase client not available');
         throw new Error('Supabase not available');
       }
 
+      console.log('Calling Supabase auth.signInWithPassword...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
+      
+      console.log('Supabase auth response:', { hasData: !!data, hasError: !!error });
 
       if (error) {
         // Log failed login attempt
-        await this.logAuthAction(email, 'login_failed', error.message);
-        throw error;
+        await this.logAuthAction(email, 'login_failed', null, error.message);
+        
+        // Provide user-friendly error message
+        let userMessage = error.message;
+        if (error.message.includes('Invalid login credentials') || 
+            error.message.includes('Invalid password') ||
+            error.message.includes('password') ||
+            error.message.includes('credentials')) {
+          userMessage = 'Wrong password, try again';
+        } else if (error.message.includes('Email not confirmed')) {
+          userMessage = 'Please verify your email before logging in';
+        } else if (error.message.includes('User not found') || error.message.includes('No user found')) {
+          userMessage = 'No account found with this email';
+        }
+        
+        const customError = new Error(userMessage);
+        customError.originalError = error;
+        throw customError;
       }
 
       if (data.session) {
@@ -104,7 +125,7 @@ class SessionManager {
         await this.loadUserProfile(data.user.id);
         
         // Log successful login
-        await this.logAuthAction(email, 'login_success', null, data.user.id);
+        await this.logAuthAction(email, 'login_success', data.user.id);
         
         return { success: true, user: data.user };
       }
@@ -118,11 +139,14 @@ class SessionManager {
 
   async signUp(email, password, name, userType = 'student', studentId = null) {
     try {
+      console.log('SessionManager.signUp called');
       const supabase = await window.getSupabaseClient();
       if (!supabase) {
+        console.error('Supabase client not available');
         throw new Error('Supabase not available');
       }
 
+      console.log('Calling Supabase auth.signUp...');
       // Sign up with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -135,8 +159,13 @@ class SessionManager {
           }
         }
       });
+      
+      console.log('Supabase signup response:', { hasData: !!authData, hasError: !!authError });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error('Supabase signup error:', authError);
+        throw authError;
+      }
 
       // Create user profile in users table
       if (authData.user) {
@@ -158,7 +187,7 @@ class SessionManager {
         await this.loadUserProfile(authData.user.id);
         
         // Log signup (trigger will also log, but this ensures it happens)
-        await this.logAuthAction(email, 'signup', null, authData.user.id);
+        await this.logAuthAction(email, 'signup', authData.user.id);
         
         return { success: true, user: authData.user };
       }
@@ -182,7 +211,7 @@ class SessionManager {
       
       // Log logout
       if (email) {
-        await this.logAuthAction(email, 'logout', null, userId);
+        await this.logAuthAction(email, 'logout', userId);
       }
       
       this.currentUser = null;
@@ -195,12 +224,14 @@ class SessionManager {
     }
   }
 
-  async logAuthAction(email, action, errorMessage = null, userId = null) {
+  async logAuthAction(email, action, userId = null, error_message = null) {
     try {
       const supabase = await window.getSupabaseClient();
-      if (!supabase) return;
+      if (!supabase) {
+        console.error('Supabase not available for logging auth action');
+        return;
+      }
 
-      // Get IP address and user agent if available
       const ipAddress = null; // Can be set from request headers if available
       const userAgent = navigator.userAgent || null;
 
@@ -212,7 +243,7 @@ class SessionManager {
           action: action,
           ip_address: ipAddress,
           user_agent: userAgent,
-          error_message: errorMessage
+          error_message: error_message
         });
 
       if (error) {

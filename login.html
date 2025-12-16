@@ -378,6 +378,25 @@
           <input type="password" id="confirmPassword" class="login-input" required>
         </div>
 
+        <div class="login-form-group">
+          <label class="login-label">Account Type</label>
+          <div style="display: flex; gap: 20px; margin-top: 10px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="radio" name="userType" value="student" checked style="width: 18px; height: 18px; accent-color: #214598;">
+              <span style="color: #214598; font-size: 15px; font-family: 'Montserrat', sans-serif; text-transform: uppercase;">Student</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="radio" name="userType" value="staff" style="width: 18px; height: 18px; accent-color: #214598;">
+              <span style="color: #214598; font-size: 15px; font-family: 'Montserrat', sans-serif; text-transform: uppercase;">Staff</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="login-form-group">
+          <label for="registerStudentId" class="login-label">Student ID (Optional)</label>
+          <input type="text" id="registerStudentId" class="login-input" placeholder="Leave blank if not applicable">
+        </div>
+
         <button type="submit" class="login-button">
           <span class="login-button-text">SIGN UP</span>
         </button>

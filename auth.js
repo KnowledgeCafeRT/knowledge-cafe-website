@@ -19,9 +19,29 @@ class AuthManager {
       tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
     });
 
-    // Form submissions
-    document.getElementById('loginForm')?.addEventListener('submit', (e) => this.handleLogin(e));
-    document.getElementById('registerForm')?.addEventListener('submit', (e) => this.handleRegister(e));
+    // Form submissions - use event delegation to ensure forms exist
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    
+    if (loginForm) {
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.handleLogin(e);
+      });
+      console.log('✅ Login form event listener attached');
+    } else {
+      console.warn('⚠️ Login form not found');
+    }
+    
+    if (registerForm) {
+      registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.handleRegister(e);
+      });
+      console.log('✅ Register form event listener attached');
+    } else {
+      console.warn('⚠️ Register form not found');
+    }
   }
 
   switchTab(tabName) {
@@ -71,7 +91,10 @@ class AuthManager {
     try {
       // Try Supabase Auth first
       if (window.sessionManager) {
+        console.log('Attempting login with Supabase...');
         const result = await window.sessionManager.signIn(email, password);
+        console.log('Login result:', result);
+        
         if (result.success) {
           this.showNotification('Welcome back!', 'success');
           setTimeout(() => {
@@ -79,9 +102,14 @@ class AuthManager {
           }, 1000);
           return;
         } else {
-          this.showNotification(result.error || 'Invalid email or password', 'error');
+          // Show specific error message, default to password error if unclear
+          const errorMsg = result.error || 'Wrong password, try again';
+          console.error('Login failed:', errorMsg);
+          this.showNotification(errorMsg, 'error');
           return;
         }
+      } else {
+        console.warn('SessionManager not available, using localStorage fallback');
       }
       
       // Fallback to localStorage auth
@@ -93,7 +121,7 @@ class AuthManager {
           window.location.href = '/profile.html';
         }, 1000);
       } else {
-        this.showNotification('Invalid email or password', 'error');
+        this.showNotification('Wrong password, try again', 'error');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -129,7 +157,10 @@ class AuthManager {
     try {
       // Try Supabase Auth first
       if (window.sessionManager) {
+        console.log('Attempting signup with Supabase...');
         const result = await window.sessionManager.signUp(email, password, name, userType, studentId);
+        console.log('Signup result:', result);
+        
         if (result.success) {
           this.showNotification('Account created successfully!', 'success');
           setTimeout(() => {
@@ -137,9 +168,12 @@ class AuthManager {
           }, 1000);
           return;
         } else {
+          console.error('Signup failed:', result.error);
           this.showNotification(result.error || 'Registration failed', 'error');
           return;
         }
+      } else {
+        console.warn('SessionManager not available, using localStorage fallback');
       }
       
       // Fallback to localStorage auth
@@ -289,9 +323,34 @@ class AuthManager {
 
 // Initialize auth manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  // Wait a bit for sessionManager to initialize
-  setTimeout(() => {
+  // Wait for Supabase and sessionManager to initialize
+  const initAuth = async () => {
+    let attempts = 0;
+    const maxAttempts = 20; // Wait up to 2 seconds
+    
+    while (attempts < maxAttempts) {
+      // Check if Supabase is available
+      try {
+        const supabase = await window.getSupabaseClient();
+        if (supabase && window.sessionManager) {
+          console.log('✅ Auth system ready');
+          const authManager = new AuthManager();
+          window.authManager = authManager; // Make it globally available for debugging
+          return;
+        }
+      } catch (error) {
+        console.warn('Waiting for Supabase to initialize...', error);
+      }
+      
+      attempts++;
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    // If we get here, Supabase might not be available - still initialize with fallback
+    console.warn('⚠️ Supabase not available, using localStorage fallback');
     const authManager = new AuthManager();
-    window.authManager = authManager; // Make it globally available for debugging
-  }, 100);
+    window.authManager = authManager;
+  };
+  
+  initAuth();
 });
