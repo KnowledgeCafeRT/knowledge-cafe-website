@@ -300,15 +300,20 @@
       }
     }
   </style>
+  <!-- IMMEDIATE REDIRECT -->
+  <script>window.location.replace("order.html");</script>
+  <meta http-equiv="refresh" content="0;url=order.html">
 </head>
-<body>
+<body style="display:none!important">
+<!-- LOGIN DISABLED - Redirecting to order page -->
+<script>window.location.href='order.html';</script>
   <!-- Navigation -->
   <nav class="navbar">
     <div class="nav-links">
       <a href="index.html#home" class="nav-link">home</a>
       <a href="index.html#about" class="nav-link">about</a>
       <a href="index.html#menu" class="nav-link">menu</a>
-      <a href="login.html" class="nav-link">login</a>
+      <a href="order.html" class="nav-link">Order Now</a>
     </div>
   </nav>
 
@@ -407,6 +412,66 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="supabase-config.js"></script>
   <script src="session-manager.js"></script>
-  <script src="auth.js"></script>
+  <script src="auth-simple.js"></script>
+  <script>
+    // Check if user is already logged in and redirect to profile
+    // Only redirect if user hasn't interacted with the page and hasn't clicked any links
+    let userInteracted = false;
+    let redirectTimer = null;
+    
+    // Track any user interaction, especially link clicks
+    document.addEventListener('click', (e) => {
+      // If clicking on a link, don't redirect
+      if (e.target.closest('a')) {
+        userInteracted = true;
+        if (redirectTimer) {
+          clearTimeout(redirectTimer);
+          redirectTimer = null;
+        }
+        return; // Allow normal link navigation
+      }
+      userInteracted = true;
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
+        redirectTimer = null;
+      }
+    }, true);
+    
+    // Also track other interactions
+    ['mousedown', 'keydown', 'touchstart'].forEach(eventType => {
+      document.addEventListener(eventType, () => {
+        userInteracted = true;
+        if (redirectTimer) {
+          clearTimeout(redirectTimer);
+          redirectTimer = null;
+        }
+      }, { passive: true });
+    });
+    
+    (async function() {
+      // Wait for session manager to initialize
+      let attempts = 0;
+      while (!window.sessionManager && attempts < 50) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+      
+      if (window.sessionManager) {
+        // Wait a bit for session to be restored
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Only redirect if user hasn't interacted and is authenticated
+        // Use a longer delay to ensure link clicks have time to register
+        if (!userInteracted && window.sessionManager.isAuthenticated()) {
+          redirectTimer = setTimeout(() => {
+            if (!userInteracted) {
+              console.log('User already logged in, redirecting to profile');
+              window.location.href = 'profile.html';
+            }
+          }, 2000);
+        }
+      }
+    })();
+  </script>
 </body>
 </html>

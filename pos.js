@@ -270,33 +270,33 @@
     
     // Milk option handlers (only if not cup-only item)
     if (!cupOnly) {
-      const milkOptions = document.querySelectorAll('.milk-option');
-      milkOptions.forEach(option => {
-        option.onclick = () => {
-          milkOptions.forEach(opt => opt.classList.remove('selected'));
-          option.classList.add('selected');
-        };
-      });
-      if (milkOptions.length > 0) {
+    const milkOptions = document.querySelectorAll('.milk-option');
+    milkOptions.forEach(option => {
+      option.onclick = () => {
         milkOptions.forEach(opt => opt.classList.remove('selected'));
-        milkOptions[0].classList.add('selected');
-      }
-      
-      // Syrup option handlers
-      const syrupOptions = document.querySelectorAll('.syrup-option');
-      syrupOptions.forEach(option => {
-        option.onclick = () => {
-          syrupOptions.forEach(opt => opt.classList.remove('selected'));
-          if (noSyrupOption) noSyrupOption.classList.remove('selected');
-          option.classList.add('selected');
-        };
-      });
-      
-      if (noSyrupOption) {
-        noSyrupOption.onclick = () => {
-          syrupOptions.forEach(opt => opt.classList.remove('selected'));
-          noSyrupOption.classList.add('selected');
-        };
+        option.classList.add('selected');
+      };
+    });
+    if (milkOptions.length > 0) {
+      milkOptions.forEach(opt => opt.classList.remove('selected'));
+      milkOptions[0].classList.add('selected');
+    }
+    
+    // Syrup option handlers
+    const syrupOptions = document.querySelectorAll('.syrup-option');
+    syrupOptions.forEach(option => {
+      option.onclick = () => {
+        syrupOptions.forEach(opt => opt.classList.remove('selected'));
+        if (noSyrupOption) noSyrupOption.classList.remove('selected');
+        option.classList.add('selected');
+      };
+    });
+    
+    if (noSyrupOption) {
+      noSyrupOption.onclick = () => {
+        syrupOptions.forEach(opt => opt.classList.remove('selected'));
+        noSyrupOption.classList.add('selected');
+      };
       }
     }
     
@@ -348,14 +348,14 @@
             alert('Please select a milk type');
             return;
           }
-          
-          const syrupId = selectedSyrup || null;
-          addCoffeeToCart(item, unitPrice, selectedMilk, syrupId, {
-            cupType,
-            cupLabel,
-            cupPrice,
-            cupPfandAmount
-          });
+        
+        const syrupId = selectedSyrup || null;
+        addCoffeeToCart(item, unitPrice, selectedMilk, syrupId, {
+          cupType,
+          cupLabel,
+          cupPrice,
+          cupPfandAmount
+        });
         }
         modal.style.display = 'none';
         pendingCoffeeItem = null;
@@ -635,28 +635,52 @@
           continue;
         }
 
+        // Get milk type from order item (customer's choice: 'cow' or 'oat')
+        const milkType = orderItem.milk || 'cow'; // Default to cow milk if not specified
+
         // Deduct each ingredient
         const ingredients = recipe.ingredients || [];
         for (const ingredient of ingredients) {
+          // Check if this ingredient is milk, and if so, use the correct milk type
+          let itemIdToDeduct = ingredient.item_id;
+          
+          // If ingredient is cow-milk but customer chose oat milk, use oat-milk instead
+          if (ingredient.item_id === 'cow-milk' && milkType === 'oat') {
+            itemIdToDeduct = 'oat-milk';
+          }
+          // If ingredient is oat-milk but customer chose cow milk, use cow-milk instead
+          else if (ingredient.item_id === 'oat-milk' && milkType === 'cow') {
+            itemIdToDeduct = 'cow-milk';
+          }
+          // If recipe has generic 'milk' reference, use customer's choice
+          else if (ingredient.item_id === 'milk') {
+            itemIdToDeduct = milkType === 'oat' ? 'oat-milk' : 'cow-milk';
+          }
+
           const totalQuantity = ingredient.quantity * (orderItem.quantity || orderItem.qty || 1);
 
           // Update inventory
           const { error: updateError } = await supabase.rpc('deduct_inventory', {
-            p_item_id: ingredient.item_id,
+            p_item_id: itemIdToDeduct,
             p_quantity: totalQuantity,
             p_order_id: order.id,
             p_reason: 'sale'
           });
 
           if (updateError) {
-            console.error(`Error deducting ${ingredient.item_id}:`, updateError);
+            console.error(`Error deducting ${itemIdToDeduct}:`, updateError);
             continue;
           }
 
+          // Get the correct item name for history
+          const itemName = itemIdToDeduct === 'oat-milk' ? 'Hafermilch' : 
+                          itemIdToDeduct === 'cow-milk' ? 'Kuhmilch' : 
+                          (ingredient.item_name || itemIdToDeduct);
+
           // Log history
           await supabase.from('inventory_history').insert({
-            item_id: ingredient.item_id,
-            item_name: ingredient.item_name || ingredient.item_id,
+            item_id: itemIdToDeduct,
+            item_name: itemName,
             change_type: 'deduction',
             quantity: -totalQuantity,
             reason: 'sale',

@@ -3,6 +3,8 @@ class AuthManager {
   constructor() {
     this.currentUser = null;
     this.users = JSON.parse(localStorage.getItem('kcafe_users')) || [];
+    this.loggingIn = false; // Flag to prevent multiple simultaneous logins
+    this.registering = false; // Flag to prevent multiple simultaneous registrations
     this.init();
   }
 
@@ -19,28 +21,38 @@ class AuthManager {
       tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
     });
 
-    // Form submissions - use event delegation to ensure forms exist
+    // Form submissions - check if listeners already exist
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     
-    if (loginForm) {
+    if (loginForm && !loginForm.hasAttribute('data-listener-attached')) {
+      loginForm.setAttribute('data-listener-attached', 'true');
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        this.handleLogin(e);
+        e.stopPropagation();
+        if (!this.loggingIn) {
+          this.loggingIn = true;
+          this.handleLogin(e).finally(() => {
+            this.loggingIn = false;
+          });
+        }
       });
       console.log('✅ Login form event listener attached');
-    } else {
-      console.warn('⚠️ Login form not found');
     }
     
-    if (registerForm) {
+    if (registerForm && !registerForm.hasAttribute('data-listener-attached')) {
+      registerForm.setAttribute('data-listener-attached', 'true');
       registerForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        this.handleRegister(e);
+        e.stopPropagation();
+        if (!this.registering) {
+          this.registering = true;
+          this.handleRegister(e).finally(() => {
+            this.registering = false;
+          });
+        }
       });
       console.log('✅ Register form event listener attached');
-    } else {
-      console.warn('⚠️ Register form not found');
     }
   }
 
@@ -72,23 +84,33 @@ class AuthManager {
 
   async handleLogin(e) {
     e.preventDefault();
-    const email = document.getElementById('loginEmail')?.value;
-    const password = document.getElementById('loginPassword')?.value;
-    const rememberMe = document.getElementById('rememberMe')?.checked;
-
-    if (!email || !password) {
-      this.showNotification('Please enter both email and password', 'error');
+    e.stopPropagation();
+    
+    // Prevent multiple simultaneous login attempts
+    if (this.loggingIn) {
+      console.log('Login already in progress, ignoring duplicate request');
       return;
     }
-
-    // Save email if "remember me" is checked (NEVER save password)
-    if (rememberMe) {
-      localStorage.setItem('kcafe_saved_email', email);
-    } else {
-      localStorage.removeItem('kcafe_saved_email');
-    }
-
+    
+    this.loggingIn = true;
+    
     try {
+      const email = document.getElementById('loginEmail')?.value;
+      const password = document.getElementById('loginPassword')?.value;
+      const rememberMe = document.getElementById('rememberMe')?.checked;
+
+      if (!email || !password) {
+        this.showNotification('Please enter both email and password', 'error');
+        return;
+      }
+
+      // Save email if "remember me" is checked (NEVER save password)
+      if (rememberMe) {
+        localStorage.setItem('kcafe_saved_email', email);
+      } else {
+        localStorage.removeItem('kcafe_saved_email');
+      }
+
       // Try Supabase Auth first
       if (window.sessionManager) {
         console.log('Attempting login with Supabase...');
@@ -96,11 +118,14 @@ class AuthManager {
         console.log('Login result:', result);
         
         if (result.success) {
+          // Wait a moment to ensure session is persisted
+          await new Promise(resolve => setTimeout(resolve, 500));
           this.showNotification('Welcome back!', 'success');
           setTimeout(() => {
-            window.location.href = '/profile.html';
+            // Use relative path to work both locally and on server
+            window.location.href = 'profile.html';
           }, 1000);
-          return;
+          return; // Don't reset flag here - page will redirect
         } else {
           // Show specific error message, default to password error if unclear
           const errorMsg = result.error || 'Wrong password, try again';
@@ -118,14 +143,18 @@ class AuthManager {
         this.setCurrentUser(user);
         this.showNotification('Welcome back!', 'success');
         setTimeout(() => {
-          window.location.href = '/profile.html';
+          window.location.href = 'profile.html';
         }, 1000);
+        return; // Don't reset flag here - page will redirect
       } else {
         this.showNotification('Wrong password, try again', 'error');
       }
     } catch (error) {
       console.error('Login error:', error);
       this.showNotification('Login failed. Please try again.', 'error');
+    } finally {
+      // Always reset the flag, even if there was an error or early return
+      this.loggingIn = false;
     }
   }
 
@@ -162,9 +191,11 @@ class AuthManager {
         console.log('Signup result:', result);
         
         if (result.success) {
+          // Wait a moment to ensure session is persisted
+          await new Promise(resolve => setTimeout(resolve, 500));
           this.showNotification('Account created successfully!', 'success');
           setTimeout(() => {
-            window.location.href = '/profile.html';
+            window.location.href = 'profile.html';
           }, 1000);
           return;
         } else {
@@ -188,7 +219,7 @@ class AuthManager {
       this.setCurrentUser(user);
       this.showNotification('Account created successfully!', 'success');
       setTimeout(() => {
-        window.location.href = '/profile.html';
+        window.location.href = 'profile.html';
       }, 1000);
     } catch (error) {
       console.error('Registration error:', error);
@@ -238,22 +269,16 @@ class AuthManager {
   }
 
   checkAuthState() {
-    // Check Supabase session first
-    if (window.sessionManager && window.sessionManager.isAuthenticated()) {
-      // Redirect to profile if already logged in
-      if (window.location.pathname === '/login.html') {
-        window.location.href = '/profile.html';
-      }
+    // Only check if we're on the login page - don't auto-redirect
+    // Let users stay on login page if they want to log in again
+    // This prevents redirect loops
       return;
-    }
     
-    // Fallback to localStorage
-    if (this.currentUser) {
-      // Redirect to profile if already logged in
-      if (window.location.pathname === '/login.html') {
-        window.location.href = '/profile.html';
-      }
-    }
+    // OLD CODE - disabled to prevent loops
+    // const currentPath = window.location.pathname;
+    // const isLoginPage = currentPath.includes('login.html') || currentPath.endsWith('/login.html');
+    // if (!isLoginPage) return;
+    // ... rest disabled
   }
 
   async logout() {
@@ -321,36 +346,46 @@ class AuthManager {
   }
 }
 
-// Initialize auth manager when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  // Wait for Supabase and sessionManager to initialize
-  const initAuth = async () => {
-    let attempts = 0;
-    const maxAttempts = 20; // Wait up to 2 seconds
-    
-    while (attempts < maxAttempts) {
-      // Check if Supabase is available
-      try {
-        const supabase = await window.getSupabaseClient();
-        if (supabase && window.sessionManager) {
-          console.log('✅ Auth system ready');
-          const authManager = new AuthManager();
-          window.authManager = authManager; // Make it globally available for debugging
-          return;
-        }
-      } catch (error) {
-        console.warn('Waiting for Supabase to initialize...', error);
-      }
-      
-      attempts++;
-      await new Promise(resolve => setTimeout(resolve, 100));
+// Initialize auth manager when DOM is loaded - only once
+if (!window.authManagerInitialized) {
+  window.authManagerInitialized = true;
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    // Don't initialize if already exists
+    if (window.authManager) {
+      console.log('AuthManager already initialized');
+      return;
     }
     
-    // If we get here, Supabase might not be available - still initialize with fallback
-    console.warn('⚠️ Supabase not available, using localStorage fallback');
-    const authManager = new AuthManager();
-    window.authManager = authManager;
-  };
-  
-  initAuth();
-});
+    // Wait for Supabase and sessionManager to initialize
+    const initAuth = async () => {
+      let attempts = 0;
+      const maxAttempts = 20; // Wait up to 2 seconds
+      
+      while (attempts < maxAttempts) {
+        // Check if Supabase is available
+        try {
+          const supabase = await window.getSupabaseClient();
+          if (supabase && window.sessionManager) {
+            console.log('✅ Auth system ready');
+            const authManager = new AuthManager();
+            window.authManager = authManager; // Make it globally available for debugging
+            return;
+          }
+        } catch (error) {
+          console.warn('Waiting for Supabase to initialize...', error);
+        }
+        
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      // If we get here, Supabase might not be available - still initialize with fallback
+      console.warn('⚠️ Supabase not available, using localStorage fallback');
+      const authManager = new AuthManager();
+      window.authManager = authManager;
+    };
+    
+    initAuth();
+  });
+}

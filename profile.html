@@ -11,15 +11,182 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <!-- Brand Profile Styles -->
+  <style>
+/* --- PROFILE PAGE BRAND STYLES OVERRIDE --- */
+.profile-page,
+.profile-header,
+.profile-content,
+.profile-tab-content,
+.current-order-card, .order-card, .loyalty-progress-card, .loyalty-rewards-card,
+.pfand-stats, .settings-section,
+.stats-grid, .stat-card, .settings-form {
+    font-family: 'Montserrat', sans-serif !important;
+    background: var(--beige);
+}
+.profile-header {
+    background: var(--primary-blue);
+    color: #fff;
+    border-radius: 40px;
+    margin-bottom: 2rem;
+    padding: 2.5rem 3rem;
+    box-shadow: 0 10px 40px rgba(33,69,152,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.profile-header .profile-details h1,
+.profile-header .profile-details p,
+.profile-header .member-since {
+    color: #fff !important;
+}
+.profile-header h1, .profile-header .profile-cafe,
+.profile-title, .tab-header h2, .profile-tabs button.active {
+    font-family: 'Climate Crisis', 'Montserrat', sans-serif;
+    color: #fff !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.profile-tabs {
+    display: flex;
+    background: var(--menu-beige);
+    border-radius: 25px;
+    padding: 0.5rem;
+    margin: 3rem 0 2rem 0;
+    overflow: visible;
+}
+.profile-tab {
+    font-family: 'Montserrat', sans-serif;
+    background: none;
+    border: none;
+    color: var(--primary-blue);
+    font-size: 17px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 24px;
+    padding: 1rem 2.3rem;
+    margin: 0 0.3rem;
+    transition: background 0.18s, color 0.12s;
+}
+.profile-tab.active {
+    background: var(--primary-blue);
+    color: #fff;
+    border-bottom: 4px solid #fff;
+    font-family: 'Climate Crisis', 'Montserrat', sans-serif;
+}
+.profile-tab:focus { outline: none; }
+.stats-grid {
+    display: flex; gap: 2rem; margin: 2.2rem 1rem 2.7rem 1rem;
+}
+.stat-card {
+    background: var(--menu-beige);
+    border-radius: 29px;
+    padding: 2rem 2.6rem;
+    text-align: center;
+    flex: 1;
+    box-shadow: 0 2px 9px rgba(33,69,152,0.09);
+}
+.stat-icon { font-size: 30px; margin-bottom: 0.7rem; color: var(--primary-blue); }
+.stat-info h3 { color: var(--primary-blue); font-size: 2.7rem; font-family: 'Montserrat',sans-serif;}
+.stat-info p { color: var(--primary-blue); font-size: 1rem;}
+.tab-header h2 {
+    color: var(--primary-blue) !important;
+    font-family: 'Climate Crisis', 'Montserrat', sans-serif;
+    font-size: 2rem;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+.btn, .btn-primary, .btn-secondary  {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 49px;
+    padding: 1rem 2.5rem;
+    font-size: 1.06rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+.btn-primary, .btn.btn-primary {
+    background: var(--primary-blue);
+    color: #fff;
+    border: 2px solid var(--primary-blue);
+    transition: background 0.14s, color 0.18s;
+}
+.btn-primary:hover { background: #19306b; color: #fff; }
+.btn-secondary, .btn.btn-secondary {
+    background: transparent;
+    color: var(--primary-blue);
+    border: 2px solid var(--primary-blue);
+}
+.btn-secondary:hover {
+    background: var(--primary-blue);
+    color: #fff;
+}
+.current-order-card, .order-card, .loyalty-progress-card, .loyalty-rewards-card, .pfand-stats, .settings-section, .danger-zone {
+    background: var(--menu-beige);
+    border-radius: 27px;
+    padding: 2rem 2.4rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(33,69,152,0.10);
+    color: var(--primary-blue);
+}
+.input, input, select, textarea {
+    border: 2px solid var(--primary-blue);
+    background: var(--beige);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.3rem;
+    color: var(--primary-blue);
+}
+input:focus, select:focus, textarea:focus {
+    outline: 2px solid var(--primary-blue);
+    background: #fff;
+}
+.settings-form button[type="submit"],
+.settings-form .btn {
+    margin-top: 1rem;
+}
+.profile-header .btn-primary { background: #fff; color: var(--primary-blue); border:2px solid #fff; }
+.profile-header .btn-primary:hover {
+    background: var(--primary-blue); color: #fff; border:2px solid #fff;
+}
+.empty-state {
+    background: var(--beige);
+    color: var(--primary-blue);
+    border: 2px dashed var(--primary-blue);
+    border-radius: 22px;
+    padding: 2rem; margin-top: 1.4rem;
+    text-align: center;
+}
+.notification {
+    position: fixed; top: 2.5rem; right: 2rem; z-index: 2000;
+    background: var(--primary-blue); color: #fff;
+    padding: 1rem 2rem; border-radius: 18px;
+    box-shadow: 0 2px 10px rgba(33,69,152,0.10);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+}
+</style>
+  <!-- IMMEDIATE REDIRECT -->
+  <script>window.location.replace("order.html");</script>
+  <meta http-equiv="refresh" content="0;url=order.html">
 </head>
-<body>
+<body style="display:none!important">
+<!-- PROFILE DISABLED - Redirecting to order page -->
+<script>window.location.href='order.html';</script>
   <!-- Navigation -->
   <nav class="navbar">
     <div class="nav-links">
       <a href="index.html#home" class="nav-link">home</a>
       <a href="index.html#about" class="nav-link">about</a>
       <a href="index.html#menu" class="nav-link">menu</a>
-      <a href="login.html" class="nav-link">login</a>
+      <a href="order.html" class="nav-link">Order Now</a>
     </div>
   </nav>
 
@@ -33,7 +200,7 @@
             <i class="fas fa-user" id="defaultAvatar"></i>
             <div class="avatar-upload">
               <input type="file" id="avatarInput" accept="image/*" style="display: none;">
-              <button class="avatar-upload-btn" id="avatarUploadBtn">
+              <button class="avatar-upload-btn btn btn-secondary" id="avatarUploadBtn" title="Upload Picture">
                 <i class="fas fa-camera"></i>
               </button>
             </div>
@@ -45,95 +212,61 @@
           </div>
         </div>
         <div class="profile-actions">
-          <a href="/order.html" class="btn btn-primary">
-            <i class="fas fa-plus"></i>
-            New Order
+          <a href="order.html" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Order
           </a>
           <button class="btn btn-secondary" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i>
-            Logout
+            <i class="fas fa-sign-out-alt"></i> Logout
           </button>
         </div>
       </div>
-
       <div class="profile-content">
         <!-- Quick Stats -->
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-shopping-cart"></i>
-            </div>
+            <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
             <div class="stat-info">
               <h3 id="totalOrders">0</h3>
               <p>Total Orders</p>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-coffee"></i>
-            </div>
+            <div class="stat-icon"><i class="fas fa-coffee"></i></div>
             <div class="stat-info">
               <h3 id="loyaltyVisits">0</h3>
               <p>Loyalty Visits</p>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-euro-sign"></i>
-            </div>
+            <div class="stat-icon"><i class="fas fa-euro-sign"></i></div>
             <div class="stat-info">
               <h3 id="totalSpent">€0.00</h3>
               <p>Total Spent</p>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-gift"></i>
-            </div>
+            <div class="stat-icon"><i class="fas fa-gift"></i></div>
             <div class="stat-info">
               <h3 id="rewardsEarned">0</h3>
               <p>Rewards Earned</p>
             </div>
           </div>
         </div>
-
         <div class="profile-tabs">
-          <button class="profile-tab active" data-tab="current">
-            <i class="fas fa-shopping-cart"></i>
-            Current Order
-          </button>
-          <button class="profile-tab" data-tab="orders">
-            <i class="fas fa-history"></i>
-            Order History
-          </button>
-          <button class="profile-tab" data-tab="loyalty">
-            <i class="fas fa-coffee"></i>
-            Loyalty Card
-          </button>
-          <button class="profile-tab" data-tab="pfand">
-            <i class="fas fa-recycle"></i>
-            Pfand Cups
-          </button>
-          <button class="profile-tab" data-tab="settings">
-            <i class="fas fa-cog"></i>
-            Settings
-          </button>
+          <button class="profile-tab active" data-tab="current"><i class="fas fa-shopping-cart"></i> Current Order</button>
+          <button class="profile-tab" data-tab="orders"><i class="fas fa-history"></i> Order History</button>
+          <button class="profile-tab" data-tab="loyalty"><i class="fas fa-coffee"></i> Loyalty Card</button>
+          <button class="profile-tab" data-tab="pfand"><i class="fas fa-recycle"></i> Pfand Cups</button>
+          <button class="profile-tab" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
         </div>
-
         <!-- Current Order Tab -->
         <div class="profile-tab-content active" id="currentTab">
           <div class="tab-header">
             <h2>Current Order</h2>
-            <a href="/order.html" class="btn btn-primary">
-              <i class="fas fa-plus"></i>
-              Add Items
-            </a>
+            <a href="order.html" class="btn btn-primary"><i class="fas fa-plus"></i> Add Items</a>
           </div>
-          <div class="current-order-content" id="currentOrderContent">
-            <!-- Current order will be populated by JavaScript -->
-          </div>
+          <div class="current-order-content" id="currentOrderContent"><!-- JS Populated --></div>
         </div>
-
         <!-- Order History Tab -->
         <div class="profile-tab-content" id="ordersTab">
           <div class="tab-header">
@@ -146,19 +279,13 @@
               </select>
             </div>
           </div>
-          <div class="orders-list" id="ordersList">
-            <!-- Orders will be populated by JavaScript -->
-          </div>
+          <div class="orders-list" id="ordersList"></div>
         </div>
-
         <!-- Loyalty Card Tab -->
         <div class="profile-tab-content" id="loyaltyTab">
           <div class="tab-header">
             <h2>Loyalty Card</h2>
-            <button class="btn btn-secondary" id="addVisitBtn">
-              <i class="fas fa-plus"></i>
-              Add Visit
-            </button>
+            <button class="btn btn-secondary" id="addVisitBtn"><i class="fas fa-plus"></i> Add Visit</button>
           </div>
           <div class="loyalty-dashboard">
             <div class="loyalty-progress-card">
@@ -169,9 +296,7 @@
               <div class="progress-bar">
                 <div class="progress-fill" id="loyaltyProgressFill"></div>
               </div>
-              <div class="stamp-grid" id="loyaltyStampGrid">
-                <!-- Stamps will be populated by JavaScript -->
-              </div>
+              <div class="stamp-grid" id="loyaltyStampGrid"></div>
             </div>
             <div class="loyalty-rewards-card">
               <h3>Available Rewards</h3>
@@ -186,7 +311,6 @@
             </div>
           </div>
         </div>
-
         <!-- Pfand Cups Tab -->
         <div class="profile-tab-content" id="pfandTab">
           <div class="tab-header">
@@ -195,62 +319,44 @@
           <div class="pfand-dashboard">
             <div class="pfand-stats">
               <div class="pfand-stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-coffee"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-coffee"></i></div>
                 <div class="stat-info">
                   <h3 id="cupsOutstanding">0</h3>
                   <p>Cups Outstanding</p>
                 </div>
               </div>
               <div class="pfand-stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-euro-sign"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-euro-sign"></i></div>
                 <div class="stat-info">
                   <h3 id="pfandValue">€0.00</h3>
                   <p>Deposit Value</p>
                 </div>
               </div>
               <div class="pfand-stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-recycle"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-recycle"></i></div>
                 <div class="stat-info">
                   <h3 id="cupsReturned">0</h3>
                   <p>Cups Returned</p>
                 </div>
               </div>
             </div>
-            
             <div class="qr-code-section">
               <h3><i class="fas fa-qrcode"></i> Your Return QR Code</h3>
               <div class="qr-code-container">
-                <div id="qrCodeDisplay" class="qr-code-placeholder">
-                  <i class="fas fa-qrcode"></i>
-                  <p>QR Code will appear here</p>
-                </div>
+                <div id="qrCodeDisplay" class="qr-code-placeholder"><i class="fas fa-qrcode"></i><p>QR Code will appear here</p></div>
               </div>
               <p class="qr-instructions">Show this QR code to staff when returning cups - only staff can process returns</p>
-              <button class="btn btn-secondary" onclick="profileManager.generateQRCode()">
-                <i class="fas fa-sync"></i> Refresh QR Code
-              </button>
+              <button class="btn btn-secondary" onclick="profileManager.generateQRCode()"><i class="fas fa-sync"></i> Refresh QR Code</button>
             </div>
-            
             <div class="pfand-history">
               <h3>Recent Pfand Activity</h3>
-              <div class="pfand-activity-list" id="pfandActivityList">
-                <!-- Pfand activity will be populated by JavaScript -->
-              </div>
+              <div class="pfand-activity-list" id="pfandActivityList"></div>
             </div>
           </div>
         </div>
-
         <!-- Settings Tab -->
         <div class="profile-tab-content" id="settingsTab">
-          <div class="tab-header">
-            <h2>Account Settings</h2>
-          </div>
+          <div class="tab-header"><h2>Account Settings</h2></div>
           <div class="settings-sections">
             <div class="settings-section">
               <h3>Personal Information</h3>
@@ -267,13 +373,9 @@
                   <label for="settingsStudentId">Student ID</label>
                   <input type="text" id="settingsStudentId">
                 </div>
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-save"></i>
-                  Save Changes
-                </button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
               </form>
             </div>
-
             <div class="settings-section">
               <h3>Preferences</h3>
               <form class="settings-form" id="preferencesForm">
@@ -298,29 +400,24 @@
                     Loyalty card reminders
                   </label>
                 </div>
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-save"></i>
-                  Save Preferences
-                </button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Preferences</button>
               </form>
             </div>
-
             <div class="settings-section danger-zone">
               <h3>Danger Zone</h3>
               <div class="danger-actions">
-                <button class="btn btn-danger" id="deleteAccountBtn">
-                  <i class="fas fa-trash"></i>
-                  Delete Account
-                </button>
+                <button class="btn btn-danger" id="deleteAccountBtn"><i class="fas fa-trash"></i> Delete Account</button>
                 <p class="danger-warning">This action cannot be undone. All your data will be permanently deleted.</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </div> <!-- /profile-content -->
+    </div> <!-- /container -->
   </main>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="session-manager.js"></script>
   <script src="profile.js"></script>
 </body>
 </html>

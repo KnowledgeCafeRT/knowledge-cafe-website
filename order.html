@@ -169,11 +169,11 @@
     .order-page .menu-item-wrapper {
       overflow: visible !important;
     }
-    
+
     .order-page .menu-container {
       transform: scale(0.85) !important;
     }
-    
+
     .order-page .menu-container {
       transform: scale(0.85) !important;
       transform-origin: left center !important;
@@ -450,7 +450,7 @@
       <a href="index.html#home" class="nav-link">home</a>
       <a href="index.html#about" class="nav-link">about</a>
       <a href="index.html#menu" class="nav-link">menu</a>
-      <a href="login.html" class="nav-link">login</a>
+      <a href="order.html" class="nav-link">Order Now</a>
     </div>
   </nav>
 
@@ -475,26 +475,26 @@
 
       <div class="order-main-content">
         <div class="menu-section">
-          <div class="menu-container">
-            <div id="categories" class="order-categories"></div>
-          </div>
+      <div class="menu-container">
+        <div id="categories" class="order-categories"></div>
+      </div>
           
           <p class="menu-note">*All coffees are available with cow or oat milk. We exclusively use oat milk from Oatly and cow milk by Bioland Schwarzwaldmilch.<br/><br/>A fee of 2€ is charged for cups, which will be returned after giving the cup back. To go cups cost 0.20€</p>
-        </div>
+    </div>
 
-        <aside class="order-cart">
-          <div class="cart-header">
-            <h3>Your Order</h3>
-            <button id="clearCart" class="btn btn-secondary" style="padding:8px 14px">Clear</button>
-          </div>
-          <ul id="cartItems" class="cart-items"></ul>
-          <div class="cart-summary">
-            <div class="summary-row"><span>Subtotal</span><span id="subtotal">€0.00</span></div>
-          </div>
-          <div class="cart-actions">
-            <a href="/checkout.html" class="btn btn-primary" id="checkoutBtn">Checkout</a>
-          </div>
-        </aside>
+      <aside class="order-cart">
+        <div class="cart-header">
+          <h3>Your Order</h3>
+          <button id="clearCart" class="btn btn-secondary" style="padding:8px 14px">Clear</button>
+        </div>
+        <ul id="cartItems" class="cart-items"></ul>
+        <div class="cart-summary">
+          <div class="summary-row"><span>Subtotal</span><span id="subtotal">€0.00</span></div>
+        </div>
+        <div class="cart-actions">
+          <a href="/checkout.html" class="btn btn-primary" id="checkoutBtn">Checkout</a>
+        </div>
+      </aside>
       </div>
     </div>
   </main>
@@ -601,6 +601,23 @@
       </div>
     </div>
   </div>
+  <script>
+    // Auto-login check - ensure user session is active
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Wait for session manager to initialize
+      let attempts = 0;
+      while (!window.sessionManager && attempts < 30) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+      
+      // Session manager will automatically restore session if user is logged in
+      // This ensures pricing and user info are correct
+      if (window.sessionManager && window.sessionManager.isAuthenticated()) {
+        console.log('User is logged in:', window.sessionManager.getUserEmail());
+      }
+    });
+  </script>
 </body>
 </html>
 

@@ -7,29 +7,60 @@ class SessionManager {
   }
 
   async init() {
-    // Wait for Supabase to be available
+    console.log('SessionManager.init() called');
+    
+    // Wait for Supabase to be available - try multiple times
+    let attempts = 0;
+    while (typeof window.supabase === 'undefined' && attempts < 50) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+
     if (typeof window.supabase === 'undefined') {
-      // Wait a bit and try again
-      setTimeout(() => this.init(), 100);
+      console.warn('Supabase library not loaded after waiting');
+      this.onSessionChange(false);
       return;
     }
 
+    // Wait for getSupabaseClient to be available
+    attempts = 0;
+    while (typeof window.getSupabaseClient === 'undefined' && attempts < 50) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+
     const supabase = await window.getSupabaseClient();
-    if (!supabase) return;
+    if (!supabase) {
+      console.warn('Failed to get Supabase client');
+      this.onSessionChange(false);
+      return;
+    }
+
+    console.log('Supabase client ready, checking session...');
 
     // Check for existing session
-    const { data: { session }, error } = await supabase.auth.getSession();
-    
-    if (session && !error) {
-      this.currentUser = session.user;
-      await this.loadUserProfile(session.user.id);
-      this.onSessionChange(true);
-    } else {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      console.log('Session check result:', { hasSession: !!session, error });
+      
+      if (session && !error && session.user) {
+        console.log('Session found, loading user profile...');
+        this.currentUser = session.user;
+        await this.loadUserProfile(session.user.id);
+        this.onSessionChange(true);
+      } else {
+        console.log('No active session found');
+        this.onSessionChange(false);
+      }
+    } catch (error) {
+      console.error('Error checking session:', error);
       this.onSessionChange(false);
     }
 
     // Listen for auth state changes
     supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
       if (event === 'SIGNED_IN' && session) {
         this.currentUser = session.user;
         await this.loadUserProfile(session.user.id);
@@ -40,6 +71,11 @@ class SessionManager {
         this.onSessionChange(false);
       } else if (event === 'TOKEN_REFRESHED' && session) {
         this.currentUser = session.user;
+      } else if (event === 'INITIAL_SESSION' && session) {
+        // Handle initial session restoration
+        this.currentUser = session.user;
+        await this.loadUserProfile(session.user.id);
+        this.onSessionChange(true);
       }
     });
   }
@@ -109,8 +145,10 @@ class SessionManager {
             error.message.includes('password') ||
             error.message.includes('credentials')) {
           userMessage = 'Wrong password, try again';
-        } else if (error.message.includes('Email not confirmed')) {
-          userMessage = 'Please verify your email before logging in';
+        } else if (error.message.includes('Email not confirmed') || 
+                   error.message.includes('email_not_confirmed') ||
+                   error.message.includes('Email not verified')) {
+          userMessage = 'Email verification required. Please check your email and click the verification link, or disable email confirmation in Supabase settings.';
         } else if (error.message.includes('User not found') || error.message.includes('No user found')) {
           userMessage = 'No account found with this email';
         }
@@ -183,13 +221,23 @@ class SessionManager {
           console.error('Error creating user profile:', profileError);
         }
 
-        this.currentUser = authData.user;
-        await this.loadUserProfile(authData.user.id);
-        
-        // Log signup (trigger will also log, but this ensures it happens)
-        await this.logAuthAction(email, 'signup', authData.user.id);
-        
-        return { success: true, user: authData.user };
+        // If session exists, user is automatically logged in (email confirmation disabled)
+        // If session is null, user needs to verify email first (email confirmation enabled)
+        if (authData.session) {
+          this.currentUser = authData.user;
+          await this.loadUserProfile(authData.user.id);
+          
+          // Log signup
+          await this.logAuthAction(email, 'signup', authData.user.id);
+          
+          return { success: true, user: authData.user };
+        } else {
+          // Email confirmation required
+          return { 
+            success: false, 
+            error: 'Please check your email and click the verification link to complete signup. If you don\'t see it, check your spam folder.' 
+          };
+        }
       }
 
       return { success: false, error: 'User creation failed' };
@@ -228,7 +276,7 @@ class SessionManager {
     try {
       const supabase = await window.getSupabaseClient();
       if (!supabase) {
-        console.error('Supabase not available for logging auth action');
+        // Silently fail - logging is optional
         return;
       }
 
@@ -247,11 +295,15 @@ class SessionManager {
         });
 
       if (error) {
-        console.error('Error logging auth action:', error);
+        // Only log if it's not a "table doesn't exist" error
+        if (!error.message.includes('Could not find the table') && 
+            !error.message.includes('does not exist')) {
+          console.warn('Error logging auth action (non-critical):', error.message);
+        }
+        // Silently fail - logging failures shouldn't break auth flow
       }
     } catch (error) {
-      console.error('Error in logAuthAction:', error);
-      // Don't throw - logging failures shouldn't break auth flow
+      // Silently fail - logging is optional and shouldn't break auth flow
     }
   }
 

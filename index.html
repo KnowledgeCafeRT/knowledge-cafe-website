@@ -16,7 +16,7 @@
             <a href="#home" class="nav-link">home</a>
             <a href="#about" class="nav-link">about</a>
             <a href="#menu" class="nav-link">menu</a>
-            <a href="login.html" class="nav-link" id="navLoginLink">login</a>
+            <a href="order.html" class="nav-link" id="navLoginLink">Order Now</a>
         </div>
     </nav>
 
@@ -117,7 +117,7 @@
             
             <div class="about-item mission" style="left: 900px; top: 820px; position: absolute">
                 <div data-layer="Text" class="Text"></div>
-                <div data-layer="We provide high quality and affordable specialty coffee to the university community and bring people closer through highly engaged baristas as well as high value and sustainable materials to promote the social exchange between study programmes and faculties." class="WeProvideHighQualityAndAffordableSpecialtyCoffeeToTheUniversityCommunityAndBringPeopleCloserThroughHighlyEngagedBaristasAsWellAsHighValueAndSustainableMaterialsToPromoteTheSocialExchangeBetweenStudyProgrammesAndFaculties" style="width: 442px; color: white; font-size: 20.49px; font-family: Montserrat; font-weight: 400; text-transform: capitalize; line-height: 32.78px; word-wrap: break-word">We provide high quality and affordable specialty coffee to the university community and bring people closer through highly engaged baristas as well as high value and sustainable materials to promote the social exchange between study programmes and faculties.</div>
+                <div data-layer="We provide high quality and affordable specialty coffee to the university community and bring people closer through highly engaged baristas as well as high value and sustainable materials to promote the social exchange between study programmes and faculties." class="WeProvideHighQualityAndAffordableSpecialtyCoffeeToTheUniversityCommunityAndBringPeopleCloserThroughHighlyEngagedBaristasAsWellAsHighValueAndSustainableMaterialsToPromoteTheSocialExchangeBetweenStudyProgrammesAndFaculties" style="width: 442px; color: white; font-size: 20.49px; font-family: Montserrat; font-weight: 400; text-transform: none; line-height: 32.78px; word-wrap: break-word">We provide high quality and affordable specialty coffee to the university community and bring people closer through highly engaged baristas as well as high value and sustainable materials to promote the social exchange between study programmes and faculties.</div>
             </div>
         </div>
     </section>
@@ -320,7 +320,7 @@
                 <a href="#home">home</a>
                 <a href="#about">about</a>
                 <a href="#menu">menu</a>
-                <a href="#login">login</a>
+                <a href="order.html">Order Now</a>
             </div>
             
             <div class="footer-social">
@@ -337,6 +337,9 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="session-manager.js"></script>
     <script src="script.js"></script>
     <script>
         // Make menu items clickable to redirect to order page
@@ -364,6 +367,24 @@
                 });
             });
         });
+    </script>
+    <script>
+      // Auto-login check - redirect to profile if already logged in
+      document.addEventListener('DOMContentLoaded', async () => {
+        // Wait for session manager to initialize
+        let attempts = 0;
+        while (!window.sessionManager && attempts < 30) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        // LOGIN DISABLED - Keep "Order Now" always
+        const navLoginLink = document.getElementById('navLoginLink');
+        if (navLoginLink) {
+          navLoginLink.href = 'order.html';
+          navLoginLink.textContent = 'Order Now';
+        }
+      });
     </script>
 </body>
 </html>

@@ -74,6 +74,12 @@ class NavigationManager {
   init() {
     this.loadCurrentUser();
     this.updateNavigation();
+    // LOGIN/PROFILE DISABLED - Always show "Order Now"
+    const navLoginLink = document.getElementById('navLoginLink');
+    if (navLoginLink) {
+      navLoginLink.href = 'order.html';
+      navLoginLink.textContent = 'Order Now';
+    }
   }
 
   async loadCurrentUser() {
@@ -104,45 +110,12 @@ class NavigationManager {
   }
 
   updateNavigation() {
-    const profileLinks = document.querySelectorAll('.profile-link');
-    profileLinks.forEach(link => {
-      if (this.currentUser) {
-        // User is logged in - show profile link
-        link.href = '/profile.html';
-        const span = link.querySelector('span');
-        if (span) {
-          span.textContent = this.currentUser.name;
-        }
-        const icon = link.querySelector('i');
-        if (icon) {
-          icon.className = 'fas fa-user-circle';
-        }
-      } else {
-        // User is not logged in - show login link
-        link.href = '/login.html';
-        const span = link.querySelector('span');
-        if (span) {
-          span.textContent = 'Login';
-        }
-        const icon = link.querySelector('i');
-        if (icon) {
-          icon.className = 'fas fa-user';
-        }
-      }
-    });
-
-    // Update login link in navigation (for index.html style navigation)
+    // LOGIN/PROFILE DISABLED - Always show "Order Now"
     const navLoginLink = document.getElementById('navLoginLink');
     if (navLoginLink) {
-      if (this.currentUser) {
-        navLoginLink.href = 'profile.html';
-        navLoginLink.textContent = 'profile';
-      } else {
-        navLoginLink.href = 'login.html';
-        navLoginLink.textContent = 'login';
-      }
+      navLoginLink.href = 'order.html';
+      navLoginLink.textContent = 'Order Now';
     }
-  }
 }
 
 document.addEventListener('DOMContentLoaded', () => { 
@@ -151,15 +124,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Update navigation periodically to catch login/logout events
   setInterval(() => {
     navManager.loadCurrentUser();
-    navManager.updateNavigation();
-  }, 2000);
-  
-  // Listen for storage changes (login/logout from other tabs)
-  window.addEventListener('storage', () => {
-    navManager.loadCurrentUser();
-    navManager.updateNavigation();
-  });
-});
-
-console.log('☕ Knowledge Café front-end loaded.');
-P
+    //     navManager.updateNavigation();
+    // LOGIN/PROFILE DISABLED - Always show "Order Now"
+    const navLoginLink = document.getElementById('navLoginLink');
+    if (navLoginLink) {
+      navLoginLink.href = 'order.html';
+      navLoginLink.textContent = 'Order Now';
+    }
+    //     navManager.updateNavigation();
+    // LOGIN/PROFILE DISABLED - Always show "Order Now"
+    const navLoginLink = document.getElementById('navLoginLink');
+    if (navLoginLink) {
+      navLoginLink.href = 'order.html';
+      navLoginLink.textContent = 'Order Now';
+    }
